@@ -1,0 +1,762 @@
+[
+  {
+    "bin": "970415",
+    "code": "ICB",
+    "shortName": "VietinBank",
+    "name": "Ngân hàng TMCP Công thương Việt Nam",
+    "swift": "ICBVVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/icb.webp"
+  },
+  {
+    "bin": "970436",
+    "code": "VCB",
+    "shortName": "Vietcombank",
+    "name": "Ngân hàng TMCP Ngoại Thương Việt Nam",
+    "swift": "BFTVVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/vcb.webp"
+  },
+  {
+    "bin": "970418",
+    "code": "BIDV",
+    "shortName": "BIDV",
+    "name": "Ngân hàng TMCP Đầu tư và Phát triển Việt Nam",
+    "swift": "BIDVVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/bidv.webp"
+  },
+  {
+    "bin": "970405",
+    "code": "VBA",
+    "shortName": "Agribank",
+    "name": "Ngân hàng Nông nghiệp và Phát triển Nông thôn Việt Nam",
+    "swift": "VBAAVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/vba.webp"
+  },
+  {
+    "bin": "970448",
+    "code": "OCB",
+    "shortName": "OCB",
+    "name": "Ngân hàng TMCP Phương Đông",
+    "swift": "ORCOVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/ocb.webp"
+  },
+  {
+    "bin": "970422",
+    "code": "MB",
+    "shortName": "MBBank",
+    "name": "Ngân hàng TMCP Quân đội",
+    "swift": "MSCBVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/mb.webp"
+  },
+  {
+    "bin": "970407",
+    "code": "TCB",
+    "shortName": "Techcombank",
+    "name": "Ngân hàng TMCP Kỹ thương Việt Nam",
+    "swift": "VTCBVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/tcb.webp"
+  },
+  {
+    "bin": "970416",
+    "code": "ACB",
+    "shortName": "ACB",
+    "name": "Ngân hàng TMCP Á Châu",
+    "swift": "ASCBVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/acb.webp"
+  },
+  {
+    "bin": "970432",
+    "code": "VPB",
+    "shortName": "VPBank",
+    "name": "Ngân hàng TMCP Việt Nam Thịnh Vượng",
+    "swift": "VPBKVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/vpb.webp"
+  },
+  {
+    "bin": "970423",
+    "code": "TPB",
+    "shortName": "TPBank",
+    "name": "Ngân hàng TMCP Tiên Phong",
+    "swift": "TPBVVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/tpb.webp"
+  },
+  {
+    "bin": "970403",
+    "code": "STB",
+    "shortName": "Sacombank",
+    "name": "Ngân hàng TMCP Sài Gòn Tài Lộc",
+    "swift": "SGTTVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/stb.webp"
+  },
+  {
+    "bin": "970437",
+    "code": "HDB",
+    "shortName": "HDBank",
+    "name": "Ngân hàng TMCP Phát triển Thành phố Hồ Chí Minh",
+    "swift": "HDBCVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/hdb.webp"
+  },
+  {
+    "bin": "970454",
+    "code": "VCCB",
+    "shortName": "VietCapitalBank",
+    "name": "Ngân hàng TMCP Bản Việt",
+    "swift": "VCBCVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/vccb.webp"
+  },
+  {
+    "bin": "970429",
+    "code": "SCB",
+    "shortName": "SCB",
+    "name": "Ngân hàng TMCP Sài Gòn",
+    "swift": "SACLVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/scb.webp"
+  },
+  {
+    "bin": "970441",
+    "code": "VIB",
+    "shortName": "VIB",
+    "name": "Ngân hàng TMCP Quốc tế Việt Nam",
+    "swift": "VNIBVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/vib.webp"
+  },
+  {
+    "bin": "970443",
+    "code": "SHB",
+    "shortName": "SHB",
+    "name": "Ngân hàng TMCP Sài Gòn - Hà Nội",
+    "swift": "SHBAVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/shb.webp"
+  },
+  {
+    "bin": "970431",
+    "code": "EIB",
+    "shortName": "Eximbank",
+    "name": "Ngân hàng TMCP Xuất Nhập khẩu Việt Nam",
+    "swift": "EBVIVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/eib.webp"
+  },
+  {
+    "bin": "970426",
+    "code": "MSB",
+    "shortName": "MSB",
+    "name": "Ngân hàng TMCP Hàng Hải",
+    "swift": "MCOBVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/msb.webp"
+  },
+  {
+    "bin": "546034",
+    "code": "CAKE",
+    "shortName": "CAKE",
+    "name": "TMCP Việt Nam Thịnh Vượng - Ngân hàng số CAKE by VPBank",
+    "swift": null,
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/cake.webp"
+  },
+  {
+    "bin": "546035",
+    "code": "Ubank",
+    "shortName": "Ubank",
+    "name": "TMCP Việt Nam Thịnh Vượng - Ngân hàng số Ubank by VPBank",
+    "swift": null,
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/ubank.webp"
+  },
+  {
+    "bin": "963388",
+    "code": "TIMO",
+    "shortName": "Timo",
+    "name": "Ngân hàng số Timo by Ban Viet Bank (Timo by Ban Viet Bank)",
+    "swift": null,
+    "transfer": true,
+    "lookup": false,
+    "logo": "banks/timo.webp"
+  },
+  {
+    "bin": "971005",
+    "code": "VTLMONEY",
+    "shortName": "ViettelMoney",
+    "name": "Tổng Công ty Dịch vụ số Viettel - Chi nhánh tập đoàn công nghiệp viễn thông Quân Đội",
+    "swift": null,
+    "transfer": false,
+    "lookup": true,
+    "logo": "banks/vtlmoney.webp"
+  },
+  {
+    "bin": "971011",
+    "code": "VNPTMONEY",
+    "shortName": "VNPTMoney",
+    "name": "Trung tâm dịch vụ tài chính số VNPT- Chi nhánh Tổng công ty truyền thông (VNPT Fintech)",
+    "swift": null,
+    "transfer": false,
+    "lookup": true,
+    "logo": "banks/vnptmoney.webp"
+  },
+  {
+    "bin": "970400",
+    "code": "SGICB",
+    "shortName": "SaigonBank",
+    "name": "Ngân hàng TMCP Sài Gòn Công Thương",
+    "swift": "SBITVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/sgicb.webp"
+  },
+  {
+    "bin": "970409",
+    "code": "BAB",
+    "shortName": "BacABank",
+    "name": "Ngân hàng TMCP Bắc Á",
+    "swift": "NASCVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/bab.webp"
+  },
+  {
+    "bin": "971133",
+    "code": "PVDB",
+    "shortName": "PVcomBank Pay",
+    "name": "Ngân hàng số PVcomBank",
+    "swift": "WBVNVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/pvdb.webp"
+  },
+  {
+    "bin": "971025",
+    "code": "momo",
+    "shortName": "MoMo",
+    "name": "CTCP Dịch Vụ Di Động Trực Tuyến",
+    "swift": null,
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/momo.webp"
+  },
+  {
+    "bin": "970412",
+    "code": "PVCB",
+    "shortName": "PVcomBank",
+    "name": "Ngân hàng TMCP Đại Chúng Việt Nam",
+    "swift": "WBVNVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/pvcb.webp"
+  },
+  {
+    "bin": "970414",
+    "code": "MBV",
+    "shortName": "MBV",
+    "name": "Ngân hàng TNHH MTV Việt Nam Hiện Đại",
+    "swift": "OCBKUS3M",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/mbv.webp"
+  },
+  {
+    "bin": "970419",
+    "code": "NCB",
+    "shortName": "NCB",
+    "name": "Ngân hàng TMCP Quốc Dân",
+    "swift": "NVBAVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/ncb.webp"
+  },
+  {
+    "bin": "970424",
+    "code": "SHBVN",
+    "shortName": "ShinhanBank",
+    "name": "Ngân hàng TNHH MTV Shinhan Việt Nam",
+    "swift": "SHBKVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/shbvn.webp"
+  },
+  {
+    "bin": "970425",
+    "code": "ABB",
+    "shortName": "ABBANK",
+    "name": "Ngân hàng TMCP An Bình",
+    "swift": "ABBKVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/abb.webp"
+  },
+  {
+    "bin": "970427",
+    "code": "VAB",
+    "shortName": "VietABank",
+    "name": "Ngân hàng TMCP Việt Á",
+    "swift": "VNACVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/vab.webp"
+  },
+  {
+    "bin": "970428",
+    "code": "NAB",
+    "shortName": "NamABank",
+    "name": "Ngân hàng TMCP Nam Á",
+    "swift": "NAMAVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/nab.webp"
+  },
+  {
+    "bin": "970430",
+    "code": "PGB",
+    "shortName": "PGBank",
+    "name": "Ngân hàng TMCP Thịnh vượng và Phát triển",
+    "swift": "PGBLVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/pgb.webp"
+  },
+  {
+    "bin": "970433",
+    "code": "VIETBANK",
+    "shortName": "VietBank",
+    "name": "Ngân hàng TMCP Việt Nam Thương Tín",
+    "swift": "VNTTVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/vietbank.webp"
+  },
+  {
+    "bin": "970438",
+    "code": "BVB",
+    "shortName": "BaoVietBank",
+    "name": "Ngân hàng TMCP Bảo Việt",
+    "swift": "BVBVVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/bvb.webp"
+  },
+  {
+    "bin": "970440",
+    "code": "SEAB",
+    "shortName": "SeABank",
+    "name": "Ngân hàng TMCP Đông Nam Á",
+    "swift": "SEAVVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/seab.webp"
+  },
+  {
+    "bin": "970446",
+    "code": "COOPBANK",
+    "shortName": "COOPBANK",
+    "name": "Ngân hàng Hợp tác xã Việt Nam",
+    "swift": null,
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/coopbank.webp"
+  },
+  {
+    "bin": "970449",
+    "code": "LPB",
+    "shortName": "LPBank",
+    "name": "Ngân hàng TMCP Lộc Phát Việt Nam",
+    "swift": "LVBKVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/lpb.webp"
+  },
+  {
+    "bin": "970452",
+    "code": "KLB",
+    "shortName": "KienLongBank",
+    "name": "Ngân hàng TMCP Kiên Long",
+    "swift": "KLBKVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/klb.webp"
+  },
+  {
+    "bin": "668888",
+    "code": "KBank",
+    "shortName": "KBank",
+    "name": "Ngân hàng Đại chúng TNHH Kasikornbank",
+    "swift": "KASIVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/kbank.webp"
+  },
+  {
+    "bin": "970466",
+    "code": "KEBHANAHCM",
+    "shortName": "KEBHanaHCM",
+    "name": "Ngân hàng KEB Hana – Chi nhánh Thành phố Hồ Chí Minh",
+    "swift": null,
+    "transfer": false,
+    "lookup": false,
+    "logo": "banks/kebhanahcm.webp"
+  },
+  {
+    "bin": "970467",
+    "code": "KEBHANAHN",
+    "shortName": "KEBHANAHN",
+    "name": "Ngân hàng KEB Hana – Chi nhánh Hà Nội",
+    "swift": null,
+    "transfer": false,
+    "lookup": false,
+    "logo": "banks/kebhanahn.webp"
+  },
+  {
+    "bin": "977777",
+    "code": "MAFC",
+    "shortName": "MAFC",
+    "name": "Công ty Tài chính TNHH MTV Mirae Asset (Việt Nam)",
+    "swift": null,
+    "transfer": false,
+    "lookup": false,
+    "logo": "banks/mafc.webp"
+  },
+  {
+    "bin": "999888",
+    "code": "VBSP",
+    "shortName": "VBSP",
+    "name": "Ngân hàng Chính sách Xã hội",
+    "swift": null,
+    "transfer": false,
+    "lookup": false,
+    "logo": "banks/vbsp.webp"
+  },
+  {
+    "bin": "963668",
+    "code": "BNP HN",
+    "shortName": "BNP HN",
+    "name": "Ngân hàng BNP Paribas – Chi nhánh Hà Nội",
+    "swift": null,
+    "transfer": false,
+    "lookup": false,
+    "logo": "banks/bnp-hn.webp"
+  },
+  {
+    "bin": "555666",
+    "code": "BIDC",
+    "shortName": "BIDC",
+    "name": "Ngân hàng Đầu Tư Và Phát Triển Campuchia - Chi nhánh Hà Nội",
+    "swift": null,
+    "transfer": false,
+    "lookup": false,
+    "logo": "banks/bidc.webp"
+  },
+  {
+    "bin": "963666",
+    "code": "BNP HCM",
+    "shortName": "BNP HCM",
+    "name": "Ngân hàng BNP Paribas – Chi nhánh Thành phố Hồ Chí Minh",
+    "swift": null,
+    "transfer": false,
+    "lookup": false,
+    "logo": "banks/bnp-hcm.webp"
+  },
+  {
+    "bin": "971101",
+    "code": "ZALOPAY",
+    "shortName": "ZaloPay",
+    "name": "Ví điện tử ZaloPay",
+    "swift": null,
+    "transfer": true,
+    "lookup": false,
+    "logo": "banks/zalopay.webp"
+  },
+  {
+    "bin": "963688",
+    "code": "BOCHK",
+    "shortName": "BOCHK",
+    "name": "Ngân hàng Bank of China (Hong Kong) Limited – Chi nhánh Hồ Chí Minh",
+    "swift": null,
+    "transfer": false,
+    "lookup": false,
+    "logo": "banks/bochk.webp"
+  },
+  {
+    "bin": "970465",
+    "code": "BSP",
+    "shortName": "BSP",
+    "name": "Ngân hàng SinoPac - Chi nhánh Thành phố Hồ Chí Minh",
+    "swift": null,
+    "transfer": false,
+    "lookup": false,
+    "logo": "banks/bsp.webp"
+  },
+  {
+    "bin": "168999",
+    "code": "CUBHCM",
+    "shortName": "CUBHCM",
+    "name": "Ngân hàng Cathay United Bank – Chi nhánh Hồ Chí Minh",
+    "swift": null,
+    "transfer": false,
+    "lookup": false,
+    "logo": "banks/cubhcm.webp"
+  },
+  {
+    "bin": "963686",
+    "code": "ESUN",
+    "shortName": "ESUN",
+    "name": "Ngân hàng Thương mại TNHH E.SUN – Chi nhánh Đồng Nai (ESUNBANK)",
+    "swift": null,
+    "transfer": false,
+    "lookup": false,
+    "logo": "banks/esun.webp"
+  },
+  {
+    "bin": "963669",
+    "code": "ICBC",
+    "shortName": "ICBC",
+    "name": "Ngân hàng Công thương Trung Quốc – Chi nhánh thành phố Hà Nội",
+    "swift": null,
+    "transfer": false,
+    "lookup": false,
+    "logo": "banks/icbc.webp"
+  },
+  {
+    "bin": "971032",
+    "code": "MVAS",
+    "shortName": "MVAS",
+    "name": "Trung tâm Dịch vụ số Mobifone – Chi nhánh Tổng Công ty viễn thông Mobifone",
+    "swift": null,
+    "transfer": true,
+    "lookup": false,
+    "logo": "banks/mvas.webp"
+  },
+  {
+    "bin": "963326",
+    "code": "TNEX",
+    "shortName": "TNEX",
+    "name": "TNEX by MSB",
+    "swift": null,
+    "transfer": false,
+    "lookup": false,
+    "logo": "banks/tnex.webp"
+  },
+  {
+    "bin": "458761",
+    "code": "HSBC",
+    "shortName": "HSBC",
+    "name": "Ngân hàng TNHH MTV HSBC (Việt Nam)",
+    "swift": "HSBCVNVX",
+    "transfer": false,
+    "lookup": true,
+    "logo": "banks/hsbc.webp"
+  },
+  {
+    "bin": "970442",
+    "code": "HLBVN",
+    "shortName": "HongLeong",
+    "name": "Ngân hàng TNHH MTV Hong Leong Việt Nam",
+    "swift": "HLBBVNVX",
+    "transfer": false,
+    "lookup": true,
+    "logo": "banks/hlbvn.webp"
+  },
+  {
+    "bin": "970455",
+    "code": "IBK - HN",
+    "shortName": "IBKHN",
+    "name": "Ngân hàng Công nghiệp Hàn Quốc - Chi nhánh Hà Nội",
+    "swift": null,
+    "transfer": false,
+    "lookup": false,
+    "logo": "banks/ibk-hn.webp"
+  },
+  {
+    "bin": "970456",
+    "code": "IBK - HCM",
+    "shortName": "IBKHCM",
+    "name": "Ngân hàng Công nghiệp Hàn Quốc - Chi nhánh TP. Hồ Chí Minh",
+    "swift": null,
+    "transfer": false,
+    "lookup": false,
+    "logo": "banks/ibk-hcm.webp"
+  },
+  {
+    "bin": "970434",
+    "code": "IVB",
+    "shortName": "IndovinaBank",
+    "name": "Ngân hàng TNHH Indovina",
+    "swift": null,
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/ivb.webp"
+  },
+  {
+    "bin": "970406",
+    "code": "Vikki",
+    "shortName": "Vikki",
+    "name": "Ngân hàng TNHH Một thành viên số Vikki",
+    "swift": "EACBVNVX",
+    "transfer": false,
+    "lookup": true,
+    "logo": "banks/vikki.webp"
+  },
+  {
+    "bin": "801011",
+    "code": "NHB HN",
+    "shortName": "Nonghyup",
+    "name": "Ngân hàng Nonghyup - Chi nhánh Hà Nội",
+    "swift": null,
+    "transfer": false,
+    "lookup": false,
+    "logo": "banks/nhb-hn.webp"
+  },
+  {
+    "bin": "796500",
+    "code": "DBS",
+    "shortName": "DBSBank",
+    "name": "DBS Bank Ltd - Chi nhánh Thành phố Hồ Chí Minh",
+    "swift": "DBSSVNVX",
+    "transfer": false,
+    "lookup": false,
+    "logo": "banks/dbs.webp"
+  },
+  {
+    "bin": "970439",
+    "code": "PBVN",
+    "shortName": "PublicBank",
+    "name": "Ngân hàng TNHH MTV Public Việt Nam",
+    "swift": "VIDPVNVX",
+    "transfer": false,
+    "lookup": true,
+    "logo": "banks/pbvn.webp"
+  },
+  {
+    "bin": "970410",
+    "code": "SCVN",
+    "shortName": "StandardChartered",
+    "name": "Ngân hàng TNHH MTV Standard Chartered Bank Việt Nam",
+    "swift": "SCBLVNVX",
+    "transfer": false,
+    "lookup": true,
+    "logo": "banks/scvn.webp"
+  },
+  {
+    "bin": "533948",
+    "code": "CITIBANK",
+    "shortName": "Citibank",
+    "name": "Ngân hàng Citibank, N.A. - Chi nhánh Hà Nội",
+    "swift": null,
+    "transfer": false,
+    "lookup": false,
+    "logo": "banks/citibank.webp"
+  },
+  {
+    "bin": "422589",
+    "code": "CIMB",
+    "shortName": "CIMB",
+    "name": "Ngân hàng TNHH MTV CIMB Việt Nam",
+    "swift": "CIBBVNVN",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/cimb.webp"
+  },
+  {
+    "bin": "970458",
+    "code": "UOB",
+    "shortName": "UnitedOverseas",
+    "name": "Ngân hàng United Overseas - Chi nhánh TP. Hồ Chí Minh",
+    "swift": null,
+    "transfer": false,
+    "lookup": true,
+    "logo": "banks/uob.webp"
+  },
+  {
+    "bin": "970444",
+    "code": "CBB",
+    "shortName": "CBBank",
+    "name": "Ngân hàng Thương mại trách nhiệm hữu hạn một thành viên Ngoại thương Công nghệ số (Vietcombank Neo Limited)",
+    "swift": "GTBAVNVX",
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/cbb.webp"
+  },
+  {
+    "bin": "970408",
+    "code": "GPB",
+    "shortName": "GPBank",
+    "name": "Ngân hàng Thương mại TNHH MTV Dầu Khí Toàn Cầu",
+    "swift": "GBNKVNVX",
+    "transfer": false,
+    "lookup": true,
+    "logo": "banks/gpb.webp"
+  },
+  {
+    "bin": "970421",
+    "code": "VRB",
+    "shortName": "VRB",
+    "name": "Ngân hàng Liên doanh Việt - Nga",
+    "swift": null,
+    "transfer": false,
+    "lookup": true,
+    "logo": "banks/vrb.webp"
+  },
+  {
+    "bin": "970457",
+    "code": "WVN",
+    "shortName": "Woori",
+    "name": "Ngân hàng TNHH MTV Woori Việt Nam",
+    "swift": null,
+    "transfer": true,
+    "lookup": true,
+    "logo": "banks/wvn.webp"
+  },
+  {
+    "bin": "970462",
+    "code": "KBHN",
+    "shortName": "KookminHN",
+    "name": "Ngân hàng Kookmin - Chi nhánh Hà Nội",
+    "swift": null,
+    "transfer": true,
+    "lookup": false,
+    "logo": "banks/kbhn.webp"
+  },
+  {
+    "bin": "970463",
+    "code": "KBHCM",
+    "shortName": "KookminHCM",
+    "name": "Ngân hàng Kookmin - Chi nhánh Thành phố Hồ Chí Minh",
+    "swift": null,
+    "transfer": true,
+    "lookup": false,
+    "logo": "banks/kbhcm.webp"
+  }
+]

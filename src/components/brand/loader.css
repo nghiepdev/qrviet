@@ -1,0 +1,137 @@
+.qv-loader {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+.qv-loader.is-visible {
+  opacity: 1;
+}
+.qv-loader-inline {
+  min-height: min(60dvh, 520px);
+  border-radius: var(--radius-page, 28px);
+}
+.qv-loader-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background:
+    radial-gradient(80% 60% at 50% 40%, color-mix(in srgb, var(--color-accent) 14%, transparent), transparent 70%),
+    var(--color-background-body);
+}
+.qv-loader-field {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mask-image: radial-gradient(70% 70% at 50% 50%, #000 40%, transparent 100%);
+}
+.qv-particle {
+  position: absolute;
+  bottom: -24px;
+  border-radius: 28%;
+  background: var(--color-accent);
+  animation-name: qv-float;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+.qv-particle.is-star {
+  border-radius: 0;
+  background: #ffc93c;
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+@keyframes qv-float {
+  from {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  to {
+    transform: translate3d(var(--qv-drift, 0px), calc(-1 * min(70dvh, 620px)), 0) rotate(300deg);
+  }
+}
+.qv-loader-center {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+}
+.qv-loader-caption {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.01em;
+}
+.qv-loader-center svg {
+  filter: drop-shadow(0 14px 28px color-mix(in srgb, #d7263d 32%, transparent));
+}
+
+/* Animated mark (shared with the boot splash in index.html) */
+.qv-mark-animated .qv-ring,
+.qv-mark-animated .qv-core {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: qv-mark-pop 1.6s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+}
+.qv-mark-animated .qv-d2 {
+  animation-delay: 0.12s;
+}
+.qv-mark-animated .qv-d3 {
+  animation-delay: 0.24s;
+}
+.qv-mark-animated .qv-v {
+  stroke-dasharray: 130;
+  animation: qv-mark-draw 1.6s ease-in-out infinite;
+}
+.qv-mark-animated .qv-star {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: qv-mark-twinkle 1.6s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+}
+@keyframes qv-mark-pop {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  18% {
+    transform: scale(0.72);
+  }
+  38% {
+    transform: scale(1.08);
+  }
+  55% {
+    transform: scale(1);
+  }
+}
+@keyframes qv-mark-draw {
+  0% {
+    stroke-dashoffset: 130;
+  }
+  45%,
+  80% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -130;
+  }
+}
+@keyframes qv-mark-twinkle {
+  0%,
+  100% {
+    transform: rotate(0) scale(1);
+  }
+  40% {
+    transform: rotate(72deg) scale(1.18);
+  }
+  60% {
+    transform: rotate(72deg) scale(0.96);
+  }
+}
+
+/* Reduced motion: freeze the scene in place rather than removing it. */
+@media (prefers-reduced-motion: reduce) {
+  .qv-particle,
+  .qv-mark-animated * {
+    animation-play-state: paused !important;
+  }
+}

@@ -1,5 +1,10 @@
+autoDedupe: true
+engineStrict: true
+minimumReleaseAge: 360
+packages:
+  - .
 allowBuilds:
   esbuild: true
   lightningcss: true
-packages:
-  - .
+  "@astryxdesign/core": false
+  "@astryxdesign/cli": false

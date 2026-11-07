@@ -1,42 +1,62 @@
 {
   "name": "vietqr",
+  "version": "1.0.0",
   "private": true,
+  "description": "QRViet — offline-first VietQR toolkit (create, scan, share). Built with Astryx + TanStack.",
   "type": "module",
-  "imports": {
-    "#/*": "./src/*"
-  },
   "scripts": {
-    "dev": "vite dev --port 3000",
-    "generate-routes": "vite build",
-    "build": "vite build",
-    "preview": "vite preview"
+    "dev": "vite --port 3000",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test src/lib/*.test.ts",
+    "sync:banks": "node scripts/sync-banks.mjs",
+    "astryx": "node node_modules/@astryxdesign/cli/clients/cli/bin/astryx.mjs",
+    "preinstall": "npx only-allow pnpm"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.27.1",
-    "@tailwindcss/vite": "^4.1.18",
-    "@tanstack/react-devtools": "0.10.14",
+    "@astryxdesign/core": "^0.7.10",
+    "@astryxdesign/theme-butter": "^0.7.10",
+    "@astryxdesign/theme-chocolate": "^0.7.10",
+    "@astryxdesign/theme-gothic": "^0.7.10",
+    "@astryxdesign/theme-matcha": "^0.7.10",
+    "@astryxdesign/theme-neutral": "^0.7.10",
+    "@astryxdesign/theme-stone": "^0.7.10",
+    "@astryxdesign/theme-y2k": "^0.7.10",
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/nunito": "^5.3.0",
+    "@fontsource/be-vietnam-pro": "^5.3.0",
+    "@stylexjs/stylex": "^0.19.1",
     "@tanstack/react-router": "1.170.46",
-    "@tanstack/react-router-devtools": "1.167.2",
-    "@tanstack/react-start": "1.169.4",
-    "nitro": "3.0.260610-beta",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "tailwindcss": "^4.1.18",
-    "zod": "^4.3.6"
+    "@tanstack/react-store": "^0.11.2",
+    "jsqr": "^1.4.0",
+    "lucide-react": "^1.70.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "uqr": "^0.1.3",
+    "workbox-window": "^7.4.1"
   },
   "devDependencies": {
-    "@tanstack/devtools-vite": "0.8.6",
-    "@types/node": "^22.10.2",
-    "@types/react": "^19.2.0",
-    "@types/react-dom": "^19.2.0",
-    "@vitejs/plugin-react": "^6.0.1",
-    "typescript": "^6.0.2",
-    "vite": "^8.0.0"
+    "@astryxdesign/cli": "^0.7.10",
+    "@tailwindcss/vite": "^4.3.5",
+    "@tanstack/router-plugin": "^1.168.48",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.2.1",
+    "tailwindcss": "^4.3.5",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.6",
+    "vite-plugin-pwa": "^2.0.0"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "lightningcss"
-    ]
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "^12.16.1"
+    }
+  },
+  "engines": {
+    "node": "26",
+    "pnpm": "12"
   }
 }
