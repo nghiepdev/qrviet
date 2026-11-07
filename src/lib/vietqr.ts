@@ -244,13 +244,3 @@ export function maskAccount(account: string, visible = 3): string {
   if (account.length <= visible * 2) return account
   return account.slice(0, visible) + '*'.repeat(account.length - visible * 2) + account.slice(-visible)
 }
-
-/** Random, easy-to-read order code for unique transfer descriptions (no 0/O/1/I). */
-export function randomOrderCode(prefix = 'DH', length = 6): string {
-  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
-  const bytes = new Uint8Array(length)
-  crypto.getRandomValues(bytes)
-  let out = ''
-  for (const b of bytes) out += alphabet[b % alphabet.length]
-  return `${prefix}${out}`
-}

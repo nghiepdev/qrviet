@@ -1,0 +1,20 @@
+import {useToast} from '@astryxdesign/core/Toast'
+import {copyText} from '#/lib/qr/export'
+import {useT} from '#/i18n'
+
+/** Copy text and confirm with a toast; resolves to whether it worked. */
+export function useCopy() {
+  const showToast = useToast()
+  const t = useT()
+  return (text: string, message?: string): Promise<boolean> =>
+    copyText(text).then(
+      () => {
+        showToast({body: message ?? t('common.copied'), uniqueID: 'copy'})
+        return true
+      },
+      () => {
+        showToast({body: t('common.copyFailed'), type: 'error', uniqueID: 'copy'})
+        return false
+      },
+    )
+}

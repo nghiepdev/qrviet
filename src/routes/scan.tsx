@@ -1,14 +1,14 @@
-import {useCallback, useEffect, useRef, useState} from 'react'
+import {useEffect, useEffectEvent, useRef, useState} from 'react'
 import {createFileRoute, useNavigate} from '@tanstack/react-router'
-import {ImageUp, ScanLine, Trash2} from 'lucide-react'
+import {History, ImageUp, ScanLine, Trash2} from 'lucide-react'
 import {Button} from '@astryxdesign/core/Button'
 import {Tab, TabList} from '@astryxdesign/core/TabList'
 import {TextArea} from '@astryxdesign/core/TextArea'
 import {EmptyState} from '@astryxdesign/core/EmptyState'
 import {useToast} from '@astryxdesign/core/Toast'
-import {PageBody, PageHeader, Panel} from '#/components/common/PageHeader'
-import {CameraScanner} from '#/components/scan/CameraScanner'
-import {ResultCard, type ScanResult} from '#/components/scan/ResultCard'
+import {PageBody, PageHeader, Panel} from '#/components/common/page-header'
+import {CameraScanner} from '#/components/scan/camera-scanner'
+import {ResultCard, type ScanResult} from '#/components/scan/result-card'
 import {decodeBlob, imageFromDataTransfer} from '#/lib/scan'
 import {classifyPayload} from '#/lib/payloads'
 import {formatVnd} from '#/lib/money'
@@ -17,6 +17,7 @@ import {addHistory} from '#/stores/history'
 import {useSettings} from '#/stores/settings'
 import {uid} from '#/lib/text'
 import {useT} from '#/i18n'
+import {pageHead} from '#/seo/head'
 
 interface ScanSearch {
   text?: string
@@ -25,12 +26,22 @@ interface ScanSearch {
 }
 
 export const Route = createFileRoute('/scan')({
+  head: () => pageHead('scan'),
   validateSearch: (s: Record<string, unknown>): ScanSearch => {
     const str = (v: unknown) => (typeof v === 'string' ? v : typeof v === 'number' ? String(v) : undefined)
     return {text: str(s.text), url: str(s.url), title: str(s.title)}
   },
   component: ScanPage,
 })
+
+/** Codes found in an image; null when the image could not be read at all. */
+async function decodeImageFile(file: Blob): Promise<string[] | null> {
+  try {
+    return await decodeBlob(file)
+  } catch {
+    return null
+  }
+}
 
 function historyEntry(text: string) {
   const c = classifyPayload(text)
@@ -60,60 +71,53 @@ function ScanPage() {
   const fileRef = useRef<HTMLInputElement>(null)
   const resultsRef = useRef<HTMLDivElement>(null)
 
-  const push = useCallback(
-    (value: string, source: ScanResult['source']) => {
-      const trimmed = value.trim()
-      if (!trimmed) return
-      setResults((list) => [{id: uid(), text: trimmed, at: Date.now(), source}, ...list.filter((r) => r.text !== trimmed)].slice(0, 20))
-      if (autoSave) addHistory({kind: 'scan', payload: trimmed, ...historyEntry(trimmed)})
-      requestAnimationFrame(() => resultsRef.current?.scrollIntoView({behavior: 'smooth', block: 'nearest'}))
-    },
-    [autoSave],
-  )
+  const push = (value: string, source: ScanResult['source']) => {
+    const trimmed = value.trim()
+    if (!trimmed) return
+    setResults((list) => [{id: uid(), text: trimmed, at: Date.now(), source}, ...list.filter((r) => r.text !== trimmed)].slice(0, 20))
+    if (autoSave) addHistory({kind: 'scan', payload: trimmed, ...historyEntry(trimmed)})
+    requestAnimationFrame(() => resultsRef.current?.scrollIntoView({behavior: 'smooth', block: 'nearest'}))
+  }
 
-  const decodeImage = useCallback(
-    async (file: Blob) => {
-      setBusy(true)
-      try {
-        const found = await decodeBlob(file)
-        if (!found.length) showToast({body: t('scan.notFound'), type: 'error', uniqueID: 'scan'})
-        found.forEach((f) => push(f, 'image'))
-      } catch {
-        showToast({body: t('scan.notFound'), type: 'error', uniqueID: 'scan'})
-      } finally {
-        setBusy(false)
-      }
-    },
-    [push, showToast, t],
-  )
+  const decodeImage = async (file: Blob) => {
+    setBusy(true)
+    const found = await decodeImageFile(file)
+    setBusy(false)
+    if (!found?.length) return showToast({body: t('scan.notFound'), type: 'error', uniqueID: 'scan'})
+    found.forEach((f) => push(f, 'image'))
+  }
 
   // Share target (Android "Share → QRViet") delivers text/url as query params.
-  useEffect(() => {
-    const shared = search.text || search.url
+  const receiveShare = useEffectEvent(({text, url}: ScanSearch) => {
+    const shared = text || url
     if (!shared) return
-    push(search.url && !search.text?.includes(search.url) ? `${search.text ?? ''} ${search.url}`.trim() : shared, 'share')
+    push(url && !text?.includes(url) ? `${text ?? ''} ${url}`.trim() : shared, 'share')
     showToast({body: t('scan.shared'), uniqueID: 'shared'})
     setTab('text')
     void navigate({search: {}, replace: true})
-  }, [search, push, navigate, showToast, t])
+  })
+  useEffect(() => {
+    receiveShare(search)
+  }, [search])
 
   // Paste an image (screenshot) anywhere on the page.
-  useEffect(() => {
-    const onPaste = (e: ClipboardEvent) => {
-      const target = e.target as HTMLElement | null
-      const image = imageFromDataTransfer(e.clipboardData)
-      if (image) {
-        e.preventDefault()
-        void decodeImage(image)
-        return
-      }
-      if (target && /^(INPUT|TEXTAREA)$/.test(target.tagName)) return
-      const pasted = e.clipboardData?.getData('text')
-      if (pasted) push(pasted, 'text')
+  const onPaste = useEffectEvent((e: ClipboardEvent) => {
+    const target = e.target as HTMLElement | null
+    const image = imageFromDataTransfer(e.clipboardData)
+    if (image) {
+      e.preventDefault()
+      void decodeImage(image)
+      return
     }
-    window.addEventListener('paste', onPaste)
-    return () => window.removeEventListener('paste', onPaste)
-  }, [decodeImage, push])
+    if (target && /^(INPUT|TEXTAREA)$/.test(target.tagName)) return
+    const pasted = e.clipboardData?.getData('text')
+    if (pasted) push(pasted, 'text')
+  })
+  useEffect(() => {
+    const listener = (e: ClipboardEvent) => onPaste(e)
+    window.addEventListener('paste', listener)
+    return () => window.removeEventListener('paste', listener)
+  }, [])
 
   const onDrop = (e: React.DragEvent) => {
     e.preventDefault()
@@ -137,8 +141,10 @@ function ScanPage() {
       className="relative">
       <PageHeader title={t('scan.title')} subtitle={t('scan.subtitle')} icon={<ScanLine size={22} />} />
       <PageBody>
-        <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 items-start">
-          <Panel>
+        {/* Side by side, the results column takes the row's height, so an empty list fills it; the
+            scanner keeps its own height when many results make the row taller. */}
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+          <Panel hue="blue" className="md:self-start">
             <div className="flex flex-col gap-4">
               <TabList value={tab} onChange={setTab} layout="fill" role="tablist">
                 <Tab value="camera" label={t('scan.camera')} panelId="scan-panel" />
@@ -183,18 +189,25 @@ function ScanPage() {
             </div>
           </Panel>
 
-          <div className="flex flex-col gap-3 min-w-0" ref={resultsRef}>
-            <div className="flex items-center justify-between">
-              <span className="font-bold">{t('scan.results')}</span>
-              {results.length > 0 && <Button label={t('scan.clearResults')} size="sm" variant="ghost" icon={<Trash2 size={14} />} onClick={() => setResults([])} />}
-            </div>
-            {results.length === 0 ? (
-              <Panel>
-                <EmptyState icon={<ScanLine size={36} aria-hidden />} title={t('common.empty')} description={t('scan.pasteHint')} isCompact />
-              </Panel>
-            ) : (
-              results.map((r) => <ResultCard key={r.id} result={r} onRemove={() => setResults((list) => list.filter((x) => x.id !== r.id))} />)
-            )}
+          <div className="flex min-w-0 flex-col" ref={resultsRef}>
+            <Panel
+              title={t('scan.results')}
+              icon={History}
+              hue="violet"
+              actions={results.length > 0 && <Button label={t('scan.clearResults')} size="sm" variant="ghost" icon={<Trash2 size={14} />} onClick={() => setResults([])} />}
+              className="flex flex-1 flex-col">
+              {results.length === 0 ? (
+                <div className="flex flex-1 flex-col justify-center">
+                  <EmptyState icon={<ScanLine size={36} aria-hidden />} title={t('common.empty')} description={t('scan.pasteHint')} isCompact />
+                </div>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  {results.map((r) => (
+                    <ResultCard key={r.id} result={r} onRemove={() => setResults((list) => list.filter((x) => x.id !== r.id))} />
+                  ))}
+                </div>
+              )}
+            </Panel>
           </div>
         </div>
       </PageBody>

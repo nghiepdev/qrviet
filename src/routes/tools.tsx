@@ -1,32 +1,53 @@
-import {useMemo, useState} from 'react'
+import {useState} from 'react'
 import {createFileRoute, useNavigate} from '@tanstack/react-router'
-import {Calculator, Copy, Eraser, FileSearch, Hash, QrCode, Users, Wrench} from 'lucide-react'
+import type {ReactNode} from 'react'
+import {Calculator, Copy, Eraser, FileSearch, Hash, QrCode, Users, Wrench, type LucideIcon} from 'lucide-react'
 import {Button} from '@astryxdesign/core/Button'
 import {NumberInput} from '@astryxdesign/core/NumberInput'
 import {Switch} from '@astryxdesign/core/Switch'
 import {TextArea} from '@astryxdesign/core/TextArea'
 import {TextInput} from '@astryxdesign/core/TextInput'
 import {Badge} from '@astryxdesign/core/Badge'
-import {PageBody, PageHeader, Panel} from '#/components/common/PageHeader'
-import {VietQrResult} from '#/components/scan/ResultCard'
-import {TlvTable} from '#/components/vietqr/TlvTable'
+import {PageBody, PageHeader, Panel} from '#/components/common/page-header'
+import type {Hue} from '#/components/common/icon-badge'
+import {VietQrResult} from '#/components/scan/result-card'
+import {TlvTable} from '#/components/vietqr/tlv-table'
 import {checkCrc, crc16ccitt, repairCrc} from '#/lib/emv'
-import {looksLikeEmv, parseEmvQr} from '#/lib/vietqr'
+import {buildVietQr, looksLikeEmv, parseEmvQr} from '#/lib/vietqr'
 import {amountToEnglishWords, amountToVietnameseWords, formatVnd, parseAmount} from '#/lib/money'
 import {sanitizeTransferContent} from '#/lib/text'
-import {useCopy} from '#/hooks/useCopy'
-import {useT} from '#/i18n'
+import {useCopy} from '#/hooks/use-copy'
+import {useMasonry} from '#/hooks/use-masonry'
+import {useT, type MessageKey} from '#/i18n'
+import {pageHead} from '#/seo/head'
 
-export const Route = createFileRoute('/tools')({component: ToolsPage})
+export const Route = createFileRoute('/tools')({
+  head: () => pageHead('tools'),
+  component: ToolsPage,
+})
+
+type ToolId = 'inspect' | 'words' | 'split' | 'clean' | 'crc'
+
+const TOOLS: ReadonlyArray<{id: ToolId; icon: LucideIcon; hue: Hue; title: MessageKey; body: MessageKey}> = [
+  {id: 'inspect', icon: FileSearch, hue: 'blue', title: 'tools.inspect', body: 'tools.inspectBody'},
+  {id: 'words', icon: Calculator, hue: 'green', title: 'tools.words', body: 'tools.wordsBody'},
+  {id: 'split', icon: Users, hue: 'violet', title: 'tools.split', body: 'tools.splitBody'},
+  {id: 'clean', icon: Eraser, hue: 'amber', title: 'tools.clean', body: 'tools.cleanBody'},
+  {id: 'crc', icon: Hash, hue: 'cyan', title: 'tools.crc', body: 'tools.crcBody'},
+]
+
+const toolById = (id: ToolId) => TOOLS.find((tool) => tool.id === id)!
 
 function ToolsPage() {
   const t = useT()
+  const masonry = useMasonry<HTMLDivElement>()
   return (
     <>
       <PageHeader title={t('tools.title')} subtitle={t('tools.subtitle')} icon={<Wrench size={22} />} />
       <PageBody>
-        <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 items-start">
-          <div className="lg:col-span-2">
+        {/* Masonry: each card rises under the one above it rather than below the row's tallest. */}
+        <div ref={masonry} className="grid grid-cols-1 gap-5 md:grid-cols-2 items-start">
+          <div className="md:col-span-2">
             <InspectTool />
           </div>
           <WordsTool />
@@ -39,28 +60,50 @@ function ToolsPage() {
   )
 }
 
+/** A tool's card: the shared Panel in the tool's icon and hue, with its name and what it does. */
+function ToolPanel({id, children}: {id: ToolId; children: ReactNode}) {
+  const t = useT()
+  const tool = toolById(id)
+  return (
+    <Panel id={id} icon={tool.icon} hue={tool.hue} title={t(tool.title)} description={t(tool.body)}>
+      {children}
+    </Panel>
+  )
+}
+
+/** A valid code to try the inspector with. */
+const SAMPLE_PAYLOAD = buildVietQr({bin: '970436', accountNumber: '0071000888999', amount: 45000, purpose: 'Ca phe sua da'})
+
+/** Parse result for the inspector; null for empty or non-EMV input. */
+function inspectEmv(raw: string) {
+  if (!raw || !looksLikeEmv(raw)) return null
+  try {
+    return {parsed: parseEmvQr(raw), error: null}
+  } catch (e) {
+    return {parsed: null, error: (e as Error).message}
+  }
+}
+
 function InspectTool() {
   const t = useT()
   const copy = useCopy()
   const [input, setInput] = useState('')
   const raw = input.trim()
-  const result = useMemo(() => {
-    if (!raw || !looksLikeEmv(raw)) return null
-    try {
-      return {parsed: parseEmvQr(raw), error: null}
-    } catch (e) {
-      return {parsed: null, error: (e as Error).message}
-    }
-  }, [raw])
+  const result = inspectEmv(raw)
   const crc = raw ? checkCrc(raw) : null
   const fixCrc = () => {
     const fixed = repairCrc(raw)
     if (fixed) setInput(fixed)
   }
   return (
-    <Panel title={<span className="inline-flex items-center gap-2"><FileSearch size={18} aria-hidden />{t('tools.inspect')}</span>} description={t('tools.inspectBody')}>
+    <ToolPanel id="inspect">
       <div className="flex flex-col gap-4">
         <TextArea label={t('tools.input')} isLabelHidden value={input} onChange={setInput} rows={3} placeholder="00020101021238…6304XXXX" hasSpellCheck={false} />
+        {!raw && (
+          <div className="-ml-3 -mt-2">
+            <Button label={t('tools.sample')} size="sm" variant="ghost" onClick={() => setInput(SAMPLE_PAYLOAD)} />
+          </div>
+        )}
         {raw && !looksLikeEmv(raw) && <p className="text-sm text-warning">{t('scan.emvInvalid')}</p>}
         {crc && looksLikeEmv(raw) && (
           <div className="flex flex-wrap items-center gap-2">
@@ -79,7 +122,7 @@ function InspectTool() {
         {result?.parsed?.kind === 'vietqr' && <VietQrResult parsed={result.parsed} />}
         {result?.parsed?.kind === 'emv' && <TlvTable fields={result.parsed.fields} />}
       </div>
-    </Panel>
+    </ToolPanel>
   )
 }
 
@@ -91,7 +134,7 @@ function WordsTool() {
   const vi = amount !== null ? amountToVietnameseWords(amount) : ''
   const en = amount !== null ? amountToEnglishWords(amount) : ''
   return (
-    <Panel title={<span className="inline-flex items-center gap-2"><Calculator size={18} aria-hidden />{t('tools.words')}</span>} description={t('tools.wordsBody')}>
+    <ToolPanel id="words">
       <div className="flex flex-col gap-3">
         <TextInput label={t('gen.amount')} value={value} onChange={setValue} placeholder={t('gen.amountPlaceholder')} hasClear />
         {amount !== null && (
@@ -106,7 +149,7 @@ function WordsTool() {
           </>
         )}
       </div>
-    </Panel>
+    </ToolPanel>
   )
 }
 
@@ -117,7 +160,7 @@ function CleanTool() {
   const [strict, setStrict] = useState(false)
   const out = sanitizeTransferContent(value, strict ? 'strict' : 'relaxed').trim()
   return (
-    <Panel title={<span className="inline-flex items-center gap-2"><Eraser size={18} aria-hidden />{t('tools.clean')}</span>} description={t('tools.cleanBody')}>
+    <ToolPanel id="clean">
       <div className="flex flex-col gap-3">
         <TextArea label={t('tools.input')} value={value} onChange={setValue} rows={2} />
         <Switch label={t('tools.strict')} value={strict} onChange={setStrict} size="sm" />
@@ -127,7 +170,7 @@ function CleanTool() {
           <Button label={t('common.copy')} isIconOnly icon={<Copy size={14} />} size="sm" variant="ghost" onClick={() => void copy(out)} />
         </div>
       </div>
-    </Panel>
+    </ToolPanel>
   )
 }
 
@@ -141,7 +184,7 @@ function SplitTool() {
   const withTip = amount * (1 + tip / 100)
   const each = people > 0 ? Math.ceil(withTip / people / 1000) * 1000 : 0
   return (
-    <Panel title={<span className="inline-flex items-center gap-2"><Users size={18} aria-hidden />{t('tools.split')}</span>} description={t('tools.splitBody')}>
+    <ToolPanel id="split">
       <div className="flex flex-col gap-3">
         <TextInput label={t('tools.splitTotal')} value={total} onChange={setTotal} hasClear />
         <div className="grid grid-cols-2 gap-3">
@@ -162,7 +205,7 @@ function SplitTool() {
           />
         </div>
       </div>
-    </Panel>
+    </ToolPanel>
   )
 }
 
@@ -172,7 +215,7 @@ function CrcTool() {
   const [value, setValue] = useState('123456789')
   const crc = crc16ccitt(value)
   return (
-    <Panel title={<span className="inline-flex items-center gap-2"><Hash size={18} aria-hidden />{t('tools.crc')}</span>} description="CRC-16/CCITT-FALSE (0x1021, init 0xFFFF)">
+    <ToolPanel id="crc">
       <div className="flex flex-col gap-3">
         <TextArea label={t('tools.input')} value={value} onChange={setValue} rows={2} hasSpellCheck={false} />
         <div className="flex items-center gap-2 rounded-md bg-muted px-3 py-2">
@@ -180,6 +223,6 @@ function CrcTool() {
           <Button label={t('common.copy')} isIconOnly icon={<Copy size={14} />} size="sm" variant="ghost" onClick={() => void copy(crc)} />
         </div>
       </div>
-    </Panel>
+    </ToolPanel>
   )
 }

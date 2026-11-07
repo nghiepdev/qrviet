@@ -20,6 +20,8 @@ export interface HistoryItem {
   }
   pinned: boolean
   createdAt: number
+  /** An image of the exported code is stored for it (src/lib/thumbs.ts). */
+  thumb?: boolean
 }
 
 const MAX_ITEMS = 300

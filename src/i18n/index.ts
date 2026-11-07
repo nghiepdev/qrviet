@@ -1,4 +1,3 @@
-import {useCallback} from 'react'
 import {useSettings, type Locale} from '#/stores/settings'
 import {en} from './en'
 import {vi, type MessageKey} from './vi'
@@ -20,7 +19,7 @@ export function useLocale(): Locale {
 
 export function useT(): TFunction {
   const locale = useLocale()
-  return useCallback<TFunction>((key, vars) => translate(locale, key, vars), [locale])
+  return (key, vars) => translate(locale, key, vars)
 }
 
 /** Relative time like "5 phút trước" / "Hôm qua". */

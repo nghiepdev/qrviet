@@ -1,4 +1,3 @@
-import {useMemo} from 'react'
 import {buildVietQr, toQrAscii, validateVietQr, type Initiation, type ParsedVietQr, type VietQrIssue, type VietQrService} from '#/lib/vietqr'
 import {formatVnd, parseAmount} from '#/lib/money'
 import {sanitizeTransferContent, type ContentMode} from '#/lib/text'
@@ -122,5 +121,5 @@ export function deriveVietQr(form: VietQrForm, contentMode: ContentMode): Derive
 }
 
 export function useDerivedVietQr(form: VietQrForm, contentMode: ContentMode): DerivedVietQr {
-  return useMemo(() => deriveVietQr(form, contentMode), [form, contentMode])
+  return deriveVietQr(form, contentMode)
 }

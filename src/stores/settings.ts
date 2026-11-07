@@ -9,7 +9,6 @@ import {DEFAULT_THEME_ID, type ThemeRecipe} from '#/theme/presets'
 export type ColorMode = 'system' | 'light' | 'dark'
 export type Locale = 'vi' | 'en'
 export type LogoMode = 'none' | 'bank' | 'brand' | 'custom'
-export type ExportFormat = 'png' | 'jpeg' | 'webp' | 'svg'
 
 export interface QrDesign {
   template: TemplateId
@@ -31,8 +30,6 @@ export interface Settings {
   customThemes: ThemeRecipe[]
   font: FontId
   design: QrDesign
-  exportFormat: ExportFormat
-  exportScale: number
   contentMode: ContentMode
   favoriteBins: string[]
   recentBins: string[]
@@ -60,8 +57,6 @@ export const DEFAULT_SETTINGS: Settings = {
   customThemes: [],
   font: 'be-vietnam',
   design: DEFAULT_DESIGN,
-  exportFormat: 'png',
-  exportScale: 3,
   contentMode: 'relaxed',
   favoriteBins: [],
   recentBins: [],

@@ -66,7 +66,7 @@
   filter: drop-shadow(0 14px 28px color-mix(in srgb, #d7263d 32%, transparent));
 }
 
-/* Animated mark (shared with the boot splash in index.html) */
+/* Animated mark (shared with the boot splash in src/app/boot-splash.ts) */
 .qv-mark-animated .qv-ring,
 .qv-mark-animated .qv-core {
   transform-box: fill-box;

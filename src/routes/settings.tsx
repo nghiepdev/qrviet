@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from 'react'
 import {createFileRoute} from '@tanstack/react-router'
-import {Check, Database, Download, HardDrive, Laptop, Moon, RefreshCw, Settings as SettingsIcon, Share, Smartphone, Sun, Trash2, Upload} from 'lucide-react'
+import {Check, Database, Download, HardDrive, Keyboard, Laptop, Moon, Paintbrush, Palette, QrCode, RefreshCw, Settings as SettingsIcon, Share, Smartphone, Sun, Trash2, Upload} from 'lucide-react'
 import {AlertDialog} from '@astryxdesign/core/AlertDialog'
 import {Badge} from '@astryxdesign/core/Badge'
 import {Button} from '@astryxdesign/core/Button'
@@ -9,23 +9,30 @@ import {SegmentedControl, SegmentedControlItem} from '@astryxdesign/core/Segment
 import {Switch} from '@astryxdesign/core/Switch'
 import {Banner} from '@astryxdesign/core/Banner'
 import {useToast} from '@astryxdesign/core/Toast'
-import {PageBody, PageHeader, Panel} from '#/components/common/PageHeader'
-import {ThemeBuilder} from '#/components/settings/ThemeBuilder'
+import {PageBody, PageHeader, Panel} from '#/components/common/page-header'
+import {ThemeBuilder} from '#/components/settings/theme-builder'
 import {PRESETS, type ThemeRecipe} from '#/theme/presets'
 import {FONTS, FONT_IDS} from '#/theme/fonts'
 import {updateSettings, useSettings, type ColorMode} from '#/stores/settings'
 import {listAppKeys} from '#/lib/persist'
+import {clearThumbs} from '#/lib/thumbs'
+import {useMasonry} from '#/hooks/use-masonry'
 import {downloadText} from '#/lib/qr/export'
 import {promptInstall, useInstallState, useOnline} from '#/app/pwa'
 import {useLocale, useT} from '#/i18n'
+import {pageHead} from '#/seo/head'
 
-export const Route = createFileRoute('/settings')({component: SettingsPage})
+export const Route = createFileRoute('/settings')({
+  head: () => pageHead('settings'),
+  component: SettingsPage,
+})
 
 function ThemeCard({recipe, selected, onSelect}: {recipe: ThemeRecipe; selected: boolean; onSelect: () => void}) {
   const locale = useLocale()
   const [a, b, c] = recipe.swatches
   return (
-    <button type="button" role="radio" aria-checked={selected} onClick={onSelect} className="qv-tile p-2 flex flex-col gap-2 text-left">
+    // items-stretch: Safari gives buttons align-items: flex-start, which shrank the preview (only absolutely placed shapes) to nothing.
+    <button type="button" role="radio" aria-checked={selected} onClick={onSelect} className="qv-tile p-2 flex flex-col items-stretch gap-2 text-left">
       <span className="relative block h-16 rounded-md overflow-hidden" style={{background: c}} aria-hidden>
         <span className="absolute left-2 top-2 h-3 w-14 rounded-full" style={{background: a}} />
         <span className="absolute left-2 top-7 h-2 w-20 rounded-full opacity-40" style={{background: a}} />
@@ -47,8 +54,21 @@ function formatBytes(n: number) {
   return `${(n / 1024 / 1024).toFixed(1)} MB`
 }
 
+/** Writes a QRViet backup file back into localStorage; false when the file is not a backup. */
+async function restoreBackup(file: File): Promise<boolean> {
+  try {
+    const json = JSON.parse(await file.text())
+    if (json?.app !== 'qrviet' || typeof json.data !== 'object') return false
+    for (const [k, v] of Object.entries(json.data as Record<string, unknown>)) if (k.startsWith('qrviet:')) localStorage.setItem(k, JSON.stringify(v))
+    return true
+  } catch {
+    return false
+  }
+}
+
 function SettingsPage() {
   const t = useT()
+  const masonry = useMasonry<HTMLDivElement>()
   const locale = useLocale()
   const showToast = useToast()
   const mode = useSettings((s) => s.mode)
@@ -79,20 +99,14 @@ function SettingsPage() {
 
   const restore = async (file?: File) => {
     if (!file) return
-    try {
-      const json = JSON.parse(await file.text())
-      if (json?.app !== 'qrviet' || typeof json.data !== 'object') throw new Error('bad')
-      for (const [k, v] of Object.entries(json.data as Record<string, unknown>)) if (k.startsWith('qrviet:')) localStorage.setItem(k, JSON.stringify(v))
-      showToast({body: t('set.restored'), uniqueID: 'restore'})
-      setTimeout(() => location.reload(), 600)
-    } catch {
-      showToast({body: t('acc.importFailed'), type: 'error', uniqueID: 'restore'})
-    }
+    if (!(await restoreBackup(file))) return showToast({body: t('acc.importFailed'), type: 'error', uniqueID: 'restore'})
+    showToast({body: t('set.restored'), uniqueID: 'restore'})
+    setTimeout(() => location.reload(), 600)
   }
 
   const wipe = () => {
     for (const k of listAppKeys()) localStorage.removeItem(k)
-    location.reload()
+    void clearThumbs().finally(() => location.reload())
   }
 
   const checkUpdate = async () => {
@@ -112,9 +126,10 @@ function SettingsPage() {
       <PageHeader title={t('set.title')} subtitle={t('set.subtitle')} icon={<SettingsIcon size={22} />} />
       <PageBody>
         <div className="flex flex-col gap-5">
-          <Panel title={t('set.appearance')}>
-            <div className="flex flex-col gap-6">
-              <div className="grid gap-4 md:grid-cols-2">
+          <Panel title={t('set.appearance')} icon={Palette} hue="pink">
+            {/* Colour mode and language side by side only where "Hệ thống" still fits its segment. */}
+            <div className="@container flex flex-col gap-6">
+              <div className="grid gap-4 @3xl:grid-cols-2">
                 <div className="flex flex-col gap-2">
                   <span className="text-sm font-semibold">{t('set.mode')}</span>
                   <SegmentedControl label={t('set.mode')} value={mode} onChange={(v) => updateSettings({mode: v as ColorMode})} layout="fill">
@@ -136,7 +151,7 @@ function SettingsPage() {
                 list.length ? (
                   <div key={title} className="flex flex-col gap-2">
                     <span className="text-sm font-semibold">{title}</span>
-                    <div className="grid grid-cols-3 lg:grid-cols-5 xl:grid-cols-7 gap-2" role="radiogroup" aria-label={title}>
+                    <div className="grid grid-cols-3 md:grid-cols-5 xl:grid-cols-7 gap-2" role="radiogroup" aria-label={title}>
                       {list.map((r) => (
                         <ThemeCard key={r.id} recipe={r} selected={r.id === themeId} onSelect={() => updateSettings({themeId: r.id})} />
                       ))}
@@ -147,7 +162,7 @@ function SettingsPage() {
 
               <div className="flex flex-col gap-2">
                 <span className="text-sm font-semibold">{t('set.font')}</span>
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-2" role="radiogroup" aria-label={t('set.font')}>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2" role="radiogroup" aria-label={t('set.font')}>
                   {FONT_IDS.map((id) => (
                     <button
                       key={id}
@@ -172,16 +187,17 @@ function SettingsPage() {
             </div>
           </Panel>
 
-          <Panel title={t('set.builder')} description={t('set.builderBody')}>
+          <Panel title={t('set.builder')} description={t('set.builderBody')} icon={Paintbrush} hue="violet">
             <ThemeBuilder />
           </Panel>
 
-          <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 items-start">
-            <Panel title={t('set.qrDefaults')}>
+          {/* Masonry: each card rises under the one above it rather than below the row's tallest. */}
+          <div ref={masonry} className="grid grid-cols-1 gap-5 md:grid-cols-2 items-start">
+            <Panel title={t('set.qrDefaults')} icon={QrCode}>
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-2">
                   <span className="text-sm font-semibold">{t('set.contentMode')}</span>
-                  <SegmentedControl label={t('set.contentMode')} value={contentMode} onChange={(v) => updateSettings({contentMode: v as 'strict' | 'relaxed'})} layout="fill" size="sm">
+                  <SegmentedControl label={t('set.contentMode')} value={contentMode} onChange={(v) => updateSettings({contentMode: v as 'strict' | 'relaxed'})} layout="fill">
                     <SegmentedControlItem value="relaxed" label={t('set.contentRelaxed')} />
                     <SegmentedControlItem value="strict" label={t('set.contentStrict')} />
                   </SegmentedControl>
@@ -190,7 +206,7 @@ function SettingsPage() {
               </div>
             </Panel>
 
-            <Panel title={t('set.app')}>
+            <Panel title={t('set.app')} icon={Smartphone} hue="green">
               <div className="flex flex-col gap-3">
                 <div className="flex flex-wrap gap-2">
                   {installed ? (
@@ -216,7 +232,7 @@ function SettingsPage() {
               </div>
             </Panel>
 
-            <Panel title={t('set.data')} description={t('set.dataBody')}>
+            <Panel title={t('set.data')} description={t('set.dataBody')} icon={Database} hue="blue">
               <div className="flex flex-wrap gap-2">
                 <Button label={t('set.backup')} icon={<Database size={16} />} onClick={backup} />
                 <Button label={t('set.restore')} icon={<Upload size={16} />} onClick={() => restoreRef.current?.click()} />
@@ -225,12 +241,11 @@ function SettingsPage() {
               </div>
             </Panel>
 
-            <Panel title={t('set.shortcuts')}>
+            <Panel title={t('set.shortcuts')} icon={Keyboard} hue="amber">
               <ul className="flex flex-col gap-2 text-sm">
                 {(
                   [
                     ['mod+k', 'set.shortcut.search'],
-                    ['mod+s', 'set.shortcut.download'],
                     ['shift+s', 'set.shortcut.scan'],
                     ['shift+d', 'set.shortcut.theme'],
                   ] as const

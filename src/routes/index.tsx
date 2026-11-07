@@ -1,38 +1,39 @@
-import {useCallback, useEffect, useMemo, useRef, useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
 import {createFileRoute, useNavigate} from '@tanstack/react-router'
 import {useSelector} from '@tanstack/react-store'
-import {ArrowDown, BookmarkPlus, Code2, Eraser, Link2, QrCode, Settings2} from 'lucide-react'
+import {ArrowDown, BookmarkPlus, Code2, Eraser, Landmark, Link2, Palette, QrCode, Settings2} from 'lucide-react'
 import {Button} from '@astryxdesign/core/Button'
 import {Collapsible} from '@astryxdesign/core/Collapsible'
 import {TextInput} from '@astryxdesign/core/TextInput'
 import {Switch} from '@astryxdesign/core/Switch'
-import {SegmentedControl, SegmentedControlItem} from '@astryxdesign/core/SegmentedControl'
+import {RadioList, RadioListItem} from '@astryxdesign/core/RadioList'
 import {Tab, TabList} from '@astryxdesign/core/TabList'
 import {EmptyState} from '@astryxdesign/core/EmptyState'
 import {useToast} from '@astryxdesign/core/Toast'
-import {PageBody, PageHeader, Panel} from '#/components/common/PageHeader'
-import {AccountFields} from '#/components/vietqr/AccountFields'
-import {AmountField} from '#/components/vietqr/AmountField'
-import {PurposeField} from '#/components/vietqr/PurposeField'
-import {SavedAccountsStrip} from '#/components/vietqr/SavedAccountsStrip'
-import {ScanCheckBadge, useScanCheck} from '#/components/vietqr/ScanCheck'
+import {PageBody, PageHeader, Panel} from '#/components/common/page-header'
+import {AccountFields} from '#/components/vietqr/account-fields'
+import {AmountField} from '#/components/vietqr/amount-field'
+import {PurposeField} from '#/components/vietqr/purpose-field'
+import {SavedAccountsStrip} from '#/components/vietqr/saved-accounts-strip'
+import {ScanCheckBadge, useScanCheck} from '#/components/vietqr/scan-check'
 import {EMPTY_FORM, draftStore, formFromAccount, useDerivedVietQr, type VietQrForm} from '#/components/vietqr/form'
-import {buildTemplateInfo} from '#/components/vietqr/templateInfo'
-import {QrStage} from '#/components/qr/QrStage'
-import {ExportActions, type ExportKind} from '#/components/qr/ExportActions'
-import {StylePanel} from '#/components/qr/StylePanel'
-import {AccentPicker, TemplatePicker} from '#/components/qr/TemplatePicker'
-import {resolveLogo, useQrScene} from '#/components/qr/useQrScene'
-import {LogoMark} from '#/components/brand/Logo'
+import {buildTemplateInfo} from '#/components/vietqr/template-info'
+import {QrStage} from '#/components/qr/qr-stage'
+import {ExportActions, type ExportKind} from '#/components/qr/export-actions'
+import {StylePanel} from '#/components/qr/style-panel'
+import {AccentPicker, TemplatePicker} from '#/components/qr/template-picker'
+import {resolveLogo, useQrScene} from '#/components/qr/use-qr-scene'
+import {LogoMark} from '#/components/brand/logo'
 import {getBankByBin, resolveBank} from '#/data/banks'
 import {useLocale, useT} from '#/i18n'
 import {accountsStore, findDuplicate, getDefaultAccount, saveAccount, touchAccount} from '#/stores/accounts'
 import {addHistory} from '#/stores/history'
+import {saveSceneThumb} from '#/lib/thumbs'
 import {updateDesign, updateQrStyle, useSettings} from '#/stores/settings'
 import {formatVnd, parseAmount} from '#/lib/money'
 import {slugify} from '#/lib/text'
 import {payLinkUrl} from '#/lib/paylink'
-import {useCopy} from '#/hooks/useCopy'
+import {useCopy} from '#/hooks/use-copy'
 
 interface GenSearch {
   bank?: string
@@ -75,10 +76,10 @@ function GeneratorPage() {
   const previewRef = useRef<HTMLDivElement>(null)
   const [previewVisible, setPreviewVisible] = useState(true)
 
-  const patch = useCallback((p: Partial<VietQrForm>) => {
+  const patch = (p: Partial<VietQrForm>) => {
     setTouched(true)
     draftStore.setState((f) => ({...f, ...p}))
-  }, [])
+  }
 
   // Seed from URL (command palette, saved accounts, banks page, scan → re-issue), then clean the URL.
   const seeded = useRef(false)
@@ -130,23 +131,19 @@ function GeneratorPage() {
 
   const derived = useDerivedVietQr(form, contentMode)
   const bank = getBankByBin(form.bin)
-  const logo = useMemo(() => resolveLogo(design, bank), [design, bank])
-  const info = useMemo(
-    () =>
-      derived.payload
-        ? buildTemplateInfo({
-            bank,
-            accountName: form.accountName,
-            accountNumber: form.accountNumber,
-            amount: derived.amount,
-            purpose: derived.purposeAscii,
-            design,
-            locale,
-            t,
-          })
-        : null,
-    [derived.payload, derived.amount, derived.purposeAscii, bank, form.accountName, form.accountNumber, design, locale, t],
-  )
+  const logo = resolveLogo(design, bank)
+  const info = derived.payload
+    ? buildTemplateInfo({
+        bank,
+        accountName: form.accountName,
+        accountNumber: form.accountNumber,
+        amount: derived.amount,
+        purpose: derived.purposeAscii,
+        design,
+        locale,
+        t,
+      })
+    : null
   const {scene, qrScene} = useQrScene(derived.payload, design.template, info, design.style, logo)
   const scanStatus = useScanCheck(qrScene, derived.payload)
 
@@ -159,27 +156,26 @@ function GeneratorPage() {
     return () => io.disconnect()
   }, [])
 
-  const filename = slugify(`vietqr-${bank?.shortName ?? ''}-${form.accountNumber}${derived.amount ? `-${derived.amount}` : ''}`)
+  const filename = slugify(`qrviet-${bank?.shortName ?? ''}-${form.accountNumber}${derived.amount ? `-${derived.amount}` : ''}`)
 
-  const onExported = useCallback(
-    (_kind: ExportKind) => {
-      if (!derived.payload || !autoSave) return
-      addHistory({
-        kind: 'vietqr',
-        payload: derived.payload,
-        title: form.accountName || bank?.shortName || form.accountNumber,
-        subtitle: [bank?.shortName, form.accountNumber, derived.amount ? formatVnd(derived.amount, true) : ''].filter(Boolean).join(' · '),
-        meta: {
-          bin: form.bin,
-          accountNumber: form.accountNumber,
-          accountName: form.accountName,
-          amount: derived.amount ? String(derived.amount) : undefined,
-          purpose: derived.purposeAscii,
-        },
-      })
-    },
-    [derived.payload, derived.amount, derived.purposeAscii, autoSave, form.accountName, form.accountNumber, form.bin, bank],
-  )
+  const onExported = (_kind: ExportKind) => {
+    if (!derived.payload || !autoSave) return
+    const entry = addHistory({
+      kind: 'vietqr',
+      thumb: Boolean(scene),
+      payload: derived.payload,
+      title: form.accountName || bank?.shortName || form.accountNumber,
+      subtitle: [bank?.shortName, form.accountNumber, derived.amount ? formatVnd(derived.amount, true) : ''].filter(Boolean).join(' · '),
+      meta: {
+        bin: form.bin,
+        accountNumber: form.accountNumber,
+        accountName: form.accountName,
+        amount: derived.amount ? String(derived.amount) : undefined,
+        purpose: derived.purposeAscii,
+      },
+    })
+    if (scene) void saveSceneThumb(entry.id, scene)
+  }
 
   const saveCurrentAccount = () => {
     if (!form.bin || !form.accountNumber) return
@@ -216,7 +212,7 @@ function GeneratorPage() {
     <>
       <PageHeader title={t('gen.title')} subtitle={t('gen.subtitle')} icon={<QrCode size={22} />} />
       <PageBody>
-        <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] items-start">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] items-start">
           {/* ---------------- Form ---------------- */}
           <div className="flex flex-col gap-5 min-w-0">
             <Panel
@@ -236,7 +232,8 @@ function GeneratorPage() {
                   />
                 </>
               }
-              title={t('gen.formTitle')}>
+              title={t('gen.formTitle')}
+              icon={Landmark}>
               <div className="flex flex-col gap-5">
                 <SavedAccountsStrip
                   activeKey={`${form.bin}:${form.accountNumber}`}
@@ -261,16 +258,18 @@ function GeneratorPage() {
                       <Settings2 size={16} aria-hidden /> {t('gen.advanced')}
                     </span>
                   }>
-                  <div className="flex flex-col gap-4 pt-3">
-                    <div className="grid sm:grid-cols-2 gap-3">
+                  <div className="@container flex flex-col gap-4 pt-3">
+                    {/* Two columns only when the panel itself (not the screen) leaves room for each label, "Tuỳ chọn" included, on one line. */}
+                    <div className="grid gap-3 @lg:grid-cols-2">
                       <TextInput label={t('gen.billNumber')} value={form.billNumber} onChange={(billNumber) => patch({billNumber})} isOptional hasClear />
                       <TextInput label={t('gen.reference')} value={form.referenceLabel} onChange={(referenceLabel) => patch({referenceLabel})} isOptional hasClear />
                     </div>
-                    <SegmentedControl label={t('gen.initiation')} value={form.initiation} onChange={(v) => patch({initiation: v as VietQrForm['initiation']})} size="sm" layout="fill">
-                      <SegmentedControlItem value="auto" label={t('gen.initiationAuto')} />
-                      <SegmentedControlItem value="static" label={t('gen.initiationStatic')} />
-                      <SegmentedControlItem value="dynamic" label={t('gen.initiationDynamic')} />
-                    </SegmentedControl>
+                    {/* Each choice says what it does: the names alone ("static", "dynamic") are EMV terms. */}
+                    <RadioList label={t('gen.initiation')} value={form.initiation} onChange={(v) => patch({initiation: v as VietQrForm['initiation']})} size="sm">
+                      <RadioListItem align="first-line" value="auto" label={t('gen.initiationAuto')} description={t('gen.initiationAutoHint')} />
+                      <RadioListItem align="first-line" value="static" label={t('gen.initiationStatic')} description={t('gen.initiationStaticHint')} />
+                      <RadioListItem align="first-line" value="dynamic" label={t('gen.initiationDynamic')} description={t('gen.initiationDynamicHint')} />
+                    </RadioList>
                     <Switch label={t('gen.merchantName')} value={form.includeName} onChange={(includeName) => patch({includeName})} />
                     {form.includeName && <TextInput label={t('gen.merchantCity')} value={form.merchantCity} onChange={(merchantCity) => patch({merchantCity})} isOptional hasClear />}
                   </div>
@@ -280,8 +279,8 @@ function GeneratorPage() {
           </div>
 
           {/* ---------------- Preview ---------------- */}
-          <div className="flex flex-col gap-5 min-w-0 lg:sticky lg:top-20" ref={previewRef}>
-            <Panel>
+          <div className="flex flex-col gap-5 min-w-0 md:sticky md:top-20" ref={previewRef}>
+            <Panel hue="violet">
               <div className="flex flex-col gap-4">
                 <TemplatePicker value={design.template} onChange={(template) => updateDesign({template})} />
                 <QrStage
@@ -297,30 +296,29 @@ function GeneratorPage() {
                     />
                   }
                 />
-                <div className="flex flex-wrap items-center justify-between gap-2 min-h-7">
-                  <ScanCheckBadge status={scanStatus} />
-                  {derived.payload && <span className="text-xs text-secondary">{t('gen.shortcut')}</span>}
-                </div>
+                <ScanCheckBadge status={scanStatus} />
                 <ExportActions
                   scene={scene}
                   filename={filename}
                   shareText={derived.amount ? `${t('tpl.transfer')} ${formatVnd(derived.amount, true)}` : t('tpl.transfer')}
                   onExported={onExported}
-                  extra={<Button label={t('gen.shareLink')} icon={<Link2 size={16} />} variant="ghost" isDisabled={!derived.payload} onClick={copyPayLink} />}
+                  side={{label: t('gen.shareLink'), icon: <Link2 size={16} />, isDisabled: !derived.payload, onClick: copyPayLink}}
+                  menuItems={[
+                    {
+                      id: 'payload',
+                      label: t('gen.copyVietQr'),
+                      icon: <Code2 size={16} />,
+                      isDisabled: !derived.payload,
+                      onClick: () => {
+                        if (derived.payload) void copy(derived.payload)
+                      },
+                    },
+                  ]}
                 />
-                {derived.payload && (
-                  <div className="flex items-center gap-2 rounded-md bg-muted px-3 py-2">
-                    <Code2 size={16} className="text-secondary shrink-0" aria-hidden />
-                    <code className="qv-mono text-xs break-all flex-1 min-w-0 line-clamp-2" title={derived.payload}>
-                      {derived.payload}
-                    </code>
-                    <Button label={t('gen.copyPayload')} size="sm" variant="ghost" onClick={() => void copy(derived.payload!)} />
-                  </div>
-                )}
               </div>
             </Panel>
 
-            <Panel title={t('gen.design')}>
+            <Panel title={t('gen.design')} icon={Palette} hue="pink">
               <div className="flex flex-col gap-4">
                 <TabList value={designTab} onChange={setDesignTab} layout="fill" role="tablist">
                   <Tab value="template" label={t('gen.templates')} panelId="design-panel" />
@@ -347,7 +345,7 @@ function GeneratorPage() {
                     <Switch label={t('gen.showBrand')} value={design.showBrand} onChange={(showBrand) => updateDesign({showBrand})} />
                   </div>
                 ) : (
-                  <StylePanel style={design.style} onStyle={updateQrStyle} design={design} onDesign={updateDesign} />
+                  <StylePanel style={design.style} onStyle={updateQrStyle} design={design} onDesign={updateDesign} logo={logo} />
                 )}
                 </div>
               </div>
@@ -357,7 +355,7 @@ function GeneratorPage() {
       </PageBody>
 
       {!previewVisible && derived.payload && (
-        <div className="lg:hidden fixed inset-x-0 bottom-[calc(88px+env(safe-area-inset-bottom))] z-30 flex justify-center pointer-events-none animate-qv-rise">
+        <div className="qv-hide-when-typing md:hidden fixed inset-x-0 bottom-[calc(104px+env(safe-area-inset-bottom))] z-30 flex justify-center pointer-events-none animate-qv-rise">
           <span className="pointer-events-auto">
             <Button
               label={t('common.preview')}

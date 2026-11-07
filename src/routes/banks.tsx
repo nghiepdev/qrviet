@@ -1,4 +1,4 @@
-import {useMemo, useState} from 'react'
+import {useState} from 'react'
 import {createFileRoute, useNavigate} from '@tanstack/react-router'
 import {Copy, Landmark, QrCode, Search, Star} from 'lucide-react'
 import {Badge} from '@astryxdesign/core/Badge'
@@ -6,14 +6,18 @@ import {Button} from '@astryxdesign/core/Button'
 import {IconButton} from '@astryxdesign/core/IconButton'
 import {Switch} from '@astryxdesign/core/Switch'
 import {TextInput} from '@astryxdesign/core/TextInput'
-import {PageBody, PageHeader} from '#/components/common/PageHeader'
-import {BankLogo} from '#/components/bank/BankLogo'
+import {PageBody, PageHeader} from '#/components/common/page-header'
+import {BankLogo} from '#/components/bank/bank-logo'
 import {BANKS, searchBanks} from '#/data/banks'
 import {toggleFavoriteBank, useSettings} from '#/stores/settings'
-import {useCopy} from '#/hooks/useCopy'
+import {useCopy} from '#/hooks/use-copy'
 import {useT} from '#/i18n'
+import {pageHead} from '#/seo/head'
 
-export const Route = createFileRoute('/banks')({component: BanksPage})
+export const Route = createFileRoute('/banks')({
+  head: () => pageHead('banks'),
+  component: BanksPage,
+})
 
 function BanksPage() {
   const t = useT()
@@ -23,11 +27,9 @@ function BanksPage() {
   const [query, setQuery] = useState('')
   const [napasOnly, setNapasOnly] = useState(false)
 
-  const list = useMemo(() => {
-    const base = napasOnly ? BANKS.filter((b) => b.transfer) : BANKS
-    const found = query.trim() ? searchBanks(query, base) : [...base].sort((a, b) => Number(b.transfer) - Number(a.transfer) || a.shortName.localeCompare(b.shortName))
-    return [...found].sort((a, b) => Number(favorites.includes(b.bin)) - Number(favorites.includes(a.bin)))
-  }, [query, napasOnly, favorites])
+  const base = napasOnly ? BANKS.filter((b) => b.transfer) : BANKS
+  const found = query.trim() ? searchBanks(query, base) : [...base].sort((a, b) => Number(b.transfer) - Number(a.transfer) || a.shortName.localeCompare(b.shortName))
+  const list = [...found].sort((a, b) => Number(favorites.includes(b.bin)) - Number(favorites.includes(a.bin)))
 
   return (
     <>
@@ -45,7 +47,7 @@ function BanksPage() {
             {list.map((b) => {
               const fav = favorites.includes(b.bin)
               return (
-                <li key={b.bin} className="rounded-xl border border-border bg-surface p-3 shadow-sm flex flex-col gap-3">
+                <li key={b.bin} className="rounded-2xl border border-border bg-surface p-3 shadow-sm flex flex-col gap-3">
                   <div className="flex items-start gap-3">
                     <BankLogo bank={b} size={40} />
                     <div className="min-w-0 flex-1">

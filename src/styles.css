@@ -7,8 +7,27 @@
 @import '@astryxdesign/core/astryx.css';
 @import '@astryxdesign/core/tailwind-theme.css';
 @import 'tailwindcss/utilities.css' layer(utilities);
+/* Be Vietnam Pro, the brand typeface (the other fonts load on demand, see src/theme/fonts.ts). */
+@import '@fontsource/be-vietnam-pro/400.css';
+@import '@fontsource/be-vietnam-pro/500.css';
+@import '@fontsource/be-vietnam-pro/600.css';
+@import '@fontsource/be-vietnam-pro/700.css';
+@import '@fontsource/be-vietnam-pro/800.css';
 
-@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+/*
+ * Dark styles: an explicit dark theme, or the system's while the app follows it. In "system" mode
+ * Astryx leaves data-theme off <html> and lets light-dark() follow the OS, so match that case too.
+ */
+@custom-variant dark {
+  &:where([data-theme='dark'], [data-theme='dark'] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme]) *) {
+      @slot;
+    }
+  }
+}
 
 @theme {
   --color-brand: #d7263d;
@@ -58,6 +77,82 @@
 }
 
 @layer components {
+  /*
+   * Installed iOS app (viewport-fit=cover + translucent status bar): pages run under the status
+   * bar and the home indicator. Astryx's mobile drawer does not pad for them, so its header
+   * (logo + close button) would sit under the notch.
+   */
+  .astryx-mobile-nav > div {
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + var(--qv-toolbar-overlap, 0px));
+  }
+  .astryx-mobile-nav[data-side='end'] > div {
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+  .astryx-mobile-nav[data-side='start'] > div {
+    padding-left: env(safe-area-inset-left, 0px);
+  }
+
+  /*
+   * In the drawer, Astryx stacks the SideNav sections and the footer in a plain block inside the
+   * scrolling <nav>, so the footer sat right under the last item. Stretch that block to the
+   * drawer's height and push the footer to the bottom, as in the desktop sidebar. When the items
+   * do not fit (a phone in landscape), the footer simply follows them.
+   */
+  .astryx-mobile-nav > div > nav {
+    display: flex;
+    flex-direction: column;
+  }
+  .astryx-mobile-nav > div > nav > div {
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
+  }
+  .astryx-mobile-nav > div > nav > div > :has(> .qv-sidenav-footer) {
+    margin-top: auto;
+  }
+
+  /*
+   * AdaptiveSheet on touch: the actions rest on the sheet's bottom edge and stay there while the
+   * content scrolls. The negative margins cancel the sheet's padding, so the bar spans its width.
+   */
+  .qv-sheet-footer {
+    position: sticky;
+    bottom: 0;
+    margin: auto calc(-1 * var(--spacing-4)) calc(-1 * var(--spacing-4));
+    padding: 12px var(--spacing-4) calc(12px + env(safe-area-inset-bottom, 0px) + var(--qv-toolbar-overlap, 0px));
+    background: var(--color-background-surface);
+    border-top: 1px solid var(--color-border);
+  }
+
+  /*
+   * MarkedText (Rough Notation): marks are drawn with currentColor in an SVG next to the marked
+   * text, after it, or before it for highlights (so the text paints on top).
+   */
+  [data-rough='underline'] + .rough-annotation {
+    color: var(--color-accent);
+  }
+  .rough-annotation:has(+ [data-rough='highlight']) {
+    color: color-mix(in srgb, var(--color-brand-gold, #ffc93c) 55%, transparent);
+  }
+
+  /*
+   * Without anchor positioning (Safari before 26) a tooltip cannot be placed by its control and would
+   * show in the top-left corner of the screen (see src/app/anchoring.ts). The controls that have one
+   * are named anyway, so it is left out.
+   */
+  @supports not (anchor-name: --qv) {
+    .astryx-tooltip {
+      display: none !important;
+    }
+  }
+
+  /* While typing on a phone the keyboard owns the bottom of the screen (see src/app/keyboard.ts). */
+  html[data-typing] .qv-tabbar,
+  html[data-typing] .qv-hide-when-typing {
+    display: none;
+  }
+
   .qv-mono {
     font-family: var(--font-family-code);
     font-variant-numeric: tabular-nums;
@@ -97,6 +192,15 @@
     filter: drop-shadow(0 18px 40px rgb(30 10 15 / 0.16)) drop-shadow(0 2px 6px rgb(30 10 15 / 0.08));
   }
 
+  /* A card washed with its item's hue at the top (tools, about); the hue comes from IconBadge's HUES. */
+  .qv-tint {
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--qv-hue) 8%, var(--color-background-surface)) 0,
+      var(--color-background-surface) 7rem
+    );
+  }
+
   /* Swatch / option tiles */
   .qv-tile {
     border: 1px solid var(--color-border);
@@ -120,11 +224,53 @@
     transform: scale(0.98);
   }
 
+  /*
+   * A tile in its own hue (`--qv-hue`, from IconBadge's HUES or a `.qv-heat` step): tinted, its icon
+   * in the hue, and selected in the hue rather than the accent.
+   */
+  .qv-tile-hue {
+    background: color-mix(in srgb, var(--qv-hue) 8%, var(--color-background-surface));
+    border-color: color-mix(in srgb, var(--qv-hue) 24%, var(--color-border));
+  }
+  .qv-tile-hue:hover {
+    border-color: color-mix(in srgb, var(--qv-hue) 55%, transparent);
+  }
+  .qv-tile-hue svg {
+    color: var(--qv-hue);
+  }
+  .qv-tile-hue[aria-pressed='true'],
+  .qv-tile-hue[aria-checked='true'] {
+    border-color: var(--qv-hue);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--qv-hue) 35%, transparent);
+  }
+
+  /*
+   * A scale that builds up along a row: `--qv-heat` from 0 to 1 moves the hue from `--qv-heat-from`
+   * to `--qv-heat-to` and deepens it. Money warms from amber to red, time cools from cyan to blue.
+   * Lightness keeps text on the tint at 4.5:1 or more.
+   */
+  .qv-heat {
+    --qv-heat-h: calc(var(--qv-heat-from) + (var(--qv-heat-to) - var(--qv-heat-from)) * var(--qv-heat, 0));
+    --qv-hue: oklch(0.6 calc(0.15 + 0.06 * var(--qv-heat, 0)) var(--qv-heat-h));
+    @variant dark {
+      --qv-hue: oklch(0.8 calc(0.11 + 0.06 * var(--qv-heat, 0)) var(--qv-heat-h));
+    }
+  }
+  .qv-heat-money {
+    --qv-heat-from: 75;
+    --qv-heat-to: 25;
+  }
+  .qv-heat-time {
+    --qv-heat-from: 195;
+    --qv-heat-to: 262;
+  }
+
   /* Bottom tab bar (phones / installed app) */
   .qv-tabbar {
     position: fixed;
     inset-inline: 0;
-    bottom: 0;
+    /* Lifted above Safari's toolbar when it covers the page unannounced (src/app/viewport.ts). */
+    bottom: var(--qv-toolbar-overlap, 0px);
     z-index: 40;
     padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
     background: var(--color-background-surface);
@@ -147,11 +293,9 @@
     user-select: none;
     -webkit-user-select: none;
   }
-  .qv-tab[aria-current='page'] {
+  .qv-tab[aria-current='page'],
+  .qv-tab[data-current] {
     color: var(--color-accent);
-  }
-  .qv-tab[aria-current='page'] .qv-tab-icon {
-    background: color-mix(in srgb, var(--color-accent) 14%, transparent);
   }
   .qv-tab-icon {
     display: grid;
@@ -159,18 +303,33 @@
     width: 52px;
     height: 30px;
     border-radius: 999px;
-    transition: background-color 180ms ease, transform 180ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: transform 180ms cubic-bezier(0.34, 1.56, 0.64, 1);
   }
   .qv-tab:active .qv-tab-icon {
     transform: scale(0.92);
   }
+  /* Centre action: a round button raised above the bar, no label. The link fills its cell so the whole cell stays tappable. */
+  .qv-tab-fab {
+    height: 100%;
+  }
   .qv-tab-fab .qv-tab-icon {
     width: 56px;
-    height: 40px;
-    margin-top: -14px;
+    height: 56px;
+    /* 12px of bar + tab padding, plus 20px of overhang. */
+    margin-top: -32px;
     color: var(--color-on-accent);
-    background: var(--color-accent) !important;
-    box-shadow: 0 8px 20px color-mix(in srgb, var(--color-accent) 38%, transparent);
+    background: var(--color-accent);
+    /* The surface-coloured ring cuts the button out of the bar's top border. */
+    box-shadow:
+      0 0 0 4px var(--color-background-surface),
+      0 10px 22px color-mix(in srgb, var(--color-accent) 40%, transparent);
+  }
+  .qv-tab-fab:focus-visible {
+    outline: none;
+  }
+  .qv-tab-fab:focus-visible .qv-tab-icon {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 6px;
   }
 
   .qv-scanner-frame {
@@ -213,6 +372,15 @@
 }
 
 @layer utilities {
+  /*
+   * Text in an item's hue, pulled toward the text colour (darker in light mode, lighter in dark mode)
+   * so it stays readable on the hue's tint. Selected hued tiles label themselves with it.
+   */
+  .qv-hue-text,
+  .qv-tile-hue[aria-pressed='true'],
+  .qv-tile-hue[aria-checked='true'] {
+    color: color-mix(in srgb, var(--qv-hue) 72%, var(--color-text-primary));
+  }
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom);
   }

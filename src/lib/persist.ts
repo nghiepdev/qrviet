@@ -23,7 +23,7 @@ export interface PersistOptions<T> {
 export const STORAGE_PREFIX = 'qrviet:'
 
 function read<T>(opts: PersistOptions<T>): T {
-  if (typeof localStorage === 'undefined') return opts.initial
+  if (typeof window === 'undefined' || typeof localStorage === 'undefined') return opts.initial
   try {
     const raw = localStorage.getItem(STORAGE_PREFIX + opts.key)
     if (!raw) return opts.initial

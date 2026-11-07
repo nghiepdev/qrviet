@@ -8,6 +8,7 @@ dist-ssr
 *.log
 coverage
 .vscode/*
+*.test.*
 !.vscode/extensions.json
-# TanStack Router keeps its generated tree in src/routeTree.gen.ts (committed)
+# TanStack Start keeps its generated route tree in src/routeTree.gen.ts (committed)
 .tanstack

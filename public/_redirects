@@ -1,1 +1,2 @@
-/*    /index.html   200
+# Pages without a file of their own (pay.html) get the app shell: TanStack Start SPA mode.
+/*    /_shell.html    200

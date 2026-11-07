@@ -7,10 +7,10 @@ import {EmptyState} from '@astryxdesign/core/EmptyState'
 import {TextInput} from '@astryxdesign/core/TextInput'
 import {Badge} from '@astryxdesign/core/Badge'
 import {useToast} from '@astryxdesign/core/Toast'
-import {PageBody, PageHeader} from '#/components/common/PageHeader'
-import {AdaptiveSheet} from '#/components/common/AdaptiveSheet'
-import {BankLogo} from '#/components/bank/BankLogo'
-import {AccountFields} from '#/components/vietqr/AccountFields'
+import {PageBody, PageHeader, Panel} from '#/components/common/page-header'
+import {AdaptiveSheet} from '#/components/common/adaptive-sheet'
+import {BankLogo} from '#/components/bank/bank-logo'
+import {AccountFields} from '#/components/vietqr/account-fields'
 import {EMPTY_FORM, type VietQrForm} from '#/components/vietqr/form'
 import {getBankByBin} from '#/data/banks'
 import {
@@ -27,10 +27,25 @@ import {
 import {validateVietQr} from '#/lib/vietqr'
 import {downloadText} from '#/lib/qr/export'
 import {groupDigits} from '#/lib/text'
-import {useCopy} from '#/hooks/useCopy'
+import {useCopy} from '#/hooks/use-copy'
 import {useT} from '#/i18n'
+import {pageHead} from '#/seo/head'
+import {sheetUnlessAnchored} from '#/app/anchoring'
 
-export const Route = createFileRoute('/accounts')({component: AccountsPage})
+export const Route = createFileRoute('/accounts')({
+  head: () => pageHead('accounts'),
+  component: AccountsPage,
+})
+
+/** Imports an exported accounts file; the number added, or null when the file is not valid. */
+async function importAccountsFile(file: File): Promise<number | null> {
+  try {
+    const data = JSON.parse(await file.text())
+    return importAccounts(Array.isArray(data) ? data : data.accounts)
+  } catch {
+    return null
+  }
+}
 
 interface Editing {
   id?: string
@@ -45,13 +60,20 @@ function AccountsPage() {
   const navigate = useNavigate()
   const showToast = useToast()
   const copy = useCopy()
-  const [editing, setEditing] = useState<Editing | null>(null)
+  // The editor stays mounted after it closes, so its sheet can animate out. Every open gets a new
+  // key, which starts the editor's own form state from `value`.
+  const [editing, setEditing] = useState<{key: number; value: Editing} | null>(null)
+  const [editorOpen, setEditorOpen] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
   const defaultId = accounts.find((a) => a.isDefault)?.id ?? accounts[0]?.id
 
-  const openNew = () => setEditing({form: {...EMPTY_FORM}, nickname: '', color: ACCOUNT_COLORS[accounts.length % ACCOUNT_COLORS.length]})
+  const startEditing = (value: Editing) => {
+    setEditing((prev) => ({key: (prev?.key ?? 0) + 1, value}))
+    setEditorOpen(true)
+  }
+  const openNew = () => startEditing({form: {...EMPTY_FORM}, nickname: '', color: ACCOUNT_COLORS[accounts.length % ACCOUNT_COLORS.length]})
   const openEdit = (a: SavedAccount) =>
-    setEditing({id: a.id, form: {...EMPTY_FORM, bin: a.bin, accountNumber: a.accountNumber, accountName: a.accountName, service: a.service}, nickname: a.nickname, color: a.color})
+    startEditing({id: a.id, form: {...EMPTY_FORM, bin: a.bin, accountNumber: a.accountNumber, accountName: a.accountName, service: a.service}, nickname: a.nickname, color: a.color})
 
   const remove = (a: SavedAccount) => {
     const removed = removeAccount(a.id)
@@ -66,13 +88,9 @@ function AccountsPage() {
 
   const importFile = async (file: File | undefined) => {
     if (!file) return
-    try {
-      const data = JSON.parse(await file.text())
-      const count = importAccounts(Array.isArray(data) ? data : data.accounts)
-      showToast({body: t('acc.imported', {count}), uniqueID: 'import'})
-    } catch {
-      showToast({body: t('acc.importFailed'), type: 'error', uniqueID: 'import'})
-    }
+    const count = await importAccountsFile(file)
+    if (count === null) showToast({body: t('acc.importFailed'), type: 'error', uniqueID: 'import'})
+    else showToast({body: t('acc.imported', {count}), uniqueID: 'import'})
   }
 
   return (
@@ -87,6 +105,7 @@ function AccountsPage() {
             <DropdownMenu
               button={{label: t('common.more'), isIconOnly: true, icon: <MoreHorizontal size={18} />, variant: 'secondary'}}
               hasChevron={false}
+              presentation={sheetUnlessAnchored('popover')}
               items={[
                 {label: t('acc.importJson'), icon: <Upload size={16} />, onClick: () => fileRef.current?.click()},
                 {label: t('acc.exportJson'), icon: <Download size={16} />, onClick: exportFile, isDisabled: !accounts.length},
@@ -98,7 +117,7 @@ function AccountsPage() {
       />
       <PageBody>
         {accounts.length === 0 ? (
-          <div className="rounded-xl border border-border bg-surface p-6">
+          <Panel hue="green">
             <EmptyState
               icon={<BookUser size={40} aria-hidden />}
               title={t('acc.empty')}
@@ -110,7 +129,7 @@ function AccountsPage() {
                 </>
               }
             />
-          </div>
+          </Panel>
         ) : (
           <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {accounts.map((a) => {
@@ -142,6 +161,7 @@ function AccountsPage() {
                           <DropdownMenu
                             button={{label: t('common.more'), isIconOnly: true, icon: <MoreHorizontal size={16} />, variant: 'ghost', size: 'sm'}}
                             hasChevron={false}
+                            presentation={sheetUnlessAnchored('popover')}
                             items={[
                               {label: t('common.edit'), icon: <Pencil size={15} />, onClick: () => openEdit(a)},
                               ...(a.id !== defaultId ? [{label: t('acc.setDefault'), icon: <Star size={15} />, onClick: () => setDefaultAccount(a.id)}] : []),
@@ -159,12 +179,12 @@ function AccountsPage() {
           </ul>
         )}
       </PageBody>
-      {editing && <AccountEditor editing={editing} onClose={() => setEditing(null)} />}
+      {editing && <AccountEditor key={editing.key} editing={editing.value} isOpen={editorOpen} onOpenChange={setEditorOpen} />}
     </>
   )
 }
 
-function AccountEditor({editing, onClose}: {editing: Editing; onClose: () => void}) {
+function AccountEditor({editing, isOpen, onOpenChange}: {editing: Editing; isOpen: boolean; onOpenChange: (open: boolean) => void}) {
   const t = useT()
   const showToast = useToast()
   const [state, setState] = useState(editing)
@@ -174,6 +194,7 @@ function AccountEditor({editing, onClose}: {editing: Editing; onClose: () => voi
     accountNumber: issues.find((i) => i.field === 'accountNumber') ? ('gen.invalid.account' as const) : undefined,
   }
   const [tried, setTried] = useState(false)
+  const close = () => onOpenChange(false)
 
   const submit = () => {
     setTried(true)
@@ -193,18 +214,17 @@ function AccountEditor({editing, onClose}: {editing: Editing; onClose: () => voi
       color: state.color,
     })
     showToast({body: t('common.saved'), uniqueID: 'acc-save'})
-    onClose()
+    close()
   }
 
   return (
     <AdaptiveSheet
-      isOpen
-      onOpenChange={(o) => !o && onClose()}
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
       title={state.id ? t('acc.edit') : t('acc.add')}
-      purpose="form"
       footer={
         <div className="flex justify-end gap-2">
-          <Button label={t('common.cancel')} variant="ghost" onClick={onClose} />
+          <Button label={t('common.cancel')} variant="ghost" onClick={close} />
           <Button label={t('common.save')} variant="primary" onClick={submit} />
         </div>
       }>

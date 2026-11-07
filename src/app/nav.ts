@@ -45,7 +45,16 @@ export const SECTION_LABEL: Record<NavSection, MessageKey> = {
   more: 'nav.more',
 }
 
+/** Pages without a menu entry of their own that belong to another: a payment page is what /link makes. */
+const NAV_ALIASES: Record<string, string> = {'/pay': '/link'}
+
 export function isActivePath(current: string, to: string): boolean {
-  if (to === '/') return current === '/' || current === ''
-  return current === to || current.startsWith(`${to}/`)
+  const path = NAV_ALIASES[current] ?? current
+  if (to === '/') return path === '/' || path === ''
+  return path === to || path.startsWith(`${to}/`)
+}
+
+/** Whether the page has a menu entry, directly or through an alias (false on unknown URLs). */
+export function hasNavEntry(current: string): boolean {
+  return NAV_ITEMS.some((item) => isActivePath(current, item.to))
 }

@@ -3,6 +3,7 @@
  * accent + shape + type) that we turn into an Astryx theme at runtime with
  * `defineTheme`, which is what Astryx recommends for in-browser theme editors.
  */
+import {useSyncExternalStore} from 'react'
 import {defineTheme, type DefinedTheme} from '@astryxdesign/core/theme'
 import {neutralTheme} from '@astryxdesign/theme-neutral/built'
 import {FONTS, MONO_STACK, type FontId} from './fonts'
@@ -44,16 +45,30 @@ const BASE_LOADERS: Record<BaseId, () => Promise<DefinedTheme>> = {
 
 const baseCache = new Map<BaseId, DefinedTheme>([['neutral', neutralTheme]])
 
-export function getLoadedBase(id: BaseId): DefinedTheme | undefined {
-  return baseCache.get(id)
+const baseListeners = new Set<() => void>()
+
+function subscribeBases(listener: () => void) {
+  baseListeners.add(listener)
+  return () => void baseListeners.delete(listener)
 }
 
+/** Downloads a base theme once; components reading it through `useLoadedBase` re-render when it lands. */
 export async function loadBase(id: BaseId): Promise<DefinedTheme> {
   const hit = baseCache.get(id)
   if (hit) return hit
   const theme = await BASE_LOADERS[id]()
   baseCache.set(id, theme)
+  baseListeners.forEach((listener) => listener())
   return theme
+}
+
+/**
+ * The base theme if already downloaded, else undefined. The cache is external
+ * mutable state, so it is read through useSyncExternalStore (never directly in
+ * render, where the compiler would keep the first value).
+ */
+export function useLoadedBase(id: BaseId): DefinedTheme | undefined {
+  return useSyncExternalStore(subscribeBases, () => baseCache.get(id))
 }
 
 export const BASE_IDS = Object.keys(BASE_LOADERS) as BaseId[]
