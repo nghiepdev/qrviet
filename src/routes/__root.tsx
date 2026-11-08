@@ -1,5 +1,5 @@
 import type {ReactNode} from 'react'
-import {ClientOnly, HeadContent, Outlet, Scripts, createRootRoute, useRouter, type ErrorComponentProps} from '@tanstack/react-router'
+import {ClientOnly, HeadContent, Outlet, ScriptOnce, Scripts, createRootRoute, useRouter, type ErrorComponentProps} from '@tanstack/react-router'
 import {Button} from '@astryxdesign/core/Button'
 import {EmptyState} from '@astryxdesign/core/EmptyState'
 import {TriangleAlert} from 'lucide-react'
@@ -28,6 +28,12 @@ export const Route = createRootRoute({
  * into /pay's own page. Tags that never change live here; <HeadContent /> adds the route heads (it
  * merges meta by name, which would drop one of the two theme colours). The boot splash shows until
  * the app mounts.
+ *
+ * Hosts may add markup of their own to the head: Netlify puts a comment there, after a line break.
+ * React hydrates a plain <style>, <script> or stylesheet <link> by walking the head in order and
+ * gives up at text, so the head holds nothing it looks for that way: the styles are resources (a
+ * precedence), which React finds by their href, and the pre-paint script exists only in the HTML
+ * (ScriptOnce).
  */
 function RootShell({children}: {children: ReactNode}) {
   return (
@@ -45,7 +51,6 @@ function RootShell({children}: {children: ReactNode}) {
         <meta name="apple-mobile-web-app-title" content="QRViet" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="format-detection" content="telephone=no" />
-        <link rel="stylesheet" href={appCss} />
         <link rel="manifest" href={`${BASE}manifest.webmanifest`} />
         <link rel="icon" href={`${BASE}favicon.ico`} sizes="48x48" />
         <link rel="icon" href={`${BASE}favicon.svg`} type="image/svg+xml" sizes="any" />
@@ -54,9 +59,11 @@ function RootShell({children}: {children: ReactNode}) {
         {splashVariants().map((v) => (
           <link key={v.file} rel="apple-touch-startup-image" href={`${BASE}${v.file}`} media={v.media} />
         ))}
-        <style dangerouslySetInnerHTML={{__html: BOOT_CSS}} />
         <HeadContent />
-        <script dangerouslySetInnerHTML={{__html: PREPAINT_SCRIPT}} />
+        {/* After <HeadContent />, so they still follow the stylesheet it adds. */}
+        <link rel="stylesheet" href={appCss} precedence="default" />
+        <style href="qrviet-boot" precedence="default" dangerouslySetInnerHTML={{__html: BOOT_CSS}} />
+        <ScriptOnce>{PREPAINT_SCRIPT}</ScriptOnce>
       </head>
       <body>
         {/* Raw HTML, so AppLayout can fade it out and remove it without React's involvement. */}

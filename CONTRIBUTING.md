@@ -81,6 +81,7 @@ Recommended VS Code extensions are listed in `.vscode/extensions.json`.
   - Move `try`/`catch` blocks with branching logic, dynamic `import()` calls and similar code into plain functions outside the component.
   - Do not add `eslint-disable` comments for React rules: the compiler treats them as a reason to skip the component.
 - The app renders in the browser only (`<ClientOnly>` in `src/routes/__root.tsx`). The build writes the root's `head` into the app shell that every page is served with, and the browser takes that HTML over. So a page's `head` may set the title and add tags such as `robots`, but must not replace the root's tags, or the shell's copy stays behind next to the page's. Only `/pay` has HTML of its own (`pay.html`), and only it replaces the preview tags. Head functions must not use browser APIs or stored settings (see `src/seo/head.ts`).
+- In the document head, give every stylesheet `<link>` a `precedence`, and every `<style>` an `href` and a `precedence`, and put inline scripts in TanStack's `ScriptOnce`. React then finds them by `href`, or never looks for them. Otherwise it walks the head in order to hydrate them and fails at any text a host adds there: Netlify adds a line break and a comment to every page.
 
 ### Interface
 
