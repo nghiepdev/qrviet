@@ -25,6 +25,8 @@ const serwist = new Serwist({
   precacheEntries: self.__SW_MANIFEST,
   precacheOptions: {
     cleanupOutdatedCaches: true,
+    // No query string picks another file here: /pay?b=… (a detailed link preview) is pay.html too.
+    ignoreURLParametersMatching: [/.*/],
     navigateFallback: `${import.meta.env.BASE_URL}_shell.html`,
     // Stop at the query string: "/scan?text=a.b" is a route, "/sw.js" is a file.
     navigateFallbackDenylist: [/^[^?]*\/[^/?]+\.[^/?]+$/],

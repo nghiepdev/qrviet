@@ -45,7 +45,7 @@ QRViet is a static single-page app: there is no server, it installs as a PWA, it
 
 ### Share and automate
 
-- **Payment links**: a payment page whose data lives in the URL `#` fragment, which browsers never send to a server. It has copy buttons for every field, a step-by-step guide, an expiry countdown, a note and the amount in words (read aloud on request), plus a printable QR code that opens the link.
+- **Payment links**: a payment page whose data lives in the URL `#` fragment, which browsers never send to a server. It has copy buttons for every field, a step-by-step guide, an expiry countdown, a note and the amount in words (read aloud on request), plus a printable QR code that opens the link. On request, a link also shows the payee and amount in its preview on Zalo or Facebook (see [Privacy](#privacy)).
 - **Batch**: paste rows from Excel or CSV (tab, `;` or `,` is detected automatically) or generate sequences (Room 101 to 120); every row is validated; download a ZIP file (PNG images plus a CSV of every row) or A4 label sheets (2×3, 3×4 or 4×5).
 - **QR studio**: links, text, Wi-Fi, vCard contacts, social profiles (Zalo, Facebook, TikTok and more), email, SMS, phone calls, locations and events, with a caption under the code and an HTML embed snippet.
 
@@ -61,7 +61,7 @@ QRViet is a static single-page app: there is no server, it installs as a PWA, it
 - **Brand and themes**: its own logo and icon set (three QR finder squares, a "V" and a gold star); 6 QRViet themes and 7 Astryx themes; a theme builder (accent, neutral tone, high contrast, radius, type scale, live preview, JSON import and export); light, dark or system mode; 4 font choices with full Vietnamese support.
 - **Installable PWA**: installation on Android and desktop (with instructions for iOS), app shortcuts, a share target and an update prompt. Every asset, bank logos and fonts included, is precached for offline use. On iOS, launch screens cover every iPhone and iPad size in light and dark, and the layout keeps clear of the notch, status bar and home indicator.
 - **Keyboard and touch**: a command palette (`Ctrl`/`⌘` + `K`), `Shift` + `D` to toggle light and dark, `Shift` + `S` to open the scanner, an app-style bottom tab bar on phones, and a loader that respects reduced motion.
-- **Link previews and SEO**: one preview card for the whole site and a payment card for payment links, a localized title for every page, and personal pages kept out of search (see [SEO](#seo)).
+- **Link previews and SEO**: one preview card for the whole site and a payment card for payment links (with the payee and amount, for links that ask for it), a localized title for every page, and personal pages kept out of search (see [SEO](#seo)).
 
 ## Getting started
 
@@ -108,8 +108,8 @@ The app has no runtime configuration. These environment variables are read at bu
 
 `dist/client/` is a static site; publish that folder. (`dist/server/` only renders the HTML during the build and is not deployed.) It has two HTML files: `_shell.html`, the app shell that every page is served with, and `pay.html`, the same shell with the preview card for payment links.
 
-- **Netlify**: nothing to configure. `public/_redirects` serves the app shell for every path that is not a file, and Netlify provides `SITE_URL`.
-- **Other static hosts**: serve existing files first, `pay.html` at `/pay`, and `_shell.html` with status 200 for every other path. With Nginx: `try_files $uri $uri.html /_shell.html;`. Set `SITE_URL` when you build, so that link previews get an absolute image URL.
+- **Netlify**: nothing to configure. `public/_redirects` serves the app shell for every path that is not a file, Netlify provides `SITE_URL`, and it runs the edge function for detailed payment link previews (see [SEO](#seo)).
+- **Other static hosts**: serve existing files first, `pay.html` at `/pay`, and `_shell.html` with status 200 for every other path. With Nginx: `try_files $uri $uri.html /_shell.html;`. Set `SITE_URL` when you build, so that link previews get an absolute image URL. Payment links that ask for a detailed preview work there too, with the general payment card.
 
 The camera and the service worker need HTTPS, or `localhost` during development.
 
@@ -118,7 +118,7 @@ The camera and the service worker need HTTPS, or `localhost` during development.
 
 ## Architecture
 
-QRViet is a client-only React app with no backend:
+QRViet is a client-only React app with no backend (on Netlify, one optional edge function fills in detailed payment link previews):
 
 - **Build**: [Vite](https://vite.dev/) with the [React Compiler](https://react.dev/learn/react-compiler), which memoizes components and hooks automatically, so the code has no `useMemo`, `useCallback` or `memo`. It runs as the compiler's Rust port (`oxc-transform-react`, enabled with `react({compiler})` in `@vitejs/plugin-react`), without Babel. A component that breaks the Rules of React is left uncompiled: it still works, without automatic memoization.
 - **UI**: [Astryx](https://github.com/meta/astryx), Meta's design system for React 19 with prebuilt StyleX: app shell, navigation, command palette, dialogs and bottom sheets, toasts, runtime themes for the theme builder and `vi-VN` translations. [Tailwind CSS](https://tailwindcss.com/) v4 handles layout through the Astryx token bridge.
@@ -146,11 +146,14 @@ src/
     __root.tsx         #   the HTML document (head, boot splash) around the app
     $.tsx              #   unknown URLs
   seo/head.ts          # route heads: page titles and the link preview cards
+  seo/pay-preview.ts   # a payment link's detailed preview, shared with the edge function
   stores/              # TanStack Store: settings, accounts, history, studio
   theme/               # theme presets, theme builder (Astryx defineTheme), fonts
   router.tsx           # router setup (TanStack Start's entry point)
   routeTree.gen.ts     # generated by TanStack Start, do not edit
   sw.ts                # service worker (Serwist)
+netlify/edge-functions/
+  pay-preview.ts       # Netlify only: writes a detailed preview into pay.html
 public/
   _redirects           # Netlify: the app shell for every page
   banks/               # bank logos (WebP, precached)
@@ -167,13 +170,14 @@ vite.config.ts         # TanStack Start (SPA mode) and the service worker
 
 The app renders in the browser, and every page is served the same HTML, the app shell:
 
-- **Link previews**: Facebook, Zalo and other apps that do not run JavaScript show one card for the whole site, with the home page's title and description and `og-image.png`. Payment links get a card of their own from `pay.html`, with `og-image-pay.png`. It cannot show the payment itself: the details stay after the `#`, which never reaches a server or a link preview (see [Privacy](#privacy)).
+- **Link previews**: Facebook, Zalo and other apps that do not run JavaScript show one card for the whole site, with the home page's title and description and `og-image.png`. Payment links get a card of their own from `pay.html`, with `og-image-pay.png`. It cannot show the payment itself: the details stay after the `#`, which never reaches a server or a link preview.
+- **Detailed payment previews**: a link made with **Show name and amount in link previews** on carries its bank, name and amount in the query string instead (see [Privacy](#privacy)). On Netlify, the edge function in `netlify/edge-functions/pay-preview.ts` writes them into the title and description of `pay.html`, for example "Chuyển 50.000 ₫ cho NGUYEN VAN A". Links without them, and requests it fails on, get `pay.html` as it is.
 - **Search engines**: Google runs the app and sees each page's own title. `/history`, `/settings`, `/pay` and unknown URLs are `noindex`.
-- **Where to edit**: the tags are built in `src/seo/head.ts`, and the titles and descriptions are the `seo.*` keys in `src/i18n/vi.ts` and `src/i18n/en.ts`.
+- **Where to edit**: the tags are built in `src/seo/head.ts`, the detailed payment preview in `src/seo/pay-preview.ts`, and the titles and descriptions are the `seo.*` keys in `src/i18n/vi.ts` and `src/i18n/en.ts`.
 
 ## Privacy
 
-All data stays in the browser: the account book, history and settings in `localStorage`, and the small history previews of exported images in IndexedDB. Payment links carry their data in the `#` fragment, which browsers never send to the server. You can back up, restore or erase everything under **Settings → Data**; backups leave the previews out.
+All data stays in the browser: the account book, history and settings in `localStorage`, and the small history previews of exported images in IndexedDB. Payment links carry their data in the `#` fragment, which browsers never send to the server. The one exception is opt-in: with **Show name and amount in link previews** on, a link carries the bank, name and amount in its query string, so that the host can put them in the link preview; the account number and message stay in the fragment. You can back up, restore or erase everything under **Settings → Data**; backups leave the previews out.
 
 ## Contributing
 

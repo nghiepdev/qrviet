@@ -387,6 +387,8 @@ export const en: Record<MessageKey, string> = {
   'pay.link': 'Link',
   'pay.qrOfLink': 'QR to the link',
   'pay.open': 'Open payment page',
+  'pay.preview': 'Show name and amount in link previews',
+  'pay.previewHint': 'Zalo, Facebook and other apps then show the bank, name and amount when you send the link. These three travel with the link to this site’s server; the account number and message do not.',
   'pay.secure': 'This page stores nothing and sends your data nowhere.',
 
   'batch.title': 'Batch create',
@@ -593,6 +595,9 @@ export const en: Record<MessageKey, string> = {
   'seo.about.title': 'About QRViet & VietQR FAQ | QRViet',
   'seo.pay.title': 'Pay by bank transfer with VietQR | QRViet',
   'seo.pay.description': 'Scan the VietQR code or copy the account number, amount and message to make the transfer.',
+  'seo.pay.sendTo': 'Send {amount} to {name} | QRViet',
+  'seo.pay.to': 'Bank transfer to {name} | QRViet',
+  'seo.pay.amount': 'Bank transfer of {amount} | QRViet',
   'seo.notFound.title': 'Page not found | QRViet',
 
   'cmd.placeholder': 'Type to find pages, banks, accounts…',

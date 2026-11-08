@@ -3,6 +3,7 @@ import {createFileRoute} from '@tanstack/react-router'
 import {Copy, ExternalLink, Link2, QrCode, Share2} from 'lucide-react'
 import {Button} from '@astryxdesign/core/Button'
 import {TextInput} from '@astryxdesign/core/TextInput'
+import {Switch} from '@astryxdesign/core/Switch'
 import {EmptyState} from '@astryxdesign/core/EmptyState'
 import {PageBody, PageHeader, Panel} from '#/components/common/page-header'
 import {AccountFields} from '#/components/vietqr/account-fields'
@@ -63,6 +64,8 @@ function LinkBuilder() {
   const [note, setNote] = useState('')
   const [expiry, setExpiry] = useState('none')
   const [accent, setAccent] = useState('#d7263d')
+  // Off unless asked for: a detailed preview sends the bank, name and amount to the host (src/lib/paylink.ts).
+  const [preview, setPreview] = useState(false)
   const measure = useTextMeasure()
   const patch = (p: Partial<VietQrForm>) => setForm((f) => ({...f, ...p}))
   const derived = useDerivedVietQr(form, contentMode)
@@ -82,7 +85,7 @@ function LinkBuilder() {
       note: note.trim() || undefined,
       exp: ms ? now + ms : undefined,
       accent,
-    })
+    }, preview)
   }
   const [stampedAt, setStampedAt] = useState(() => Date.now())
   useEffect(() => {
@@ -126,6 +129,7 @@ function LinkBuilder() {
                   ))}
                 </div>
               </div>
+              <Switch label={t('pay.preview')} description={t('pay.previewHint')} value={preview} onChange={setPreview} />
               <div className="flex flex-col gap-2">
                 <span className="text-sm font-semibold">{t('gen.accent')}</span>
                 <AccentPicker value={accent} onChange={setAccent} label={t('gen.accent')} />

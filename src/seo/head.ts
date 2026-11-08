@@ -1,5 +1,7 @@
 import {DEFAULT_SETTINGS, type Locale} from '#/stores/settings'
 import {translate, type MessageKey} from '#/i18n'
+import {getBankByBin} from '#/data/banks'
+import {payPreview} from '#/seo/pay-preview'
 
 /**
  * Route `head` helpers. The build renders the root's head into the app shell (_shell.html), the HTML
@@ -22,7 +24,7 @@ export function setHeadLocale(locale: Locale): boolean {
   return true
 }
 
-const t = (key: MessageKey) => translate(headLocale, key)
+const t = (key: MessageKey, vars?: Record<string, string>) => translate(headLocale, key, vars)
 
 /**
  * A link preview image (1200 × 630, in public/), followed by the tags that describe it: Open Graph
@@ -75,11 +77,18 @@ export function pageHead(id: PageId) {
 
 /**
  * /pay's own card, in pay.html. It stays general: a payment link carries its details after the `#`,
- * which never leaves the browser, so link previews, fetched without it, cannot show them.
+ * which never leaves the browser, so link previews, fetched without it, cannot show them. A link
+ * that opts in to a detailed preview carries the bank, name and amount in its query string instead,
+ * and gets a title and description from them (src/seo/pay-preview.ts). On Netlify the page is
+ * served with these too; served the plain pay.html (the service worker, other hosts), the app
+ * leaves that page's tags next to its own, which only link previews read, and they never see them.
  */
-export function payHead() {
-  const title = t('seo.pay.title')
-  const description = t('seo.pay.description')
+export function payHead(search: Record<string, unknown> = {}) {
+  // The router has parsed the values of the query string; as strings again, they read as the edge function's.
+  const query = new URLSearchParams(Object.entries(search).map(([key, value]) => [key, String(value)]))
+  const preview = payPreview(query.toString(), t, (bin) => getBankByBin(bin)?.shortName)
+  const title = preview?.title ?? t('seo.pay.title')
+  const description = preview?.description ?? t('seo.pay.description')
   return {
     meta: [
       {title},

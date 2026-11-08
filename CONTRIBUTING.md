@@ -55,7 +55,7 @@ Recommended VS Code extensions are listed in `.vscode/extensions.json`.
 
 ### Scope
 
-- QRViet is a static site with no backend, no accounts and no telemetry. Changes must keep it working offline and must not send user data anywhere.
+- QRViet is a static site with no backend, no accounts and no telemetry. Changes must keep it working offline and must not send user data anywhere. The one exception is opt-in: a payment link made with the detailed preview switch on carries its bank, name and amount in the query string, which an optional Netlify edge function writes into the link preview (`netlify/edge-functions/pay-preview.ts`).
 - Prefer what the project already uses: Astryx components first, then TanStack libraries, and a new dependency only when neither covers the need. Explain any new dependency in the pull request. To read the Astryx documentation for a component, run `pnpm dlx @astryxdesign/cli component Button` (the CLI is not a project dependency).
 
 ### Language and copy
@@ -68,7 +68,7 @@ Recommended VS Code extensions are listed in `.vscode/extensions.json`.
 - TypeScript runs in strict mode, and `pnpm typecheck` must pass.
 - File names are kebab-case (`app-layout.tsx`, `use-qr-scene.ts`). Components keep PascalCase names and hooks start with `use`.
 - Import from `src/` through the `#/` alias (`#/lib/vietqr`).
-- The scripts in `scripts/` run directly in Node.js, which strips the types without compiling. In them, and in the `src/` modules they import, use relative imports that end in `.ts` and erasable TypeScript only (no `enum`, `namespace` or constructor parameter properties).
+- The scripts in `scripts/` run directly in Node.js, which strips the types without compiling, and the edge function in `netlify/edge-functions/` runs in Deno. In them, and in the `src/` modules they import, use relative imports that end in `.ts` and erasable TypeScript only (no `enum`, `namespace` or constructor parameter properties).
 - Keep domain logic (VietQR, EMV, amounts, text) in `src/lib/` as plain TypeScript without React.
 - Match the surrounding code: 2-space indentation, single quotes, no semicolons and no spaces inside braces. `.editorconfig` sets the basics for your editor.
 - Write comments that explain why the code does something, not what it does.
