@@ -38,7 +38,7 @@ const REPO = 'nghiepdev/qrviet'
 
 const CREDITS = [
   ['Astryx', 'https://github.com/meta/astryx', 'Design system (Meta)'],
-  ['TanStack Router & Store', 'https://tanstack.com', 'Routing, state'],
+  ['TanStack Start & Store', 'https://tanstack.com', 'Framework, routing, state'],
   ['uqr', 'https://github.com/unjs/uqr', 'QR encoder'],
   ['jsQR', 'https://github.com/cozmo/jsQR', 'QR decoder fallback'],
   ['Serwist', 'https://serwist.pages.dev', 'Service worker, offline'],

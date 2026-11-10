@@ -1,6 +1,6 @@
 import {useEffect, useRef} from 'react'
 import {CreditCard, QrCode, Square, Store, ScanQrCode} from 'lucide-react'
-import {Carousel, type CarouselHandle} from '@astryxdesign/core/Carousel'
+import {Carousel} from '@astryxdesign/core/Carousel'
 import {TEMPLATE_ACCENTS, TEMPLATE_IDS, type TemplateId} from '#/lib/qr/templates'
 import {canAnchor} from '#/app/anchoring'
 import {HUES, type Hue} from '#/components/common/icon-badge'
@@ -23,6 +23,30 @@ const ICONS: Record<TemplateId, typeof QrCode> = {
   qr: QrCode,
 }
 
+/** The nearest ancestor that scrolls horizontally: the carousel's scroll area. */
+function horizontalScroller(el: HTMLElement): HTMLElement | null {
+  for (let node = el.parentElement; node; node = node.parentElement) {
+    const {overflowX} = getComputedStyle(node)
+    if ((overflowX === 'auto' || overflowX === 'scroll') && node.scrollWidth > node.clientWidth) return node
+  }
+  return null
+}
+
+/**
+ * Scrolls the row so the tile sits in its middle (clamped at both ends by the browser). Only the
+ * row moves, never the page, unlike `scrollIntoView`.
+ */
+function centerTile(tile: HTMLElement, smooth: boolean) {
+  const scroller = horizontalScroller(tile)
+  if (!scroller) return
+  const rowRect = scroller.getBoundingClientRect()
+  const tileRect = tile.getBoundingClientRect()
+  const delta = tileRect.left + tileRect.width / 2 - (rowRect.left + rowRect.width / 2)
+  if (Math.abs(delta) < 1) return
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  scroller.scrollBy({left: delta, behavior: smooth && !reduce ? 'smooth' : 'auto'})
+}
+
 /**
  * Template tiles, the same on every screen: one Astryx Carousel row, with edge fades and prev/next
  * buttons when the tiles do not fit (swipe, trackpad and Shift + wheel scroll it too). Tiles keep
@@ -33,25 +57,34 @@ const ICONS: Record<TemplateId, typeof QrCode> = {
  */
 export function TemplatePicker({value, onChange}: {value: TemplateId; onChange: (v: TemplateId) => void}) {
   const t = useT()
-  const carouselRef = useRef<CarouselHandle>(null)
+  const tilesRef = useRef(new Map<TemplateId, HTMLButtonElement>())
+  const hasCenteredRef = useRef(false)
 
-  // Bring the current template into view once (with the tile before it for context), so a choice
-  // near the end is not hidden off-screen. Waits a frame for the carousel to measure its items.
+  // Keep the current template in the middle of the row: at once when the picker mounts (after a
+  // frame, for the carousel to lay out), then with a smooth scroll whenever it changes, whether
+  // picked here or set from outside (a restored history entry).
   useEffect(() => {
-    const index = TEMPLATE_IDS.indexOf(value)
-    if (index < 1) return
-    const id = requestAnimationFrame(() => carouselRef.current?.scrollTo(index - 1))
+    const tile = tilesRef.current.get(value)
+    if (!tile) return
+    const smooth = hasCenteredRef.current
+    const id = requestAnimationFrame(() => {
+      centerTile(tile, smooth)
+      hasCenteredRef.current = true
+    })
     return () => cancelAnimationFrame(id)
-    // Only the template selected when the picker mounts.
-  }, [])
+  }, [value])
 
   return (
-    <Carousel aria-label={t('gen.templates')} gap={2} handleRef={carouselRef} hasButtons={canAnchor}>
+    <Carousel aria-label={t('gen.templates')} gap={2} hasButtons={canAnchor}>
       {TEMPLATE_IDS.map((id) => {
         const Icon = ICONS[id]
         return (
           <button
             key={id}
+            ref={(el) => {
+              if (el) tilesRef.current.set(id, el)
+              else tilesRef.current.delete(id)
+            }}
             type="button"
             aria-pressed={id === value}
             onClick={() => onChange(id)}

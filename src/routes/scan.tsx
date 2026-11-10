@@ -94,7 +94,7 @@ function ScanPage() {
     push(url && !text?.includes(url) ? `${text ?? ''} ${url}`.trim() : shared, 'share')
     showToast({body: t('scan.shared'), uniqueID: 'shared'})
     setTab('text')
-    void navigate({search: {}, replace: true})
+    void navigate({search: {}, replace: true, resetScroll: false})
   })
   useEffect(() => {
     receiveShare(search)

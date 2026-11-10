@@ -1,8 +1,8 @@
 import {useEffect, useEffectEvent, useState, type ReactNode} from 'react'
 import {useLocation} from '@tanstack/react-router'
 import {AppShell, useAppShellMobile} from '@astryxdesign/core/AppShell'
-import {TopNav, TopNavHeading} from '@astryxdesign/core/TopNav'
-import {SideNav, SideNavItem, SideNavSection} from '@astryxdesign/core/SideNav'
+import {TopNav, TopNavHeading, useTopNavRenderMode} from '@astryxdesign/core/TopNav'
+import {SideNav, SideNavItem, SideNavSection, useSideNavRenderMode} from '@astryxdesign/core/SideNav'
 import {useHotkeys, useMediaQuery} from '@astryxdesign/core/hooks'
 import {useNavigate} from '@tanstack/react-router'
 import {LogoMark} from '#/components/brand/logo'
@@ -15,13 +15,18 @@ import {CommandMenu} from './command-menu'
 import {PwaManager} from './pwa-manager'
 import {SideNavFooter} from './side-nav-footer'
 
+const SECTIONS: NavSection[] = ['tools', 'data', 'more']
+
 function NavSections({pathname}: {pathname: string}) {
   const t = useT()
-  const sections: NavSection[] = ['tools', 'data', 'more']
+  // In the phone drawer the first section's title is the drawer's own heading (see AppTopNav), so
+  // it is not repeated above the items; screen readers still get it.
+  const renderMode = useSideNavRenderMode()
+  const inDrawer = renderMode === 'drawer' || renderMode === 'drawer-content'
   return (
     <>
-      {sections.map((section) => (
-        <SideNavSection key={section} title={t(SECTION_LABEL[section])}>
+      {SECTIONS.map((section, index) => (
+        <SideNavSection key={section} title={t(SECTION_LABEL[section])} isHeaderHidden={inDrawer && index === 0}>
           {NAV_ITEMS.filter((i) => i.section === section).map((item) => (
             <SideNavItem
               key={item.to}
@@ -69,8 +74,27 @@ function MobileExtras() {
   return isMobile ? <BottomTabs /> : null
 }
 
-export function AppLayout({children}: {children: ReactNode}) {
+/**
+ * The top bar. On phones AppShell renders it a second time as the drawer, which takes the heading
+ * for its own header. The drawer opens beside the bar's brand, so instead of repeating it the
+ * drawer is headed by its first section's title (which NavSections then hides).
+ */
+function AppTopNav({isRailCollapsed, onOpenPalette}: {isRailCollapsed: boolean; onOpenPalette: () => void}) {
   const t = useT()
+  const inDrawer = useTopNavRenderMode() === 'drawer'
+  return (
+    <TopNav
+      label={t('nav.main')}
+      // From md the sidebar's icons start 16px from the edge, centred at 24px. The mark lines up with
+      // their left edge (and the section titles) beside the full sidebar, and centres over them
+      // (-6px) above the icon rail.
+      heading={inDrawer ? t(SECTION_LABEL[SECTIONS[0]]) : <TopNavHeading heading="QRViet" headingHref="/" logo={<LogoMark size={28} />} className={isRailCollapsed ? 'md:-ml-1.5' : undefined} />}
+      endContent={<HeaderActions onOpenPalette={onOpenPalette} />}
+    />
+  )
+}
+
+export function AppLayout({children}: {children: ReactNode}) {
   const pathname = useLocation({select: (l) => l.pathname})
   const navigate = useNavigate()
   const [paletteOpen, setPaletteOpen] = useState(false)
@@ -99,16 +123,7 @@ export function AppLayout({children}: {children: ReactNode}) {
         contentPadding={0}
         // No hamburger in the top bar: on phones the bottom tab bar's Menu tab opens the drawer.
         mobileNav={{breakpoint: 'md', hasToggle: false}}
-        topNav={
-          <TopNav
-            label={t('nav.main')}
-            // From md the sidebar's icons start 16px from the edge, centred at 24px. The mark lines up with
-            // their left edge (and the section titles) beside the full sidebar, and centres over them
-            // (-6px) above the icon rail.
-            heading={<TopNavHeading heading="QRViet" headingHref="/" logo={<LogoMark size={28} />} className={rail.isCollapsed ? 'md:-ml-1.5' : undefined} />}
-            endContent={<HeaderActions onOpenPalette={() => setPaletteOpen(true)} />}
-          />
-        }
+        topNav={<AppTopNav isRailCollapsed={rail.isCollapsed} onOpenPalette={() => setPaletteOpen(true)} />}
         sideNav={
           <SideNav footer={<SideNavFooter />} collapsible={rail}>
             <NavSections pathname={pathname} />

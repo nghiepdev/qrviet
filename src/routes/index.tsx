@@ -28,8 +28,9 @@ import {getBankByBin, resolveBank} from '#/data/banks'
 import {useLocale, useT} from '#/i18n'
 import {accountsStore, findDuplicate, getDefaultAccount, saveAccount, touchAccount} from '#/stores/accounts'
 import {addHistory} from '#/stores/history'
+import {applyHistoryEntry, findHistoryEntry, historyDesign} from '#/components/vietqr/history-entry'
 import {saveSceneThumb} from '#/lib/thumbs'
-import {updateDesign, updateQrStyle, useSettings} from '#/stores/settings'
+import {settingsStore, updateDesign, updateQrStyle, useSettings} from '#/stores/settings'
 import {formatVnd, parseAmount} from '#/lib/money'
 import {slugify} from '#/lib/text'
 import {payLinkUrl} from '#/lib/paylink'
@@ -43,6 +44,8 @@ interface GenSearch {
   memo?: string
   account?: string
   card?: boolean
+  /** A history entry shown as it was exported; kept in the URL until the code is edited. */
+  h?: string
 }
 
 const str = (v: unknown) => (typeof v === 'string' || typeof v === 'number' ? String(v) : undefined)
@@ -56,6 +59,7 @@ export const Route = createFileRoute('/')({
     memo: str(s.memo),
     account: str(s.account),
     card: s.card === true || s.card === 'true' || s.card === '1' ? true : undefined,
+    h: str(s.h),
   }),
   component: GeneratorPage,
 })
@@ -84,9 +88,10 @@ function GeneratorPage() {
   // Seed from URL (command palette, saved accounts, banks page, scan → re-issue), then clean the URL.
   const seeded = useRef(false)
   useEffect(() => {
-    const hasSearch = Object.values(search).some((v) => v !== undefined)
     const firstRun = !seeded.current
     seeded.current = true
+    if (search.h) return // a history entry: the effect below
+    const hasSearch = Object.values(search).some((v) => v !== undefined)
     if (!hasSearch) {
       // Only on first mount (not after we clear the URL): an empty draft starts from the default account.
       if (firstRun && !draftStore.state.accountNumber) {
@@ -126,8 +131,26 @@ function GeneratorPage() {
         return next
       })
     }
-    void navigate({search: {}, replace: true})
+    void navigate({search: {}, replace: true, resetScroll: false})
   }, [search, navigate])
+
+  // A history entry (`?h=<id>`): the history page has already loaded it, so the first frame shows
+  // it; this covers opening the URL directly (reload, back/forward). The URL stays as it is while
+  // the page shows the entry, and is let go, without a new history step, at the first change to
+  // the code or its design, so a reload never puts back an entry over your edits.
+  useEffect(() => {
+    if (!search.h) return
+    const leave = () => void navigate({search: {}, replace: true, resetScroll: false})
+    const entry = findHistoryEntry(search.h)
+    if (!entry || !applyHistoryEntry(entry)) return leave()
+    const design = settingsStore.state.design
+    const subs = [draftStore.subscribe(() => stop()), settingsStore.subscribe((s) => s.design !== design && stop())]
+    function stop() {
+      subs.forEach((s) => s.unsubscribe())
+      leave()
+    }
+    return () => subs.forEach((s) => s.unsubscribe())
+  }, [search.h, navigate])
 
   const derived = useDerivedVietQr(form, contentMode)
   const bank = getBankByBin(form.bin)
@@ -173,6 +196,8 @@ function GeneratorPage() {
         amount: derived.amount ? String(derived.amount) : undefined,
         purpose: derived.purposeAscii,
       },
+      form,
+      design: historyDesign(design),
     })
     if (scene) void saveSceneThumb(entry.id, scene)
   }

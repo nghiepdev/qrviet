@@ -184,7 +184,7 @@ function StudioPage() {
 
   const setType = (next: QrKind) => {
     patchStudio({type: next})
-    void navigate({search: {type: next}, replace: true})
+    void navigate({search: {type: next}, replace: true, resetScroll: false})
   }
 
   // Derive from the store state (frozen) rather than the local `s`, so the compiler can memoize.

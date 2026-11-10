@@ -25,6 +25,7 @@ import {useCopy} from '#/hooks/use-copy'
 import {pageHead} from '#/seo/head'
 import {sheetUnlessAnchored} from '#/app/anchoring'
 import {loadThumb} from '#/lib/thumbs'
+import {applyHistoryEntry} from '#/components/vietqr/history-entry'
 
 export const Route = createFileRoute('/history')({
   head: () => pageHead('history'),
@@ -40,24 +41,6 @@ function thumbSvg(payload: string): string {
     return qrToSvg(layoutQr(makeQr(payload, 'L'), style), 56, {style})
   } catch {
     return ''
-  }
-}
-
-/** Generator search params that reopen a saved VietQR payload, or null when it is not one. */
-function generatorSearch(h: HistoryItem) {
-  try {
-    const p = parseEmvQr(h.payload)
-    if (p.kind !== 'vietqr') return null
-    return {
-      bank: p.bin,
-      acc: p.accountNumber,
-      name: h.meta.accountName || p.merchantName || undefined,
-      amount: p.amount || undefined,
-      memo: p.purpose || undefined,
-      card: p.service === 'card' ? true : undefined,
-    }
-  } catch {
-    return null
   }
 }
 
@@ -181,8 +164,11 @@ function HistoryPage() {
     .sort((a, b) => Number(b.pinned) - Number(a.pinned) || b.createdAt - a.createdAt)
 
   const open = (h: HistoryItem) => {
-    const search = (h.kind === 'vietqr' || h.kind === 'scan') && looksLikeEmv(h.payload) ? generatorSearch(h) : null
-    if (search) return void navigate({to: '/', search})
+    // A VietQR goes back into the generator, at the entry's own URL. Loading it before navigating
+    // means the generator's first frame already shows it, not the previous draft and design.
+    if ((h.kind === 'vietqr' || h.kind === 'scan') && looksLikeEmv(h.payload) && applyHistoryEntry(h)) {
+      return void navigate({to: '/', search: {h: h.id}})
+    }
     void navigate({to: '/scan', search: {text: h.payload}})
   }
 

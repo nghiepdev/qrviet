@@ -1,6 +1,8 @@
 import {useSelector} from '@tanstack/react-store'
 import {persistedStore} from '#/lib/persist'
 import {uid} from '#/lib/text'
+import type {VietQrForm} from '#/components/vietqr/form'
+import type {QrDesign} from './settings'
 
 export type HistoryKind = 'vietqr' | 'qr' | 'scan'
 
@@ -22,6 +24,14 @@ export interface HistoryItem {
   createdAt: number
   /** An image of the exported code is stored for it (src/lib/thumbs.ts). */
   thumb?: boolean
+  /**
+   * VietQR entries made by the generator: the form and design they were exported with, so opening
+   * the entry shows that very code again (src/components/vietqr/history-entry.ts). Older entries,
+   * and scans, have neither. The design leaves out the uploaded logo image (`customLogo: null`):
+   * one copy per entry would soon fill the storage quota.
+   */
+  form?: VietQrForm
+  design?: QrDesign
 }
 
 const MAX_ITEMS = 300
