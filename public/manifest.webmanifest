@@ -14,25 +14,72 @@
   "theme_color": "#d7263d",
   "categories": ["finance", "utilities", "productivity"],
   "icons": [
-    {"src": "pwa-64x64.png", "sizes": "64x64", "type": "image/png"},
-    {"src": "pwa-192x192.png", "sizes": "192x192", "type": "image/png"},
-    {"src": "pwa-512x512.png", "sizes": "512x512", "type": "image/png"},
-    {"src": "maskable-icon-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"},
-    {"src": "favicon.svg", "sizes": "any", "type": "image/svg+xml"}
+    { "src": "pwa-64x64.png", "sizes": "64x64", "type": "image/png" },
+    { "src": "pwa-192x192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "pwa-512x512.png", "sizes": "512x512", "type": "image/png" },
+    {
+      "src": "maskable-icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml" }
   ],
   "shortcuts": [
-    {"name": "Tạo mã VietQR", "short_name": "Tạo QR", "url": "./?source=shortcut", "icons": [{"src": "shortcuts/create.png", "sizes": "96x96", "type": "image/png"}]},
-    {"name": "Quét mã QR", "short_name": "Quét QR", "url": "./scan?source=shortcut", "icons": [{"src": "shortcuts/scan.png", "sizes": "96x96", "type": "image/png"}]},
-    {"name": "Sổ tài khoản", "short_name": "Tài khoản", "url": "./accounts?source=shortcut", "icons": [{"src": "shortcuts/accounts.png", "sizes": "96x96", "type": "image/png"}]}
+    {
+      "name": "Tạo mã VietQR",
+      "short_name": "Tạo QR",
+      "url": "./?source=shortcut",
+      "icons": [{ "src": "shortcuts/create.png", "sizes": "96x96", "type": "image/png" }]
+    },
+    {
+      "name": "Quét mã QR",
+      "short_name": "Quét QR",
+      "url": "./scan?source=shortcut",
+      "icons": [{ "src": "shortcuts/scan.png", "sizes": "96x96", "type": "image/png" }]
+    },
+    {
+      "name": "Sổ tài khoản",
+      "short_name": "Tài khoản",
+      "url": "./accounts?source=shortcut",
+      "icons": [{ "src": "shortcuts/accounts.png", "sizes": "96x96", "type": "image/png" }]
+    }
   ],
-  "share_target": {"action": "./scan", "method": "GET", "enctype": "application/x-www-form-urlencoded", "params": {"title": "title", "text": "text", "url": "url"}},
+  "share_target": {
+    "action": "./scan",
+    "method": "GET",
+    "enctype": "application/x-www-form-urlencoded",
+    "params": { "title": "title", "text": "text", "url": "url" }
+  },
   "screenshots": [
-    {"src": "screenshots/wide-create.webp", "sizes": "1280x800", "type": "image/webp", "form_factor": "wide", "label": "Tạo mã VietQR với mẫu ảnh đẹp"},
-    {"src": "screenshots/wide-scan.webp", "sizes": "1280x800", "type": "image/webp", "form_factor": "wide", "label": "Quét và kiểm tra mã VietQR"},
-    {"src": "screenshots/narrow-create.webp", "sizes": "780x1688", "type": "image/webp", "form_factor": "narrow", "label": "Tạo mã ngay trên điện thoại"},
-    {"src": "screenshots/narrow-themes.webp", "sizes": "780x1688", "type": "image/webp", "form_factor": "narrow", "label": "Đa giao diện, chế độ tối"}
+    {
+      "src": "screenshots/wide-create.webp",
+      "sizes": "1280x800",
+      "type": "image/webp",
+      "form_factor": "wide",
+      "label": "Tạo mã VietQR với mẫu ảnh đẹp"
+    },
+    {
+      "src": "screenshots/wide-scan.webp",
+      "sizes": "1280x800",
+      "type": "image/webp",
+      "form_factor": "wide",
+      "label": "Quét và kiểm tra mã VietQR"
+    },
+    {
+      "src": "screenshots/narrow-create.webp",
+      "sizes": "780x1688",
+      "type": "image/webp",
+      "form_factor": "narrow",
+      "label": "Tạo mã ngay trên điện thoại"
+    },
+    {
+      "src": "screenshots/narrow-themes.webp",
+      "sizes": "780x1688",
+      "type": "image/webp",
+      "form_factor": "narrow",
+      "label": "Đa giao diện, chế độ tối"
+    }
   ],
-  "launch_handler": {"client_mode": ["navigate-existing", "auto"]},
-  "handle_links": "preferred",
   "prefer_related_applications": false
 }
