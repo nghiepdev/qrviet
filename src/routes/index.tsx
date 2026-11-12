@@ -27,8 +27,8 @@ import {LogoMark} from '#/components/brand/logo'
 import {getBankByBin, resolveBank} from '#/data/banks'
 import {useLocale, useT} from '#/i18n'
 import {accountsStore, findDuplicate, getDefaultAccount, saveAccount, touchAccount} from '#/stores/accounts'
-import {addHistory} from '#/stores/history'
-import {applyHistoryEntry, findHistoryEntry, historyDesign} from '#/components/vietqr/history-entry'
+import {addHistory, historyStore} from '#/stores/history'
+import {applyHistoryEntry} from '#/components/vietqr/history-entry'
 import {saveSceneThumb} from '#/lib/thumbs'
 import {settingsStore, updateDesign, updateQrStyle, useSettings} from '#/stores/settings'
 import {formatVnd, parseAmount} from '#/lib/money'
@@ -141,7 +141,7 @@ function GeneratorPage() {
   useEffect(() => {
     if (!search.h) return
     const leave = () => void navigate({search: {}, replace: true, resetScroll: false})
-    const entry = findHistoryEntry(search.h)
+    const entry = historyStore.state.find((h) => h.id === search.h)
     if (!entry || !applyHistoryEntry(entry)) return leave()
     const design = settingsStore.state.design
     const subs = [draftStore.subscribe(() => stop()), settingsStore.subscribe((s) => s.design !== design && stop())]
@@ -197,7 +197,7 @@ function GeneratorPage() {
         purpose: derived.purposeAscii,
       },
       form,
-      design: historyDesign(design),
+      design: {...design, customLogo: null},
     })
     if (scene) void saveSceneThumb(entry.id, scene)
   }

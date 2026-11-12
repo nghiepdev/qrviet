@@ -51,6 +51,7 @@ export function formFromParsed(p: ParsedVietQr): VietQrForm {
     purpose: p.purpose,
     billNumber: p.billNumber,
     referenceLabel: p.referenceLabel,
+    initiation: p.initiation === 'unknown' ? 'auto' : p.initiation,
     includeName: Boolean(p.merchantName),
     merchantCity: p.merchantCity,
   }
