@@ -79,11 +79,15 @@
 @layer components {
   /*
    * Installed iOS app (viewport-fit=cover + translucent status bar): pages run under the status
-   * bar and the home indicator. Astryx's mobile drawer does not pad for them, so its header
-   * (logo + close button) would sit under the notch.
+   * bar and the home indicator, but the mobile drawer (and its backdrop) should start strictly
+   * below the status bar instead of reaching the physical top of the screen.
    */
+  .astryx-mobile-nav,
+  .astryx-mobile-nav::backdrop {
+    top: env(safe-area-inset-top, 0px);
+    height: calc(100dvh - env(safe-area-inset-top, 0px));
+  }
   .astryx-mobile-nav > div {
-    padding-top: env(safe-area-inset-top, 0px);
     padding-bottom: calc(env(safe-area-inset-bottom, 0px) + var(--qv-toolbar-overlap, 0px));
   }
   .astryx-mobile-nav[data-side='end'] > div {
