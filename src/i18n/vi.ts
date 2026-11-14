@@ -581,6 +581,27 @@ export const vi = {
   'about.standard': 'Chuẩn mã',
   'about.standardBody': 'EMVCo Merchant-Presented QR + đặc tả VietQR của NAPAS: GUID A000000727, dịch vụ QRIBFTTA/QRIBFTTC, tiền tệ 704, CRC16-CCITT.',
 
+  // About → Support
+  'support.title': 'Buy me a coffee',
+  'support.subtitle': 'Nếu QRViet hữu ích với bạn, mời tác giả một ly cà phê hoặc bữa sáng nhé.',
+  'support.drinks': 'Chọn đồ uống',
+  'support.breakfast': 'Ăn sáng kèm theo',
+  'support.drink.blackCoffee': 'Cà phê đen',
+  'support.drink.milkCoffee': 'Cà phê sữa',
+  'support.drink.milkTea': 'Trà sữa',
+  'support.drink.icedTea': 'Trà đá',
+  'support.drink.custom': 'Tuỳ tâm',
+  'support.breakfast.fasting': 'Nhịn đói',
+  'support.breakfast.bread': 'Bánh mì',
+  'support.breakfast.breadEgg': 'Bánh mì ốp la',
+  'support.customAmount': 'Số tiền tuỳ tâm',
+  'support.customPlaceholder': 'VD: 50k, 100.000',
+  'support.customHint': 'Để trống để tạo mã tĩnh (tự nhập khi quét), hoặc gõ như 50k, 100k.',
+  'support.total': 'Tổng ủng hộ',
+  'support.anyAmount': 'Tuỳ tâm khi quét',
+  'support.openPay': 'Mở trang chuyển khoản',
+  'support.invalidHint': 'Nhập số tiền hợp lệ (VD: 50k, 100.000) để tạo mã QR.',
+
   // About → FAQ
   'faq.title': 'Câu hỏi thường gặp',
   'faq.q1': 'VietQR là gì?',

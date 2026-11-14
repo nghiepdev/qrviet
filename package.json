@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "description": "QRViet — offline-first VietQR toolkit (create, scan, share). Built with Astryx + TanStack.",
-  "homepage": "https://github.com/nghiepdev/qrviet#readme",
+  "homepage": "https://qrviet.nghiep.dev",
   "bugs": {
     "url": "https://github.com/nghiepdev/qrviet/issues"
   },

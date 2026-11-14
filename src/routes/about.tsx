@@ -25,6 +25,7 @@ import {PageBody, PageHeader, Panel} from '#/components/common/page-header'
 import {IconBadge, HUES, type Hue} from '#/components/common/icon-badge'
 import {LogoMark} from '#/components/brand/logo'
 import {MarkedText, type MarkStyle} from '#/components/common/marked-text'
+import {BuyMeCoffee} from '#/components/about/buy-me-coffee'
 import {BANKS} from '#/data/banks'
 import {useT, type MessageKey} from '#/i18n'
 import {pageHead} from '#/seo/head'
@@ -238,6 +239,7 @@ function AboutPage() {
               ))}
             </ul>
           </Panel>
+          <BuyMeCoffee />
         </div>
       </PageBody>
     </>

@@ -565,6 +565,27 @@ export const en: Record<MessageKey, string> = {
   'about.standard': 'Standards',
   'about.standardBody': 'EMVCo Merchant-Presented QR + the NAPAS VietQR profile: GUID A000000727, services QRIBFTTA/QRIBFTTC, currency 704, CRC16-CCITT.',
 
+  // About → Support
+  'support.title': 'Buy me a coffee',
+  'support.subtitle': 'If QRViet helps you out, treat the author to a coffee or breakfast.',
+  'support.drinks': 'Pick a drink',
+  'support.breakfast': 'Add breakfast',
+  'support.drink.blackCoffee': 'Black coffee',
+  'support.drink.milkCoffee': 'Milk coffee',
+  'support.drink.milkTea': 'Milk tea',
+  'support.drink.icedTea': 'Iced tea',
+  'support.drink.custom': 'Custom',
+  'support.breakfast.fasting': 'No breakfast',
+  'support.breakfast.bread': 'Banh mi',
+  'support.breakfast.breadEgg': 'Banh mi + egg',
+  'support.customAmount': 'Custom amount',
+  'support.customPlaceholder': 'e.g. 50k, 100,000',
+  'support.customHint': 'Leave blank for a static QR (enter on scan), or type e.g. 50k, 100k.',
+  'support.total': 'Total',
+  'support.anyAmount': 'Enter on scan',
+  'support.openPay': 'Open payment page',
+  'support.invalidHint': 'Enter a valid amount (e.g. 50k, 100,000) to generate the QR code.',
+
   // About → FAQ
   'faq.title': 'Frequently asked questions',
   'faq.q1': 'What is VietQR?',
