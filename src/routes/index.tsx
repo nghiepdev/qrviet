@@ -35,6 +35,7 @@ import {formatVnd, parseAmount} from '#/lib/money'
 import {slugify} from '#/lib/text'
 import {payLinkUrl} from '#/lib/paylink'
 import {useCopy} from '#/hooks/use-copy'
+import {homeHead} from '#/seo/head'
 
 interface GenSearch {
   bank?: string
@@ -51,6 +52,7 @@ interface GenSearch {
 const str = (v: unknown) => (typeof v === 'string' || typeof v === 'number' ? String(v) : undefined)
 
 export const Route = createFileRoute('/')({
+  head: () => homeHead(),
   validateSearch: (s: Record<string, unknown>): GenSearch => ({
     bank: str(s.bank),
     acc: str(s.acc),

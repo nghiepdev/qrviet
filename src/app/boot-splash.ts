@@ -22,6 +22,8 @@ html[data-theme='dark'] { background: #150d10; }
 html[data-theme='dark'] #boot { color: #f5dfe2; background: #150d10; }
 html[data-theme='light'] #boot { color: #3a1f25; background: #fff8f4; }
 #boot.qv-boot-done { opacity: 0; visibility: hidden; }
+html[data-bot='1'] #boot { display: none !important; }
+html[data-bot='1'] *, html[data-bot='1'] *::before, html[data-bot='1'] *::after { animation: none !important; transition: none !important; }
 #boot svg { width: 96px; height: 96px; filter: drop-shadow(0 14px 28px rgba(215, 38, 61, 0.28)); }
 #boot .qv-ring, #boot .qv-core { transform-box: fill-box; transform-origin: center; animation: qv-pop 1.6s cubic-bezier(.34, 1.56, .64, 1) infinite; }
 #boot .qv-d2 { animation-delay: .12s; } #boot .qv-d3 { animation-delay: .24s; }
@@ -62,11 +64,22 @@ export const BOOT_HTML = `<div id="boot" role="status" aria-live="polite">
   <div class="qv-dots" aria-label="Đang tải"><i></i><i></i><i></i></div>
 </div>`
 
-/** Applies the saved colour mode and language before first paint, so neither flashes. */
+export const BOT_UA_RE = /googlebot|google-inspectiontool|adsbot-google|mediapartners-google|bingbot|applebot|duckduckbot|slurp|yandex|baiduspider|facebookexternalhit|zalo/i
+
+export function isSearchBot(): boolean {
+  if (typeof document === 'undefined') return false
+  if (document.documentElement.getAttribute('data-bot') === '1') return true
+  return Boolean(navigator.webdriver || BOT_UA_RE.test(navigator.userAgent))
+}
+
+/** Applies the saved colour mode and language before first paint, and skips boot splash/animations for search bots. */
 export const PREPAINT_SCRIPT = `try {
   var s = JSON.parse(localStorage.getItem('qrviet:settings') || '{}');
   var m = s && s.state && s.state.mode;
   if (m === 'light' || m === 'dark') document.documentElement.setAttribute('data-theme', m);
   var l = s && s.state && s.state.locale;
   if (l === 'en') document.documentElement.setAttribute('lang', 'en');
+  if (navigator.webdriver || ${BOT_UA_RE.toString()}.test(navigator.userAgent || '')) {
+    document.documentElement.setAttribute('data-bot', '1');
+  }
 } catch (e) {}`

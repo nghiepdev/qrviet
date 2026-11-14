@@ -63,15 +63,21 @@ export function siteHead() {
   }
 }
 
+const CANONICAL_HOME = __SITE_URL__ || 'https://qrviet.nghiep.dev/'
+
+/** Canonical link for the homepage, keeping query-parameter variants consolidated on `/`. */
+export function homeHead() {
+  return {
+    links: [{rel: 'canonical', href: CANONICAL_HOME}],
+  }
+}
+
 type PageId = 'scan' | 'qr' | 'link' | 'batch' | 'tools' | 'banks' | 'accounts' | 'history' | 'settings' | 'about' | 'notFound'
 
-/** Pages with nothing for a search visitor: personal ones and unknown URLs. */
-const NOINDEX: ReadonlySet<PageId> = new Set(['history', 'settings', 'notFound'])
-
-/** A page's title, for the browser tab and for search engines, which run the app. */
+/** Keep search indexing focused solely on the homepage; sub-pages still get their own tab title. */
 export function pageHead(id: PageId) {
   return {
-    meta: [{title: t(`seo.${id}.title`)}, ...(NOINDEX.has(id) ? [{name: 'robots', content: 'noindex'}] : [])],
+    meta: [{title: t(`seo.${id}.title`)}, {name: 'robots', content: 'noindex'}],
   }
 }
 

@@ -6,6 +6,7 @@ import {SideNav, SideNavItem, SideNavSection, useSideNavRenderMode} from '@astry
 import {useHotkeys, useMediaQuery} from '@astryxdesign/core/hooks'
 import {useNavigate} from '@tanstack/react-router'
 import {LogoMark} from '#/components/brand/logo'
+import {isSearchBot} from '#/app/boot-splash'
 import {NAV_ITEMS, SECTION_LABEL, isActivePath, type NavSection} from '#/app/nav'
 import {useT} from '#/i18n'
 import {cycleMode} from '#/stores/settings'
@@ -107,10 +108,14 @@ export function AppLayout({children}: {children: ReactNode}) {
     {keys: 'shift+s', onPress: () => void navigate({to: '/scan'})},
   ])
 
-  // Fade out the static boot splash once the shell is on screen.
+  // Fade out the static boot splash once the shell is on screen (remove immediately for bots).
   useEffect(() => {
     const boot = document.getElementById('boot')
     if (!boot) return
+    if (isSearchBot()) {
+      boot.remove()
+      return
+    }
     boot.classList.add('qv-boot-done')
     const id = window.setTimeout(() => boot.remove(), 400)
     return () => window.clearTimeout(id)

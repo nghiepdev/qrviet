@@ -1,6 +1,7 @@
 import {createRouter} from '@tanstack/react-router'
 import {routeTree} from './routeTree.gen'
 import {BrandLoader} from '#/components/brand/brand-loader'
+import {isSearchBot} from '#/app/boot-splash'
 import {capturePwaEvents} from '#/app/pwa'
 import {trackTyping} from '#/app/keyboard'
 import {trackToolbarOverlap} from '#/app/viewport'
@@ -21,6 +22,7 @@ if (typeof window !== 'undefined') {
 
 /** TanStack Start's router entry. Start sets the base path itself, from Vite's `base`. */
 export function getRouter() {
+  const isBot = isSearchBot()
   return createRouter({
     routeTree,
     scrollRestoration: true,
@@ -37,8 +39,8 @@ export function getRouter() {
       const query = params.toString()
       return query ? `?${query}` : ''
     },
-    defaultPendingMs: 200,
-    defaultPendingMinMs: 350,
+    defaultPendingMs: isBot ? 1000 : 200,
+    defaultPendingMinMs: isBot ? 0 : 350,
     defaultPendingComponent: () => (
       <div className="p-4 lg:p-8">
         <BrandLoader delay={0} />
