@@ -12,6 +12,7 @@ import {cycleMode} from '#/stores/settings'
 import {HeaderActions} from './header-actions'
 import {BottomTabs} from './bottom-tabs'
 import {CommandMenu} from './command-menu'
+import {IosInstallGuide} from './ios-install-guide'
 import {PwaManager} from './pwa-manager'
 import {SideNavFooter} from './side-nav-footer'
 
@@ -142,6 +143,7 @@ export function AppLayout({children}: {children: ReactNode}) {
         <MobileExtras />
       </AppShell>
       <CommandMenu isOpen={paletteOpen} onOpenChange={setPaletteOpen} />
+      <IosInstallGuide />
       <PwaManager />
     </>
   )

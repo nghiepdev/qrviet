@@ -18,7 +18,7 @@ import {listAppKeys} from '#/lib/persist'
 import {clearThumbs} from '#/lib/thumbs'
 import {useMasonry} from '#/hooks/use-masonry'
 import {downloadText} from '#/lib/qr/export'
-import {promptInstall, useInstallState, useOnline} from '#/app/pwa'
+import {openIosInstallGuide, promptInstall, useInstallState, useOnline} from '#/app/pwa'
 import {useLocale, useT} from '#/i18n'
 import {pageHead} from '#/seo/head'
 
@@ -218,7 +218,12 @@ function SettingsPage() {
                   {!online && <Badge variant="warning" label={t('app.offline')} />}
                 </div>
                 {ios && !installed && (
-                  <Banner status="info" title={t('app.installIosTitle')} description={t('app.installIosBody')} icon={<Share size={16} />} />
+                  <div className="flex flex-col gap-2">
+                    <Banner status="info" title={t('app.installIosTitle')} description={t('app.installIosBody')} icon={<Share size={16} />} />
+                    <div>
+                      <Button label={t('app.installIosGuideAction')} icon={<Smartphone size={15} />} size="sm" variant="primary" onClick={() => openIosInstallGuide()} />
+                    </div>
+                  </div>
                 )}
                 <div className="flex items-center gap-2 text-sm text-secondary">
                   <HardDrive size={15} aria-hidden /> {storage ? t('set.storage', {used: storage}) : '—'}

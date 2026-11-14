@@ -7,13 +7,13 @@ import {Kbd} from '@astryxdesign/core/Kbd'
 import {useTheme} from '@astryxdesign/core/theme'
 import {useT} from '#/i18n'
 import {cycleMode, updateSettings, useSettings} from '#/stores/settings'
-import {promptInstall, useInstallState, useOnline} from '#/app/pwa'
+import {openIosInstallGuide, promptInstall, useInstallState, useOnline} from '#/app/pwa'
 
 export function HeaderActions({onOpenPalette}: {onOpenPalette: () => void}) {
   const t = useT()
   const locale = useSettings((s) => s.locale)
   const online = useOnline()
-  const {canPrompt, installed} = useInstallState()
+  const {canPrompt, installed, ios} = useInstallState()
   const {mode} = useTheme()
   const isDark = mode === 'dark'
 
@@ -47,9 +47,21 @@ export function HeaderActions({onOpenPalette}: {onOpenPalette: () => void}) {
         variant="ghost"
         onClick={() => cycleMode()}
       />
-      {canPrompt && !installed && (
+      {(canPrompt || ios) && !installed && (
         <span className="hidden sm:inline-flex">
-          <Button label={t('app.install')} variant="primary" size="sm" icon={<Download size={15} />} clickAction={async () => void (await promptInstall())} />
+          <Button
+            label={t('app.install')}
+            variant="primary"
+            size="sm"
+            icon={<Download size={15} />}
+            clickAction={async () => {
+              if (canPrompt) {
+                await promptInstall()
+                return
+              }
+              openIosInstallGuide()
+            }}
+          />
         </span>
       )}
     </HStack>

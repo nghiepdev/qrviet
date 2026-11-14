@@ -10,9 +10,10 @@ interface BeforeInstallPromptEvent extends Event {
 interface PwaState {
   installEvent: BeforeInstallPromptEvent | null
   installed: boolean
+  iosGuideOpen: boolean
 }
 
-export const pwaStore = createStore<PwaState>({installEvent: null, installed: false})
+export const pwaStore = createStore<PwaState>({installEvent: null, installed: false, iosGuideOpen: false})
 
 export function isStandalone(): boolean {
   if (typeof window === 'undefined') return false
@@ -35,7 +36,7 @@ export function capturePwaEvents() {
     pwaStore.setState((s) => ({...s, installEvent: e as BeforeInstallPromptEvent}))
   })
   window.addEventListener('appinstalled', () => {
-    pwaStore.setState(() => ({installEvent: null, installed: true}))
+    pwaStore.setState((s) => ({...s, installEvent: null, installed: true}))
   })
 }
 
@@ -43,6 +44,19 @@ export function useInstallState() {
   const canPrompt = useSelector(pwaStore, (s) => s.installEvent !== null)
   const installed = useSelector(pwaStore, (s) => s.installed)
   return {canPrompt, installed: installed || isStandalone(), ios: isIos()}
+}
+
+export function setIosInstallGuideOpen(iosGuideOpen: boolean) {
+  pwaStore.setState((s) => ({...s, iosGuideOpen}))
+}
+
+export function openIosInstallGuide() {
+  setIosInstallGuideOpen(true)
+}
+
+export function useIosInstallGuide() {
+  const isOpen = useSelector(pwaStore, (s) => s.iosGuideOpen)
+  return {isOpen, open: openIosInstallGuide, setOpen: setIosInstallGuideOpen}
 }
 
 export async function promptInstall(): Promise<boolean> {

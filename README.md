@@ -9,7 +9,16 @@ Create, scan and share **VietQR** bank-transfer codes for every Vietnamese bank 
 
 QRViet is a static single-page app: there is no server, it installs as a PWA, it works offline and your data never leaves your device. The interface is in Vietnamese by default, with a complete English translation.
 
-![QRViet on a desktop browser: the transfer form next to the generated VietQR image](public/screenshots/wide-create.webp)
+<table>
+  <tr>
+    <td width="77%" align="center" valign="middle">
+      <img src="public/screenshots/wide-create.webp" alt="QRViet on a desktop browser: the transfer form next to the generated VietQR image" width="620" />
+    </td>
+    <td width="23%" align="center" valign="middle">
+      <img src="public/guides/safari-install.gif" alt="Installing QRViet on iOS Safari via Add to Home Screen" width="178" />
+    </td>
+  </tr>
+</table>
 
 ## Contents
 
@@ -59,7 +68,7 @@ QRViet is a static single-page app: there is no server, it installs as a PWA, it
 ### App
 
 - **Brand and themes**: its own logo and icon set (three QR finder squares, a "V" and a gold star); 6 QRViet themes and 7 Astryx themes; a theme builder (accent, neutral tone, high contrast, radius, type scale, live preview, JSON import and export); light, dark or system mode; 4 font choices with full Vietnamese support.
-- **Installable PWA**: installation on Android and desktop (with instructions for iOS), app shortcuts, a share target and an update prompt. Every asset, bank logos and fonts included, is precached for offline use. On iOS, launch screens cover every iPhone and iPad size in light and dark, and the layout keeps clear of the notch, status bar and home indicator.
+- **Installable PWA**: installation on Android and desktop, plus an in-app Safari "Add to Home Screen" walkthrough modal for iOS (`public/guides/safari-install.mp4`), app shortcuts, a share target and an update prompt. Every asset, bank logos and fonts included, is precached for offline use. On iOS, launch screens cover every iPhone and iPad size in light and dark, and the layout keeps clear of the notch, status bar and home indicator.
 - **Keyboard and touch**: a command palette (`Ctrl`/`⌘` + `K`), `Shift` + `D` to toggle light and dark, `Shift` + `S` to open the scanner, an app-style bottom tab bar on phones, and a loader that respects reduced motion.
 - **Link previews and SEO**: one preview card for the whole site and a payment card for payment links (with the payee and amount, for links that ask for it), a localized title for every page, and personal pages kept out of search (see [SEO](#seo)).
 
@@ -157,6 +166,7 @@ netlify/edge-functions/
 public/
   _redirects           # Netlify: the app shell for every page
   banks/               # bank logos (WebP, precached)
+  guides/              # iOS Safari Add to Home Screen guide (MP4 for the app, GIF for this README)
   screenshots/         # screenshots for the web app manifest and this README
   splash/              # iOS launch screens (pnpm gen:splash, not precached)
   manifest.webmanifest # web app manifest
