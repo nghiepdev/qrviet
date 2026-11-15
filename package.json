@@ -19,6 +19,7 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "gen:splash": "node scripts/generate-splash.ts",
+    "gen:og": "node scripts/generate-og.ts",
     "sync:banks": "node scripts/sync-banks.ts",
     "preinstall": "npx only-allow pnpm"
   },

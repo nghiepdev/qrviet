@@ -102,7 +102,7 @@ export function payHead(search: Record<string, unknown> = {}) {
       {name: 'robots', content: 'noindex'},
       {property: 'og:title', content: title},
       {property: 'og:description', content: description},
-      ...previewImage('og-image-pay.png', `QRViet — ${t('pay.title')}`),
+      ...previewImage('og-image-pay.png', t('seo.pay.title')),
     ],
   }
 }
