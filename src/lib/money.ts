@@ -1,6 +1,6 @@
 /** VND formatting, shorthand parsing ("150k", "1tr2") and amount-in-words (vi/en). */
 
-export const AMOUNT_LIMIT = 9_999_999_999_999 // 13 digits — tag 54 maximum
+export const AMOUNT_LIMIT = 500_000_000 // Napas 247 exclusive upper bound (strictly under 500M VND)
 
 /**
  * Read a plain numeric string as an amount: digits with an optional "." decimal

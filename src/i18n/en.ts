@@ -187,7 +187,7 @@ export const en: Record<MessageKey, string> = {
   'gen.invalid.account': 'Enter an account number (letters & digits only)',
   'gen.invalid.accountLength': 'Account number is at most 19 characters',
   'gen.invalid.amount': 'Invalid amount',
-  'gen.invalid.amountLarge': 'Amount exceeds 13 digits',
+  'gen.invalid.amountLarge': 'Amount must be under 500,000,000 VND',
   'gen.invalid.purpose': 'Description is at most 50 characters',
 
   'tpl.compact': 'VietQR',

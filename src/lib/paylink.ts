@@ -46,7 +46,7 @@ function readFields(p: URLSearchParams): PayLinkData {
     bin: p.get('b') ?? p.get('bank') ?? '',
     acc: p.get('a') ?? p.get('acc') ?? '',
     name: p.get('n') ?? p.get('name') ?? undefined,
-    amount: Number.isSafeInteger(amount) && amount > 0 && amount <= 9_999_999_999_999 ? amount : undefined,
+    amount: Number.isSafeInteger(amount) && amount > 0 && amount < 500_000_000 ? amount : undefined,
     memo: p.get('c') ?? p.get('memo') ?? undefined,
     card: p.get('t') === 'card',
     note: p.get('o') ?? undefined,

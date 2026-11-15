@@ -191,7 +191,7 @@ export const vi = {
   'gen.invalid.account': 'Nhập số tài khoản (chỉ chữ và số)',
   'gen.invalid.accountLength': 'Số tài khoản tối đa 19 ký tự',
   'gen.invalid.amount': 'Số tiền không hợp lệ',
-  'gen.invalid.amountLarge': 'Số tiền vượt quá 13 chữ số',
+  'gen.invalid.amountLarge': 'Số tiền phải dưới 500 triệu ₫',
   'gen.invalid.purpose': 'Nội dung tối đa 50 ký tự',
 
   // Templates

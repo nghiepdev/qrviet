@@ -17,6 +17,8 @@ export const PURPOSE_SPEC_LIMIT = 25
 export const PURPOSE_MAX = 50
 export const ACCOUNT_MAX = 19
 export const AMOUNT_MAX_DIGITS = 13
+/** Napas 247 fast transfer max per transaction (must be under 500,000,000 VND). */
+export const AMOUNT_MAX = 499_999_999
 
 export type VietQrService = 'account' | 'card'
 export type Initiation = 'auto' | 'static' | 'dynamic'
@@ -88,8 +90,11 @@ export function validateVietQr(input: VietQrInput): VietQrIssue[] {
     const raw = typeof input.amount === 'number' ? String(input.amount) : input.amount
     if (typeof input.amount === 'number' ? !Number.isFinite(input.amount) || input.amount < 0 : /[^\d.,\s]/.test(raw)) {
       issues.push({field: 'amount', code: 'amount-format', severity: 'error'})
-    } else if (normalizeAmount(input.amount).length > AMOUNT_MAX_DIGITS) {
-      issues.push({field: 'amount', code: 'amount-too-large', severity: 'error'})
+    } else {
+      const normalized = normalizeAmount(input.amount)
+      if (normalized && (normalized.length > AMOUNT_MAX_DIGITS || BigInt(normalized) > BigInt(AMOUNT_MAX))) {
+        issues.push({field: 'amount', code: 'amount-too-large', severity: 'error'})
+      }
     }
   }
 
