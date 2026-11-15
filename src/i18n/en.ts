@@ -589,6 +589,7 @@ export const en: Record<MessageKey, string> = {
   'support.anyAmount': 'Enter on scan',
   'support.openPay': 'Open payment page',
   'support.invalidHint': 'Enter a valid amount (e.g. 50k, 100,000) to generate the QR code.',
+  'support.tooMuch': 'Whoa, too generous!',
 
   // About → FAQ
   'faq.title': 'Frequently asked questions',

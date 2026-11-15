@@ -1,5 +1,5 @@
-import {useState} from 'react'
-import {Ban, Banknote, Code2, Coffee, CupSoda, EggFried, ExternalLink, GlassWater, Heart, Sandwich, Volume2, type LucideIcon} from 'lucide-react'
+import {useState, type ComponentType} from 'react'
+import {Banknote, Code2, Coffee, CupSoda, ExternalLink, GlassWater, Heart, Sandwich, Volume2} from 'lucide-react'
 import {EmptyState} from '@astryxdesign/core/EmptyState'
 import {IconButton} from '@astryxdesign/core/IconButton'
 import {TextInput} from '@astryxdesign/core/TextInput'
@@ -27,7 +27,59 @@ const SUPPORT_ACCOUNT = {
   accountName: 'NGUYEN THI NGAN',
 } as const
 
+const CUSTOM_AMOUNT_MAX = 10_000_000
 const SUPPORT_QR_STYLE = {...DEFAULT_QR_STYLE, ecc: 'M' as const}
+
+type IconComponent = ComponentType<{size?: number; className?: string; 'aria-hidden'?: boolean}>
+
+/** Lucide-styled drooling face icon for the "fasting" breakfast option. */
+function DroolingFace({size = 24, className, 'aria-hidden': ariaHidden}: {size?: number; className?: string; 'aria-hidden'?: boolean}) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden={ariaHidden}>
+      <circle cx="12" cy="12" r="10" />
+      <path d="M8 9.5c.6-.8 1.6-.8 2.2 0" />
+      <path d="M13.8 9.5c.6-.8 1.6-.8 2.2 0" />
+      <path d="M8.5 14c1 1.3 2.2 2 3.5 2s2.5-.7 3.5-2" />
+      <path d="M13.8 15.6v2.7a1.1 1.1 0 0 0 2.2 0v-4" />
+    </svg>
+  )
+}
+
+/** Sunny-side-up fried egg icon with white albumen and golden yolk. */
+function FriedEggIcon({size = 24, className, 'aria-hidden': ariaHidden}: {size?: number; className?: string; 'aria-hidden'?: boolean}) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden={ariaHidden}>
+      <path
+        d="M12 3C8.5 3 6.2 4.8 5 7.5c-1.1 2.4-2.5 4.2-2.2 7 .3 3 2.8 5.8 6 6.3 2.2.4 4.1-.2 6-.8 2.8-.9 5.9-2.2 6.2-5.6.2-2.4-1.4-4.2-2.5-6.2C17.2 5.7 15.2 3 12 3Z"
+        fill="#fffbeb"
+      />
+      <circle cx="11.8" cy="12.2" r="4.2" fill="#fbbf24" strokeWidth={1.8} />
+      <path d="M10.1 11.2a2 2 0 0 1 1.8-1.2" stroke="#ffffff" strokeWidth={1.6} />
+    </svg>
+  )
+}
 
 type DrinkId = 'blackCoffee' | 'milkCoffee' | 'milkTea' | 'icedTea' | 'custom'
 type BreakfastId = 'fasting' | 'bread' | 'breadEgg'
@@ -37,7 +89,7 @@ interface DrinkOption {
   labelKey: MessageKey
   asciiLabel: string
   amount: number | null
-  icon: LucideIcon
+  icon: IconComponent
   hue: Hue
 }
 
@@ -46,7 +98,7 @@ interface BreakfastOption {
   labelKey: MessageKey
   asciiLabel: string
   amount: number
-  icon: LucideIcon
+  icon: IconComponent
   hue: Hue
 }
 
@@ -59,9 +111,9 @@ const DRINKS: readonly DrinkOption[] = [
 ]
 
 const BREAKFASTS: readonly BreakfastOption[] = [
-  {id: 'fasting', labelKey: 'support.breakfast.fasting', asciiLabel: '', amount: 0, icon: Ban, hue: 'slate'},
+  {id: 'fasting', labelKey: 'support.breakfast.fasting', asciiLabel: '', amount: 0, icon: DroolingFace, hue: 'slate'},
   {id: 'bread', labelKey: 'support.breakfast.bread', asciiLabel: 'Banh mi', amount: 15_000, icon: Sandwich, hue: 'amber'},
-  {id: 'breadEgg', labelKey: 'support.breakfast.breadEgg', asciiLabel: 'Banh mi op la', amount: 25_000, icon: EggFried, hue: 'orange'},
+  {id: 'breadEgg', labelKey: 'support.breakfast.breadEgg', asciiLabel: 'Banh mi op la', amount: 25_000, icon: FriedEggIcon, hue: 'orange'},
 ]
 
 function buildSupportPurpose(drink: DrinkOption, breakfast: BreakfastOption): string {
@@ -99,6 +151,7 @@ export function BuyMeCoffee() {
   let customError: MessageKey | undefined
   if (drink.id === 'custom' && trimmedCustom) {
     if (customParsed === null) customError = 'gen.invalid.amount'
+    else if (customParsed > CUSTOM_AMOUNT_MAX) customError = 'support.tooMuch'
     else if (normalizeAmount(customParsed).length > AMOUNT_MAX_DIGITS) customError = 'gen.invalid.amountLarge'
   }
 
@@ -252,7 +305,13 @@ export function BuyMeCoffee() {
             scene={scene}
             label={`VietQR ${bank?.shortName ?? 'VietinBank'} ${SUPPORT_ACCOUNT.accountNumber}`}
             maxWidth={340}
-            empty={<EmptyState icon={<Coffee size={36} aria-hidden />} title={t('support.invalidHint')} isCompact />}
+            empty={
+              <EmptyState
+                icon={<Coffee size={36} aria-hidden />}
+                title={customError === 'support.tooMuch' ? t('support.tooMuch') : t('support.invalidHint')}
+                isCompact
+              />
+            }
           />
           <ExportActions
             scene={scene}

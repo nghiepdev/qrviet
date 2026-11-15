@@ -605,6 +605,7 @@ export const vi = {
   'support.anyAmount': 'Tuỳ tâm khi quét',
   'support.openPay': 'Mở trang chuyển khoản',
   'support.invalidHint': 'Nhập số tiền hợp lệ (VD: 50k, 100.000) để tạo mã QR.',
+  'support.tooMuch': 'Nhiều quá pro ơi!',
 
   // About → FAQ
   'faq.title': 'Câu hỏi thường gặp',
