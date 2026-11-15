@@ -3,6 +3,7 @@ import {BookUser, Menu, QrCode, ScanLine, Shapes} from 'lucide-react'
 import {useAppShellMobile} from '@astryxdesign/core/AppShell'
 import {useT, type MessageKey} from '#/i18n'
 import {hasNavEntry, isActivePath} from '#/app/nav'
+import {requestCameraStart} from '#/components/scan/camera-scanner'
 
 const TABS: Array<{to: string; label: MessageKey; icon: typeof QrCode; fab?: boolean}> = [
   {to: '/', label: 'nav.createShort', icon: QrCode},
@@ -28,6 +29,7 @@ export function BottomTabs() {
             <li key={tab.to}>
               <Link
                 to={tab.to as never}
+                onClick={tab.fab ? requestCameraStart : undefined}
                 className={`qv-tab${tab.fab ? ' qv-tab-fab' : ''}`}
                 aria-current={active ? 'page' : undefined}
                 // The centre action is icon-only, like most mobile apps; keep its accessible name.

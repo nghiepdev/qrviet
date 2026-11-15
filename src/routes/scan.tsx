@@ -6,8 +6,9 @@ import {Tab, TabList} from '@astryxdesign/core/TabList'
 import {TextArea} from '@astryxdesign/core/TextArea'
 import {EmptyState} from '@astryxdesign/core/EmptyState'
 import {useToast} from '@astryxdesign/core/Toast'
+import {useMediaQuery} from '@astryxdesign/core/hooks'
 import {PageBody, PageHeader, Panel} from '#/components/common/page-header'
-import {CameraScanner} from '#/components/scan/camera-scanner'
+import {CameraScanner, subscribeCameraStart} from '#/components/scan/camera-scanner'
 import {ResultCard, type ScanResult} from '#/components/scan/result-card'
 import {decodeBlob, imageFromDataTransfer} from '#/lib/scan'
 import {classifyPayload} from '#/lib/payloads'
@@ -63,13 +64,18 @@ function ScanPage() {
   const navigate = useNavigate({from: '/scan'})
   const search = Route.useSearch()
   const autoSave = useSettings((s) => s.autoSaveHistory)
+  const isMobile = useMediaQuery('(max-width: 767.98px)')
   const [tab, setTab] = useState('camera')
   const [results, setResults] = useState<ScanResult[]>([])
   const [text, setText] = useState('')
   const [dragging, setDragging] = useState(false)
   const [busy, setBusy] = useState(false)
+  const [pasting, setPasting] = useState(false)
+  const [externalScanCount, setExternalScanCount] = useState(0)
+  const [startRequest, setStartRequest] = useState(0)
   const fileRef = useRef<HTMLInputElement>(null)
   const resultsRef = useRef<HTMLDivElement>(null)
+  const activeTab = isMobile && tab === 'image' ? 'camera' : tab
 
   const push = (value: string, source: ScanResult['source']) => {
     const trimmed = value.trim()
@@ -85,6 +91,74 @@ function ScanPage() {
     setBusy(false)
     if (!found?.length) return showToast({body: t('scan.notFound'), type: 'error', uniqueID: 'scan'})
     found.forEach((f) => push(f, 'image'))
+    setExternalScanCount((c) => c + 1)
+  }
+
+  const pasteFromClipboard = async () => {
+    const clipboard = typeof navigator !== 'undefined' ? navigator.clipboard : undefined
+    if (!clipboard) {
+      showToast({body: t('scan.pastePermission'), type: 'error', uniqueID: 'scan'})
+      return
+    }
+    setPasting(true)
+    try {
+      if (typeof clipboard.read === 'function') {
+        const items = await clipboard.read()
+        for (const item of items) {
+          const imageType = item.types.find((type) => type.startsWith('image/'))
+          if (imageType) {
+            const blob = await item.getType(imageType)
+            await decodeImage(blob)
+            return
+          }
+        }
+        for (const item of items) {
+          if (item.types.includes('text/plain')) {
+            const blob = await item.getType('text/plain')
+            const pasted = (await blob.text()).trim()
+            if (pasted) {
+              push(pasted, 'text')
+              setExternalScanCount((c) => c + 1)
+              return
+            }
+          }
+        }
+        showToast({body: t('scan.pasteEmpty'), type: 'error', uniqueID: 'scan'})
+        return
+      }
+      if (typeof clipboard.readText === 'function') {
+        const pasted = (await clipboard.readText()).trim()
+        if (pasted) {
+          push(pasted, 'text')
+          setExternalScanCount((c) => c + 1)
+          return
+        }
+        showToast({body: t('scan.pasteEmpty'), type: 'error', uniqueID: 'scan'})
+        return
+      }
+      showToast({body: t('scan.pastePermission'), type: 'error', uniqueID: 'scan'})
+    } catch (e) {
+      const name = (e as DOMException | undefined)?.name
+      if (name !== 'NotAllowedError' && typeof clipboard.readText === 'function') {
+        try {
+          const pasted = (await clipboard.readText()).trim()
+          if (pasted) {
+            push(pasted, 'text')
+            setExternalScanCount((c) => c + 1)
+            return
+          }
+        } catch {
+          /* fall through */
+        }
+      }
+      showToast({
+        body: t(name === 'NotAllowedError' ? 'scan.pastePermission' : 'scan.pasteEmpty'),
+        type: 'error',
+        uniqueID: 'scan',
+      })
+    } finally {
+      setPasting(false)
+    }
   }
 
   // Share target (Android "Share → QRViet") delivers text/url as query params.
@@ -119,6 +193,15 @@ function ScanPage() {
     return () => window.removeEventListener('paste', listener)
   }, [])
 
+  useEffect(
+    () =>
+      subscribeCameraStart(() => {
+        setTab('camera')
+        setStartRequest((n) => n + 1)
+      }),
+    [],
+  )
+
   const onDrop = (e: React.DragEvent) => {
     e.preventDefault()
     setDragging(false)
@@ -146,14 +229,24 @@ function ScanPage() {
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           <Panel hue="blue" className="md:self-start">
             <div className="flex flex-col gap-4">
-              <TabList value={tab} onChange={setTab} layout="fill" role="tablist">
+              <TabList value={activeTab} onChange={setTab} layout="fill" role="tablist">
                 <Tab value="camera" label={t('scan.camera')} panelId="scan-panel" />
-                <Tab value="image" label={t('scan.image')} panelId="scan-panel" />
+                {!isMobile && <Tab value="image" label={t('scan.image')} panelId="scan-panel" />}
                 <Tab value="text" label={t('scan.text')} panelId="scan-panel" />
               </TabList>
               <div id="scan-panel" role="tabpanel" className="flex flex-col gap-4">
-              {tab === 'camera' && <CameraScanner onResult={(r) => push(r, 'camera')} />}
-              {tab === 'image' && (
+              {activeTab === 'camera' && (
+                <CameraScanner
+                  onResult={(r) => push(r, 'camera')}
+                  onPickImage={() => fileRef.current?.click()}
+                  isPickingImage={busy}
+                  onPaste={() => void pasteFromClipboard()}
+                  isPasting={pasting}
+                  externalScanCount={externalScanCount}
+                  startRequest={startRequest}
+                />
+              )}
+              {activeTab === 'image' && (
                 <button
                   type="button"
                   onClick={() => fileRef.current?.click()}
@@ -177,7 +270,7 @@ function ScanPage() {
                   e.target.value = ''
                 }}
               />
-              {tab === 'text' && (
+              {activeTab === 'text' && (
                 <div className="flex flex-col gap-3">
                   <TextArea label={t('scan.text')} isLabelHidden value={text} onChange={setText} placeholder={t('scan.textPlaceholder')} rows={5} hasSpellCheck={false} />
                   <div>
