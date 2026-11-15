@@ -1,5 +1,8 @@
 import raw from './banks.json'
+import {BANK_APPS_BY_CODE, type BankAppSpec, type BankDeeplinkTier} from './bank-apps'
 import {foldForSearch} from '#/lib/text'
+
+export type {BankAppSpec, BankDeeplinkTier} from './bank-apps'
 
 export interface Bank {
   bin: string
@@ -41,6 +44,26 @@ export function bankIconUrl(bank: Bank | undefined | null): string | null {
   return path ? `${import.meta.env.BASE_URL}${path}` : null
 }
 
+/** Offline deeplink / app launch specification for a bank, if supported. */
+export function getBankApp(bankOrRef: Bank | string | null | undefined): BankAppSpec | undefined {
+  const bank = typeof bankOrRef === 'string' ? resolveBank(bankOrRef) : bankOrRef
+  if (!bank) return undefined
+  return BANK_APPS_BY_CODE.get(bank.code.toUpperCase())
+}
+
+export function getBankDeeplinkTier(bankOrRef: Bank | string | null | undefined): BankDeeplinkTier {
+  return getBankApp(bankOrRef)?.tier ?? 'none'
+}
+
+export function hasBankDeeplink(bank: Bank | undefined | null): boolean {
+  return getBankDeeplinkTier(bank) !== 'none'
+}
+
+export function hasBankQrHandoff(bank: Bank | undefined | null): boolean {
+  const tier = getBankDeeplinkTier(bank)
+  return tier === 'autofill' || tier === 'qrpay'
+}
+
 /** Most-used banks shown first in the picker. */
 export const POPULAR_BINS = [
   '970436', // Vietcombank
@@ -56,6 +79,8 @@ export const POPULAR_BINS = [
   '971025', // MoMo
   '971101', // ZaloPay
 ]
+
+export const DEEPLINK_BANKS: Bank[] = BANKS.filter((b) => hasBankDeeplink(b))
 
 const searchIndex = new Map(
   BANKS.map((b) => [b.bin, foldForSearch(`${b.shortName} ${b.code} ${b.name} ${b.bin} ${b.swift ?? ''}`)]),

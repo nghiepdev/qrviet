@@ -1,0 +1,579 @@
+[
+  {
+    "code": "MB",
+    "ios": {
+      "scheme": "mbbank://",
+      "appStoreId": "1205807363",
+      "handoff": {
+        "kind": "qrPay",
+        "path": "applink"
+      }
+    },
+    "android": {
+      "package": "com.mbmobile"
+    },
+    "tier": "autofill"
+  },
+  {
+    "code": "MOMO",
+    "ios": {
+      "scheme": "momo://",
+      "appStoreId": "918751511",
+      "handoff": {
+        "kind": "momoP2P"
+      }
+    },
+    "android": {
+      "package": "com.mservice.momotransfer"
+    },
+    "tier": "autofill"
+  },
+  {
+    "code": "ICB",
+    "ios": {
+      "scheme": "vietinbankipay://",
+      "appStoreId": "689963454",
+      "handoff": {
+        "kind": "qrPay",
+        "path": "host.qrTransfer"
+      }
+    },
+    "android": {
+      "package": "com.vietinbank.ipay"
+    },
+    "tier": "qrpay"
+  },
+  {
+    "code": "BIDV",
+    "ios": {
+      "scheme": "dl.bidvsmartbanking.vn://",
+      "appStoreId": "1061867449",
+      "handoff": {
+        "kind": "qrPay",
+        "path": "applink"
+      }
+    },
+    "android": {
+      "package": "com.vnpay.bidv"
+    },
+    "tier": "qrpay"
+  },
+  {
+    "code": "ACB",
+    "ios": {
+      "scheme": "acbone://",
+      "appStoreId": "950141024",
+      "handoff": {
+        "kind": "qrPay",
+        "path": "applink"
+      }
+    },
+    "android": {
+      "package": "mobile.acb.com.vn"
+    },
+    "tier": "qrpay"
+  },
+  {
+    "code": "TCB",
+    "ios": {
+      "scheme": "tcb://",
+      "appStoreId": "1548623362",
+      "handoff": {
+        "kind": "qrPay",
+        "path": "applink"
+      }
+    },
+    "android": {
+      "package": "vn.com.techcombank.bb.app"
+    },
+    "tier": "qrpay"
+  },
+  {
+    "code": "VPB",
+    "ios": {
+      "scheme": "vpbankneo://",
+      "appStoreId": "1209349510",
+      "handoff": {
+        "kind": "qrPay",
+        "path": "applink"
+      }
+    },
+    "android": {
+      "package": "com.vnpay.vpbankonline"
+    },
+    "tier": "qrpay"
+  },
+  {
+    "code": "STB",
+    "ios": {
+      "scheme": "sacombankpay://",
+      "appStoreId": "1436283663",
+      "handoff": {
+        "kind": "qrPay",
+        "path": "applink"
+      }
+    },
+    "android": {
+      "package": "com.sacombank.ewallet"
+    },
+    "tier": "qrpay"
+  },
+  {
+    "code": "TPB",
+    "ios": {
+      "scheme": "hydro://",
+      "appStoreId": "450464147",
+      "handoff": {
+        "kind": "qrPay",
+        "path": "applink"
+      }
+    },
+    "android": {
+      "package": "com.tpb.mb.gprsandroid"
+    },
+    "tier": "qrpay"
+  },
+  {
+    "code": "VIB",
+    "ios": {
+      "scheme": "myvib2://",
+      "appStoreId": "1626624790",
+      "handoff": {
+        "kind": "qrPay",
+        "path": "applink"
+      }
+    },
+    "android": {
+      "package": "com.vib.myvib2"
+    },
+    "tier": "qrpay"
+  },
+  {
+    "code": "SHB",
+    "ios": {
+      "scheme": "saha://",
+      "appStoreId": "1661457183",
+      "handoff": {
+        "kind": "qrPay",
+        "path": "applink"
+      }
+    },
+    "android": {
+      "package": "vn.shb.saha.mbanking"
+    },
+    "tier": "qrpay"
+  },
+  {
+    "code": "MSB",
+    "ios": {
+      "scheme": "msbdigibank://",
+      "appStoreId": "436134873",
+      "handoff": {
+        "kind": "qrPay",
+        "path": "applink"
+      }
+    },
+    "android": {
+      "package": "vn.com.msb.smartBanking"
+    },
+    "tier": "qrpay"
+  },
+  {
+    "code": "OCB",
+    "ios": {
+      "scheme": "newomni-app://",
+      "appStoreId": "6472261202",
+      "handoff": {
+        "kind": "qrPay",
+        "path": "applink"
+      }
+    },
+    "android": {
+      "package": "vn.com.ocb.awe"
+    },
+    "tier": "qrpay"
+  },
+  {
+    "code": "SEAB",
+    "ios": {
+      "scheme": "seamobile://",
+      "appStoreId": "846407152",
+      "handoff": {
+        "kind": "qrPay",
+        "path": "applink"
+      }
+    },
+    "android": {
+      "package": "vn.com.seabank.mb1"
+    },
+    "tier": "qrpay"
+  },
+  {
+    "code": "HDB",
+    "ios": {
+      "scheme": "hdbankmobile://",
+      "appStoreId": "1461658565",
+      "handoff": {
+        "kind": "qrPay",
+        "path": "applink"
+      }
+    },
+    "android": {
+      "package": "com.vnpay.hdbank"
+    },
+    "tier": "qrpay"
+  },
+  {
+    "code": "EIB",
+    "ios": {
+      "scheme": "eximbankomnimobile://",
+      "appStoreId": "1571427361",
+      "handoff": {
+        "kind": "qrPay",
+        "path": "applink"
+      }
+    },
+    "android": {
+      "package": "com.vnpay.EximBankOmni"
+    },
+    "tier": "qrpay"
+  },
+  {
+    "code": "LPB",
+    "ios": {
+      "scheme": "lv24h://",
+      "appStoreId": "1488794748",
+      "handoff": {
+        "kind": "qrPay",
+        "path": "applink"
+      }
+    },
+    "android": {
+      "package": "vn.com.lpbank.digibank"
+    },
+    "tier": "qrpay"
+  },
+  {
+    "code": "PVCB",
+    "ios": {
+      "scheme": "pvcapp://",
+      "appStoreId": "6467857410",
+      "handoff": {
+        "kind": "qrPay",
+        "path": "applink"
+      }
+    },
+    "android": {
+      "package": "com.pvcombank.retail"
+    },
+    "tier": "qrpay"
+  },
+  {
+    "code": "ABB",
+    "ios": {
+      "scheme": "vn.abbank.retail://",
+      "appStoreId": "6636532294",
+      "handoff": {
+        "kind": "qrPay",
+        "path": "applink"
+      }
+    },
+    "android": {
+      "package": "vn.abbank.retail"
+    },
+    "tier": "qrpay"
+  },
+  {
+    "code": "VCCB",
+    "ios": {
+      "scheme": "bvb.digimi://",
+      "appStoreId": "1526444697",
+      "handoff": {
+        "kind": "qrPay",
+        "path": "applink"
+      }
+    },
+    "android": {
+      "package": "vn.banvietbank.mobilebanking"
+    },
+    "tier": "qrpay"
+  },
+  {
+    "code": "PGB",
+    "ios": {
+      "scheme": "pgbank.partner://",
+      "appStoreId": "1537765475",
+      "handoff": {
+        "kind": "qrPay",
+        "path": "applink"
+      }
+    },
+    "android": {
+      "package": "pgbankApp.pgbank.com.vn"
+    },
+    "tier": "qrpay"
+  },
+  {
+    "code": "VAB",
+    "ios": {
+      "scheme": "zalo.vietaomni://",
+      "appStoreId": "6744814738",
+      "handoff": {
+        "kind": "qrPay",
+        "path": "applink"
+      }
+    },
+    "android": {
+      "package": "com.vn.vietaomni"
+    },
+    "tier": "qrpay"
+  },
+  {
+    "code": "VIETBANK",
+    "ios": {
+      "scheme": "vietbankzalo://",
+      "appStoreId": "6746633957",
+      "handoff": {
+        "kind": "qrPay",
+        "path": "applink"
+      }
+    },
+    "android": {
+      "package": "com.vn.vietbankomni"
+    },
+    "tier": "qrpay"
+  },
+  {
+    "code": "MBV",
+    "ios": {
+      "scheme": "mbv://",
+      "appStoreId": "6742386787",
+      "handoff": {
+        "kind": "qrPay",
+        "path": "applink"
+      }
+    },
+    "android": {
+      "package": "com.mbv.mobilebanking"
+    },
+    "tier": "qrpay"
+  },
+  {
+    "code": "WVN",
+    "ios": {
+      "scheme": "wvbs://",
+      "appStoreId": "1501785125",
+      "handoff": {
+        "kind": "qrPay",
+        "path": "applink"
+      }
+    },
+    "android": {
+      "package": "vn.com.woori.smart"
+    },
+    "tier": "qrpay"
+  },
+  {
+    "code": "KBANK",
+    "ios": {
+      "scheme": "kbank.kplusvn://",
+      "appStoreId": "1586576195",
+      "handoff": {
+        "kind": "qrPay",
+        "path": "applink"
+      }
+    },
+    "android": {
+      "package": "com.kasikornbank.kplus.vn"
+    },
+    "tier": "qrpay"
+  },
+  {
+    "code": "NAB",
+    "ios": {
+      "scheme": "nabtransfermoney://",
+      "appStoreId": "1456997296",
+      "handoff": {
+        "kind": "namABank"
+      }
+    },
+    "android": {
+      "package": "ops.namabank.com.vn"
+    },
+    "tier": "qrpay"
+  },
+  {
+    "code": "CAKE",
+    "ios": {
+      "scheme": "cake.vn://",
+      "appStoreId": "1551907051",
+      "handoff": {
+        "kind": "qrPay",
+        "path": "applink"
+      }
+    },
+    "android": {
+      "package": "xyz.be.cake"
+    },
+    "tier": "qrpay"
+  },
+  {
+    "code": "TIMO",
+    "ios": {
+      "scheme": "timo://",
+      "appStoreId": "1521230347",
+      "handoff": {
+        "kind": "qrPay",
+        "path": "applink"
+      }
+    },
+    "android": {
+      "package": "io.lifestyle.plus"
+    },
+    "tier": "qrpay"
+  },
+  {
+    "code": "VCB",
+    "ios": {
+      "scheme": "vietcombankmobile://",
+      "appStoreId": "561433133",
+      "handoff": null
+    },
+    "android": {
+      "package": "com.VCB"
+    },
+    "tier": "launch"
+  },
+  {
+    "code": "VBA",
+    "ios": {
+      "scheme": "agribankmobile://",
+      "appStoreId": "935944952",
+      "handoff": null
+    },
+    "android": {
+      "package": "com.vnpay.Agribank3g"
+    },
+    "tier": "launch"
+  },
+  {
+    "code": "SHBVN",
+    "ios": {
+      "scheme": "shinhanglbvnbank://",
+      "appStoreId": "1071033810",
+      "handoff": null
+    },
+    "android": {
+      "package": "com.shinhan.global.vn.bank"
+    },
+    "tier": "launch"
+  },
+  {
+    "code": "NCB",
+    "ios": {
+      "scheme": "ncbizimobile://",
+      "appStoreId": "1465217154",
+      "handoff": null
+    },
+    "android": {
+      "package": "com.ncb.bank"
+    },
+    "tier": "launch"
+  },
+  {
+    "code": "SCB",
+    "ios": {
+      "scheme": "scbmobilebanking://",
+      "appStoreId": "954973621",
+      "handoff": null
+    },
+    "android": {
+      "package": "com.vnpay.SCB"
+    },
+    "tier": "launch"
+  },
+  {
+    "code": "KLB",
+    "ios": {
+      "scheme": "kienlongbankmobilebanking://",
+      "appStoreId": "1562823941",
+      "handoff": null
+    },
+    "android": {
+      "package": "com.sunshine.ksbank"
+    },
+    "tier": "launch"
+  },
+  {
+    "code": "CIMB",
+    "ios": {
+      "scheme": "cimb://",
+      "appStoreId": "1318127958",
+      "handoff": null
+    },
+    "android": {
+      "package": "vn.cimbbank.octo"
+    },
+    "tier": "launch"
+  },
+  {
+    "code": "SGICB",
+    "ios": {
+      "scheme": "saigonbankmobilebanking://",
+      "appStoreId": "1481832587",
+      "handoff": null
+    },
+    "android": {
+      "package": "com.vnpay.sgbank"
+    },
+    "tier": "launch"
+  },
+  {
+    "code": "BVB",
+    "ios": {
+      "scheme": "baovietmobile://",
+      "appStoreId": "1504422967",
+      "handoff": null
+    },
+    "android": {
+      "package": "com.vnpay.bvbank"
+    },
+    "tier": "launch"
+  },
+  {
+    "code": "COOPBANK",
+    "ios": {
+      "scheme": "coopbankmobile://",
+      "appStoreId": "1578445811",
+      "handoff": null
+    },
+    "android": {
+      "package": "com.vnpay.coopbank"
+    },
+    "tier": "launch"
+  },
+  {
+    "code": "PBVN",
+    "ios": {
+      "scheme": "publicbankmobile://",
+      "appStoreId": "1573736472",
+      "handoff": null
+    },
+    "android": {
+      "package": "com.vnpay.publicbank"
+    },
+    "tier": "launch"
+  },
+  {
+    "code": "ZALOPAY",
+    "ios": {
+      "scheme": "zalopay://",
+      "appStoreId": "1112407590",
+      "handoff": null
+    },
+    "android": {
+      "package": "vn.com.vng.zalopay"
+    },
+    "tier": "launch"
+  }
+]

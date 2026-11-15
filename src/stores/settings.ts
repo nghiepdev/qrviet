@@ -33,6 +33,7 @@ export interface Settings {
   contentMode: ContentMode
   favoriteBins: string[]
   recentBins: string[]
+  preferredBankAppBin: string | null
   autoSaveHistory: boolean
   installDismissedAt: number | null
 }
@@ -60,6 +61,7 @@ export const DEFAULT_SETTINGS: Settings = {
   contentMode: 'relaxed',
   favoriteBins: [],
   recentBins: [],
+  preferredBankAppBin: null,
   autoSaveHistory: true,
   installDismissedAt: null,
 }
@@ -110,6 +112,10 @@ export function toggleFavoriteBank(bin: string) {
 
 export function pushRecentBank(bin: string) {
   settingsStore.setState((s) => ({...s, recentBins: [bin, ...s.recentBins.filter((b) => b !== bin)].slice(0, 6)}))
+}
+
+export function setPreferredBankApp(bin: string | null) {
+  settingsStore.setState((s) => ({...s, preferredBankAppBin: bin}))
 }
 
 export function cycleMode() {

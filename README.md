@@ -5,7 +5,7 @@
 [![pnpm 12](https://img.shields.io/badge/pnpm-12-f69220?logo=pnpm&logoColor=white)](https://pnpm.io/)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-Create, scan and share **VietQR** bank-transfer codes for every Vietnamese bank and e-wallet.
+Create, scan and share **VietQR** bank-transfer codes — and launch **40+ Vietnamese banking & e-wallet apps via offline Deeplinks** — for every Vietnamese bank and e-wallet.
 
 QRViet is a static single-page app: there is no server, it installs as a PWA, it works offline and your data never leaves your device. The interface is in Vietnamese by default, with a complete English translation.
 
@@ -49,12 +49,13 @@ QRViet is a static single-page app: there is no server, it installs as a PWA, it
 ### Scan
 
 - **Inputs**: the camera (BarcodeDetector with a jsQR fallback) with torch, camera switching and continuous scanning; image files, pasted screenshots and drag and drop; pasted text; content shared from other apps (Web Share Target).
-- **Results**: the bank, the amount in words, the CRC check and the full EMV field table, with actions to edit and recreate the code or save the account.
+- **Results**: the bank, the amount in words, the CRC check and the full EMV field table, with actions to launch your banking app via **Deeplink**, edit and recreate the code, or save the account.
 - **Other QR content**: links, Wi-Fi networks, vCard and MeCard contacts, email, SMS, phone numbers, locations and calendar events.
 
 ### Share and automate
 
-- **Payment links**: a payment page whose data lives in the URL `#` fragment, which browsers never send to a server. It has copy buttons for every field, a step-by-step guide, an expiry countdown, a note and the amount in words (read aloud on request), plus a printable QR code that opens the link. On request, a link also shows the payee and amount in its preview on Zalo or Facebook (see [Privacy](#privacy)).
+- **Payment links**: a payment page whose data lives in the URL `#` fragment, which browsers never send to a server. It has copy buttons for every field, an offline **Deeplink** launcher for banking apps, a step-by-step guide, an expiry countdown, a note and the amount in words (read aloud on request), plus a printable QR code that opens the link. On request, a link also shows the payee and amount in its preview on Zalo or Facebook (see [Privacy](#privacy)).
+- **Offline banking app Deeplinks**: launch 41 Vietnamese banking and e-wallet apps directly from `/pay` or `/scan` with zero network calls or intermediary servers. Classifies capability honestly per app (`Deeplink · Auto-fill` for verified MB Bank & MoMo P2P on iOS, `Deeplink · QR Pay` for unsigned VietQR handoff on iOS, and `Deeplink` quick-launch with automatic account clipboard copy on others/Android), warns inside In-App Browsers (Zalo, Messenger, Facebook, Instagram, TikTok, LINE), remembers the payer's preferred app, and monitors focus/visibility to offer App Store / Play Store or QR-save fallbacks.
 - **Batch**: paste rows from Excel or CSV (tab, `;` or `,` is detected automatically) or generate sequences (Room 101 to 120); every row is validated; download a ZIP file (PNG images plus a CSV of every row) or A4 label sheets (2×3, 3×4 or 4×5).
 - **QR studio**: links, text, Wi-Fi, vCard contacts, social profiles (Zalo, Facebook, TikTok and more), email, SMS, phone calls, locations and events, with a caption under the code and an HTML embed snippet.
 
@@ -62,7 +63,7 @@ QRViet is a static single-page app: there is no server, it installs as a PWA, it
 
 - **Account book**: card colours, a default account, JSON import and export, and undo for deletions.
 - **History**: search, filters, pinning and reopening past codes, each shown as the image that was exported.
-- **Bank directory**: 76 banks and e-wallets with BIN, short code, SWIFT code and NAPAS 247 support.
+- **Bank directory**: 76 banks and e-wallets with BIN, short code, SWIFT code, NAPAS 247 support, and **Deeplink** capability tags and filters.
 - **Utilities**: a VietQR string checker with CRC repair, amount in words, transfer-message cleanup, bill splitting and a CRC16 calculator.
 
 ### App
@@ -99,7 +100,7 @@ Then open <http://localhost:3000>.
 | `pnpm preview` | Serve the production build on port 4173, service worker and offline mode included. |
 | `pnpm typecheck` | Type-check the project without building it. |
 | `pnpm gen:splash` | Re-render the iOS launch screens after a change to the boot splash in `src/app/boot-splash.ts`. Needs Chrome; shrinks the images with ffmpeg when it is installed. |
-| `pnpm sync:banks` | Refresh `src/data/banks.json` and the logos in `public/banks/` from the public VietQR API. Needs network access; converts the logos to WebP with cwebp when it is installed. |
+| `pnpm sync:banks` | Refresh `src/data/banks.json`, `public/banks/` logos, and `src/data/bank-apps.json` by crawling VietQR APIs, `dl.vietqr.io`, and `vietqr-core`. Needs network access; converts logos to WebP with cwebp when installed (supports `--no-logos`, `--deeplinks-only`, `--no-deeplinks`). |
 
 Node.js runs the TypeScript in `scripts/` directly (type stripping), so the scripts need no build step.
 
@@ -140,8 +141,10 @@ QRViet is a client-only React app with no backend (on Netlify, one optional edge
 ```text
 src/
   app/                 # providers, navigation, PWA and keyboard helpers, boot splash, iOS launch screens
-  components/          # UI by area: bank, brand, common, layout, qr, scan, settings, vietqr
+  components/          # UI by area: bank, brand, common, layout, pay, qr, scan, settings, vietqr
   data/banks.json      # offline bank directory (pnpm sync:banks)
+  data/bank-apps.json  # offline banking & e-wallet app Deeplink specs (pnpm sync:banks)
+  data/bank-apps.ts    # typed Deeplink registry loader & App/Play Store URL helpers
   hooks/               # shared React hooks
   i18n/                # vi.ts (source of truth) and en.ts (type-checked for missing keys)
   lib/                 # plain TypeScript without React
@@ -150,6 +153,7 @@ src/
     money.ts, text.ts  #   VND amounts ("1tr2"), amounts in words, accent stripping
     payloads.ts        #   Wi-Fi, vCard and other payloads; classifying scanned content
     qr/                #   styled QR geometry, scene graph (SVG and Canvas), templates, export
+    deeplink.ts        #   offline banking app Deeplink plans, OS & IAB detection
     scan.ts, zip.ts, paylink.ts, persist.ts
   routes/              # file routes, one per page
     __root.tsx         #   the HTML document (head, boot splash) around the app
@@ -201,7 +205,7 @@ Please do not report security problems in public issues. The [security policy](S
 
 - [Astryx](https://github.com/meta/astryx), [TanStack](https://tanstack.com/), [Serwist](https://serwist.pages.dev/), [uqr](https://github.com/unjs/uqr), [jsQR](https://github.com/cozmo/jsQR) and [Lucide](https://lucide.dev/) icons.
 - The [Be Vietnam Pro](https://fonts.google.com/specimen/Be+Vietnam+Pro), [Inter](https://rsms.me/inter/) and [Nunito](https://fonts.google.com/specimen/Nunito) typefaces, packaged by [Fontsource](https://fontsource.org/).
-- The bank list and logos from the public VietQR API (`api.vietqr.io`).
+- The bank list, logos and deeplink catalogs from the public VietQR APIs (`api.vietqr.io` & `dl.vietqr.io`), alongside banking app Deeplink references from [Ngochiendev/vietqr-core](https://github.com/Ngochiendev/vietqr-core).
 
 ## License
 

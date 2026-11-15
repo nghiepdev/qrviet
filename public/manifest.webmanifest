@@ -2,7 +2,7 @@
   "id": "./",
   "name": "QRViet — Tiện ích VietQR",
   "short_name": "QRViet",
-  "description": "Tạo, quét và chia sẻ mã VietQR chuyển khoản cho mọi ngân hàng Việt Nam. Miễn phí, riêng tư, chạy cả khi offline.",
+  "description": "Tạo, quét, chia sẻ mã VietQR và mở app ngân hàng bằng Deeplink cho mọi ngân hàng Việt Nam. Miễn phí, riêng tư, chạy cả khi offline.",
   "lang": "vi",
   "dir": "ltr",
   "start_url": "./?source=pwa",

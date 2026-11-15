@@ -3,11 +3,15 @@ import {Check, ChevronDown, Search, Star} from 'lucide-react'
 import {TextInput} from '@astryxdesign/core/TextInput'
 import {Text} from '@astryxdesign/core/Text'
 import {Badge} from '@astryxdesign/core/Badge'
+import {SegmentedControl, SegmentedControlItem} from '@astryxdesign/core/SegmentedControl'
 import {AdaptiveSheet, useIsTouchSheet} from '#/components/common/adaptive-sheet'
 import {BankLogo} from './bank-logo'
-import {BANKS, POPULAR_BINS, getBankByBin, searchBanks, type Bank} from '#/data/banks'
+import {BankDeeplinkBadge} from './bank-deeplink-badge'
+import {BANKS, DEEPLINK_BANKS, POPULAR_BINS, getBankByBin, hasBankDeeplink, hasBankQrHandoff, searchBanks, type Bank} from '#/data/banks'
 import {useT, type TFunction} from '#/i18n'
 import {pushRecentBank, toggleFavoriteBank, useSettings} from '#/stores/settings'
+
+export type BankAppFilter = 'all' | 'deeplink' | 'autofill'
 
 interface Props {
   value: string
@@ -15,9 +19,10 @@ interface Props {
   label?: string
   error?: string
   isRequired?: boolean
+  onlyDeeplink?: boolean
 }
 
-export function BankPicker({value, onChange, label, error, isRequired}: Props) {
+export function BankPicker({value, onChange, label, error, isRequired, onlyDeeplink = false}: Props) {
   const t = useT()
   const [open, setOpen] = useState(false)
   // The sheet mounts on first open and stays mounted while closed, so it can animate out (and
@@ -50,7 +55,10 @@ export function BankPicker({value, onChange, label, error, isRequired}: Props) {
           <>
             <BankLogo bank={bank} size={36} />
             <span className="flex-1 min-w-0">
-              <span className="block font-semibold truncate">{bank.shortName}</span>
+              <span className="flex flex-wrap items-center gap-1.5">
+                <span className="font-semibold truncate">{bank.shortName}</span>
+                <BankDeeplinkBadge bank={bank} compact />
+              </span>
               <span className="block text-xs text-secondary truncate">{bank.name}</span>
             </span>
           </>
@@ -66,6 +74,7 @@ export function BankPicker({value, onChange, label, error, isRequired}: Props) {
           value={value}
           isOpen={open}
           onOpenChange={setOpen}
+          onlyDeeplink={onlyDeeplink}
           onSelect={(b) => {
             onChange(b.bin)
             pushRecentBank(b.bin)
@@ -77,43 +86,73 @@ export function BankPicker({value, onChange, label, error, isRequired}: Props) {
   )
 }
 
-/** Favourites, recents, popular, then every bank — or a flat search result. */
-function bankSections(query: string, favorites: string[], recent: string[], t: TFunction) {
-  if (query.trim()) return [{title: t('bank.all'), banks: searchBanks(query)}]
-  const pick = (bins: string[]) => bins.map((b) => getBankByBin(b)).filter((b): b is Bank => Boolean(b))
+/** Favourites, recents, popular, then every matching bank — or a flat search result. */
+function bankSections(query: string, pool: Bank[], favorites: string[], recent: string[], t: TFunction) {
+  if (query.trim()) return [{title: t('bank.all'), banks: searchBanks(query, pool)}]
+  const poolBins = new Set(pool.map((b) => b.bin))
+  const pick = (bins: string[]) => bins.filter((b) => poolBins.has(b)).map((b) => getBankByBin(b)).filter((b): b is Bank => Boolean(b))
   const out: Array<{title: string; banks: Bank[]}> = []
   const fav = pick(favorites)
   if (fav.length) out.push({title: t('bank.favorites'), banks: fav})
   const rec = pick(recent).filter((b) => !favorites.includes(b.bin))
   if (rec.length) out.push({title: t('bank.recent'), banks: rec})
-  out.push({title: t('bank.popular'), banks: pick(POPULAR_BINS)})
+  const pop = pick(POPULAR_BINS)
+  if (pop.length) out.push({title: t('bank.popular'), banks: pop})
   out.push({
     title: t('bank.all'),
-    banks: [...BANKS].sort((a, b) => Number(b.transfer) - Number(a.transfer) || a.shortName.localeCompare(b.shortName)),
+    banks: [...pool].sort((a, b) => Number(b.transfer) - Number(a.transfer) || a.shortName.localeCompare(b.shortName)),
   })
   return out
 }
 
-function BankSheet({value, isOpen, onOpenChange, onSelect}: {value: string; isOpen: boolean; onOpenChange: (open: boolean) => void; onSelect: (b: Bank) => void}) {
+export function BankSheet({
+  value,
+  isOpen,
+  onOpenChange,
+  onSelect,
+  onlyDeeplink = false,
+  title,
+}: {
+  value: string
+  isOpen: boolean
+  onOpenChange: (open: boolean) => void
+  onSelect: (b: Bank) => void
+  onlyDeeplink?: boolean
+  title?: string
+}) {
   const t = useT()
   const [query, setQuery] = useState('')
+  const [filter, setFilter] = useState<BankAppFilter>(onlyDeeplink ? 'deeplink' : 'all')
   const favorites = useSettings((s) => s.favoriteBins)
   const recent = useSettings((s) => s.recentBins)
   const touch = useIsTouchSheet()
 
-  const sections = bankSections(query, favorites, recent, t)
+  const poolBase = onlyDeeplink ? DEEPLINK_BANKS : BANKS
+  const pool =
+    filter === 'autofill'
+      ? poolBase.filter((b) => hasBankQrHandoff(b))
+      : filter === 'deeplink'
+        ? poolBase.filter((b) => hasBankDeeplink(b))
+        : poolBase
+
+  const sections = bankSections(query, pool, favorites, recent, t)
 
   const first = sections[0]?.banks[0]
 
   return (
-    <AdaptiveSheet isOpen={isOpen} onOpenChange={onOpenChange} title={t('bank.placeholder')} subtitle={t('bank.count', {count: BANKS.length})} width={560}>
+    <AdaptiveSheet
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
+      title={title ?? t('bank.placeholder')}
+      subtitle={t('bank.count', {count: pool.length})}
+      width={560}>
       <div className="flex flex-col gap-3">
         {/*
           Phones: the sheet itself scrolls (one scroll area, so swipe-to-close keeps working) and search
           stays pinned. No z-index: the rows paint under it and the sheet's grabber (z-index 1) stays on
           top, inside the 16px of padding the negative margin cancels while the search is not stuck.
         */}
-        <div className={touch ? 'sticky top-0 -mt-4 pt-4 -mx-1 px-1 pb-1 bg-surface' : undefined}>
+        <div className={`flex flex-col gap-2 ${touch ? 'sticky top-0 -mt-4 pt-4 -mx-1 px-1 pb-1 bg-surface' : ''}`}>
           <TextInput
             type="search"
             label={t('bank.search')}
@@ -128,6 +167,18 @@ function BankSheet({value, isOpen, onOpenChange, onSelect}: {value: string; isOp
             autoComplete="off"
             onEnter={() => first && onSelect(first)}
           />
+          <div className="overflow-x-auto scrollbar-none">
+            <SegmentedControl
+              label={t('bank.filterDeeplink')}
+              size="sm"
+              layout="fill"
+              value={filter}
+              onChange={(v) => setFilter(v as BankAppFilter)}>
+              {!onlyDeeplink && <SegmentedControlItem value="all" label={t('bank.filterAll')} />}
+              <SegmentedControlItem value="deeplink" label={onlyDeeplink ? t('bank.filterAll') : t('bank.filterDeeplink')} />
+              <SegmentedControlItem value="autofill" label={t('bank.filterAutofill')} />
+            </SegmentedControl>
+          </div>
         </div>
         <div className={`flex flex-col gap-4 -mx-1 px-1 pb-2 ${touch ? '' : 'max-h-[60dvh] overflow-y-auto overflow-x-hidden'}`} role="list">
           {sections.map((section) =>
@@ -166,8 +217,9 @@ function BankRow({bank, selected, favorite, onSelect}: {bank: Bank; selected: bo
         }`}>
         <BankLogo bank={bank} size={34} />
         <span className="flex-1 min-w-0">
-          <span className="flex items-center gap-2">
+          <span className="flex flex-wrap items-center gap-1.5">
             <span className="font-semibold truncate">{bank.shortName}</span>
+            <BankDeeplinkBadge bank={bank} compact />
             {!bank.transfer && <Badge variant="neutral" label={t('bank.napasNo')} />}
           </span>
           <span className="block text-xs text-secondary leading-snug wrap-break-word">{bank.name}</span>

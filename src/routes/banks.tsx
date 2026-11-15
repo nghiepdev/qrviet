@@ -4,11 +4,13 @@ import {Copy, Landmark, QrCode, Search, Star} from 'lucide-react'
 import {Badge} from '@astryxdesign/core/Badge'
 import {Button} from '@astryxdesign/core/Button'
 import {IconButton} from '@astryxdesign/core/IconButton'
+import {SegmentedControl, SegmentedControlItem} from '@astryxdesign/core/SegmentedControl'
 import {Switch} from '@astryxdesign/core/Switch'
 import {TextInput} from '@astryxdesign/core/TextInput'
 import {PageBody, PageHeader} from '#/components/common/page-header'
 import {BankLogo} from '#/components/bank/bank-logo'
-import {BANKS, searchBanks} from '#/data/banks'
+import {BankDeeplinkBadge} from '#/components/bank/bank-deeplink-badge'
+import {BANKS, hasBankDeeplink, hasBankQrHandoff, searchBanks} from '#/data/banks'
 import {toggleFavoriteBank, useSettings} from '#/stores/settings'
 import {useCopy} from '#/hooks/use-copy'
 import {useT} from '#/i18n'
@@ -19,6 +21,8 @@ export const Route = createFileRoute('/banks')({
   component: BanksPage,
 })
 
+type AppFilter = 'all' | 'deeplink' | 'autofill'
+
 function BanksPage() {
   const t = useT()
   const copy = useCopy()
@@ -26,8 +30,14 @@ function BanksPage() {
   const favorites = useSettings((s) => s.favoriteBins)
   const [query, setQuery] = useState('')
   const [napasOnly, setNapasOnly] = useState(false)
+  const [appFilter, setAppFilter] = useState<AppFilter>('all')
 
-  const base = napasOnly ? BANKS.filter((b) => b.transfer) : BANKS
+  const base = BANKS.filter((b) => {
+    if (napasOnly && !b.transfer) return false
+    if (appFilter === 'deeplink' && !hasBankDeeplink(b)) return false
+    if (appFilter === 'autofill' && !hasBankQrHandoff(b)) return false
+    return true
+  })
   const found = query.trim() ? searchBanks(query, base) : [...base].sort((a, b) => Number(b.transfer) - Number(a.transfer) || a.shortName.localeCompare(b.shortName))
   const list = [...found].sort((a, b) => Number(favorites.includes(b.bin)) - Number(favorites.includes(a.bin)))
 
@@ -36,13 +46,25 @@ function BanksPage() {
       <PageHeader title={t('bank.directoryTitle')} subtitle={t('bank.directorySubtitle', {count: BANKS.length})} icon={<Landmark size={22} />} />
       <PageBody>
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
-            <div className="flex-1">
+          <div className="flex flex-col lg:flex-row gap-3 lg:items-center">
+            <div className="flex-1 min-w-0">
               <TextInput type="search" label={t('bank.search')} isLabelHidden value={query} onChange={setQuery} placeholder={t('bank.search')} startIcon={Search} hasClear />
             </div>
-            <Switch label={t('bank.filterNapas')} value={napasOnly} onChange={setNapasOnly} size="sm" />
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="overflow-x-auto scrollbar-none">
+                <SegmentedControl label={t('bank.filterDeeplink')} size="sm" value={appFilter} onChange={(v) => setAppFilter(v as AppFilter)}>
+                  <SegmentedControlItem value="all" label={t('bank.filterAll')} />
+                  <SegmentedControlItem value="deeplink" label={t('bank.filterDeeplink')} />
+                  <SegmentedControlItem value="autofill" label={t('bank.filterAutofill')} />
+                </SegmentedControl>
+              </div>
+              <Switch label={t('bank.filterNapas')} value={napasOnly} onChange={setNapasOnly} size="sm" />
+            </div>
           </div>
-          <p className="text-sm text-secondary">{t('bank.count', {count: list.length})}</p>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-sm text-secondary">
+            <p>{t('bank.count', {count: list.length})}</p>
+            <p className="text-xs">{t('bank.tagLegend')}</p>
+          </div>
           <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {list.map((b) => {
               const fav = favorites.includes(b.bin)
@@ -76,8 +98,9 @@ function BanksPage() {
                       <dd className="qv-mono font-semibold truncate">{b.swift ?? '—'}</dd>
                     </div>
                   </dl>
-                  <div className="flex items-center gap-2 mt-auto">
+                  <div className="flex flex-wrap items-center gap-1.5 mt-auto">
                     {b.transfer ? <Badge variant="success" label={t('bank.napas')} /> : <Badge variant="neutral" label={t('bank.napasNo')} />}
+                    <BankDeeplinkBadge bank={b} />
                     <span className="ml-auto flex gap-1">
                       <IconButton label={t('bank.copyBin')} icon={<Copy size={15} />} variant="ghost" size="sm" onClick={() => void copy(b.bin, `${t('common.copied')}: ${b.bin}`)} />
                       <Button label={t('acc.createQr')} icon={<QrCode size={15} />} size="sm" onClick={() => void navigate({to: '/', search: {bank: b.bin}})} />

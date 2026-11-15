@@ -8,6 +8,7 @@ import {Heading} from '@astryxdesign/core/Heading'
 import {IconBadge, HUES} from '#/components/common/icon-badge'
 import {CopyField} from '#/components/common/copy-field'
 import {BankLogo} from '#/components/bank/bank-logo'
+import {BankAppLauncher} from '#/components/pay/bank-app-launcher'
 import {QrStage} from '#/components/qr/qr-stage'
 import {exportPng} from '#/components/qr/export-actions'
 import {resolveLogo, useQrScene} from '#/components/qr/use-qr-scene'
@@ -153,6 +154,20 @@ function PayPage() {
             {data.memo && <CopyField label={t('pay.purpose')} value={data.memo} />}
             <p className="mt-3 text-xs text-secondary">{t('pay.copyHint')}</p>
           </section>
+
+          <BankAppLauncher
+            payment={{
+              bin: bank.bin,
+              accountNumber: data.acc,
+              accountName: data.name,
+              amount: data.amount,
+              purpose: data.memo,
+              service: data.card ? 'card' : 'account',
+              rawPayload: payload,
+            }}
+            disabled={Boolean(expired)}
+            onSaveQr={() => void saveImage()}
+          />
 
           <section className={`${HUES.blue} qv-tint rounded-2xl border border-border p-5 shadow-sm`}>
             <div className="flex items-center gap-3">

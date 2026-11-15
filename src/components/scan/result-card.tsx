@@ -1,3 +1,4 @@
+import {useState} from 'react'
 import {useNavigate} from '@tanstack/react-router'
 import {
   BookmarkPlus,
@@ -12,6 +13,7 @@ import {
   Phone,
   ShieldAlert,
   ShieldCheck,
+  Smartphone,
   Trash2,
   UserRound,
   Wifi,
@@ -21,8 +23,10 @@ import {Button} from '@astryxdesign/core/Button'
 import {Collapsible} from '@astryxdesign/core/Collapsible'
 import {IconButton} from '@astryxdesign/core/IconButton'
 import {useToast} from '@astryxdesign/core/Toast'
+import {AdaptiveSheet} from '#/components/common/adaptive-sheet'
 import {CopyField} from '#/components/common/copy-field'
 import {BankLogo} from '#/components/bank/bank-logo'
+import {BankAppLauncher} from '#/components/pay/bank-app-launcher'
 import {TlvTable} from '#/components/vietqr/tlv-table'
 import {classifyPayload, contactToVCard, type Classified} from '#/lib/payloads'
 import type {ParsedVietQr} from '#/lib/vietqr'
@@ -81,6 +85,8 @@ export function VietQrResult({parsed, onRemove, compact}: {parsed: ParsedVietQr;
   const navigate = useNavigate()
   const showToast = useToast()
   const copy = useCopy()
+  const [launcherOpen, setLauncherOpen] = useState(false)
+  const [launcherKey, setLauncherKey] = useState(0)
   const bank = getBankByBin(parsed.bin)
   const amount = parsed.amount ? Number(parsed.amount) : 0
 
@@ -107,6 +113,11 @@ export function VietQrResult({parsed, onRemove, compact}: {parsed: ParsedVietQr;
     showToast({body: t('gen.accountSaved'), uniqueID: 'scan-save'})
   }
 
+  const openLauncher = () => {
+    setLauncherKey((k) => k + 1)
+    setLauncherOpen(true)
+  }
+
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-start gap-3">
@@ -131,7 +142,8 @@ export function VietQrResult({parsed, onRemove, compact}: {parsed: ParsedVietQr;
       </div>
       {!compact && (
         <div className="flex flex-wrap gap-2">
-          <Button label={t('scan.reissue')} icon={<PencilLine size={16} />} variant="primary" size="sm" onClick={reissue} />
+          <Button label={t('scan.openBankApp')} icon={<Smartphone size={16} />} variant="primary" size="sm" onClick={openLauncher} />
+          <Button label={t('scan.reissue')} icon={<PencilLine size={16} />} size="sm" onClick={reissue} />
           <Button label={t('scan.saveAccount')} icon={<BookmarkPlus size={16} />} size="sm" onClick={save} />
           <Button label={t('gen.copyPayload')} size="sm" variant="ghost" onClick={() => void copy(parsed.raw)} />
         </div>
@@ -141,6 +153,28 @@ export function VietQrResult({parsed, onRemove, compact}: {parsed: ParsedVietQr;
           <TlvTable fields={parsed.fields} />
         </div>
       </Collapsible>
+      {!compact && launcherKey > 0 && (
+        <AdaptiveSheet
+          key={launcherKey}
+          isOpen={launcherOpen}
+          onOpenChange={setLauncherOpen}
+          title={t('pay.openAppTitle')}
+          subtitle={t('pay.openAppSubtitle')}
+          width={520}>
+          <BankAppLauncher
+            framed={false}
+            payment={{
+              bin: parsed.bin,
+              accountNumber: parsed.accountNumber,
+              accountName: parsed.merchantName || undefined,
+              amount: parsed.amount || undefined,
+              purpose: parsed.purpose || undefined,
+              service: parsed.service,
+              rawPayload: parsed.raw,
+            }}
+          />
+        </AdaptiveSheet>
+      )}
     </div>
   )
 }
@@ -274,7 +308,7 @@ function GenericResult({classified, raw, onRemove}: {classified: Classified; raw
         </>
       )}
       {(classified.type === 'text' || classified.type === 'emv-invalid') && (
-        <div className="rounded-md bg-muted p-3 text-sm whitespace-pre-wrap break-words max-h-64 overflow-auto">{raw}</div>
+        <div className="rounded-md bg-muted p-3 text-sm whitespace-pre-wrap wrap-break-word max-h-64 overflow-auto">{raw}</div>
       )}
       {classified.type === 'emv-invalid' && <p className="text-xs text-error">{classified.error}</p>}
       <div>

@@ -14,7 +14,7 @@ import {
   QrCode,
   ScanLine,
   ServerOff,
-  SunMoon,
+  Smartphone,
   WifiOff,
   type LucideIcon,
 } from 'lucide-react'
@@ -26,7 +26,7 @@ import {IconBadge, HUES, type Hue} from '#/components/common/icon-badge'
 import {LogoMark} from '#/components/brand/logo'
 import {MarkedText, type MarkStyle} from '#/components/common/marked-text'
 import {BuyMeCoffee} from '#/components/about/buy-me-coffee'
-import {BANKS} from '#/data/banks'
+import {BANKS, DEEPLINK_BANKS} from '#/data/banks'
 import {useT, type MessageKey} from '#/i18n'
 import {pageHead} from '#/seo/head'
 
@@ -45,7 +45,8 @@ const CREDITS = [
   ['Serwist', 'https://serwist.pages.dev', 'Service worker, offline'],
   ['Lucide', 'https://lucide.dev', 'Icons'],
   ['Be Vietnam Pro', 'https://fonts.google.com/specimen/Be+Vietnam+Pro', 'Typeface (OFL)'],
-  ['VietQR bank list', 'https://api.vietqr.io/v2/banks', 'Bank directory data'],
+  ['VietQR API & Deeplink', 'https://api.vietqr.io/v2/banks', 'Bank directory & deeplinks'],
+  ['vietqr-core', 'https://github.com/Ngochiendev/vietqr-core', 'Deeplink catalog & reference (Ngochiendev)'],
 ] as const
 
 /** The lead's selling points: an underline for open source, a marker over the privacy promise. */
@@ -57,11 +58,11 @@ const LEAD_MARKS: readonly MarkStyle[] = [
 /** What QRViet does, each card linking to the page that does it. */
 const FEATURES: ReadonlyArray<{title: MessageKey; body: MessageKey; icon: LucideIcon; hue: Hue; to: string}> = [
   {title: 'about.f1Title', body: 'about.f1', icon: QrCode, hue: 'red', to: '/'},
-  {title: 'about.f2Title', body: 'about.f2', icon: ScanLine, hue: 'blue', to: '/scan'},
-  {title: 'about.f3Title', body: 'about.f3', icon: Palette, hue: 'pink', to: '/qr'},
-  {title: 'about.f4Title', body: 'about.f4', icon: Layers, hue: 'violet', to: '/batch'},
-  {title: 'about.f5Title', body: 'about.f5', icon: WifiOff, hue: 'green', to: '/settings'},
-  {title: 'about.f6Title', body: 'about.f6', icon: SunMoon, hue: 'amber', to: '/settings'},
+  {title: 'about.f2Title', body: 'about.f2', icon: Smartphone, hue: 'indigo', to: '/link'},
+  {title: 'about.f3Title', body: 'about.f3', icon: ScanLine, hue: 'blue', to: '/scan'},
+  {title: 'about.f4Title', body: 'about.f4', icon: Palette, hue: 'pink', to: '/qr'},
+  {title: 'about.f5Title', body: 'about.f5', icon: Layers, hue: 'violet', to: '/batch'},
+  {title: 'about.f6Title', body: 'about.f6', icon: WifiOff, hue: 'green', to: '/settings'},
 ]
 
 const PROMISES: ReadonlyArray<{label: MessageKey; icon: LucideIcon}> = [
@@ -73,13 +74,14 @@ const PROMISES: ReadonlyArray<{label: MessageKey; icon: LucideIcon}> = [
 const SPEC: ReadonlyArray<readonly [MessageKey, string]> = [
   ['about.specStandard', 'EMVCo MPM · NAPAS VietQR'],
   ['about.specGuid', 'A000000727'],
-  ['about.specService', 'QRIBFTTA · QRIBFTTC'],
+  ['about.specService', 'QRIBFTTA · QRIBFTTA'],
   ['about.specCurrency', '704 (VND)'],
   ['about.specChecksum', 'CRC16-CCITT'],
 ]
 
 const FAQ: ReadonlyArray<readonly [MessageKey, MessageKey]> = [
   ['faq.q1', 'faq.a1'],
+  ['faq.q7', 'faq.a7'],
   ['faq.q2', 'faq.a2'],
   ['faq.q3', 'faq.a3'],
   ['faq.q4', 'faq.a4'],
@@ -89,7 +91,7 @@ const FAQ: ReadonlyArray<readonly [MessageKey, MessageKey]> = [
 
 function AboutPage() {
   const t = useT()
-  const withBankCount = (text: string) => text.replace('70+', `${BANKS.length}`)
+  const withBankCount = (text: string) => text.replace('70+', `${BANKS.length}`).replace('40+', `${DEEPLINK_BANKS.length}`)
   const stats: ReadonlyArray<readonly [string, MessageKey]> = [
     [`${BANKS.length}`, 'about.statBanks'],
     ['100%', 'about.statLocal'],
@@ -111,6 +113,7 @@ function AboutPage() {
                 </p>
                 <div className="flex flex-wrap gap-2">
                   <Button label={t('nav.create')} icon={<QrCode size={16} />} variant="primary" href="/" />
+                  <Button label={t('about.ctaLink')} icon={<Smartphone size={16} />} href="/link" />
                   <Button label={t('nav.scan')} icon={<ScanLine size={16} />} href="/scan" />
                 </div>
               </div>
@@ -128,7 +131,7 @@ function AboutPage() {
                   href={`https://github.com/${REPO}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex h-full flex-col rounded-lg border border-border bg-surface/80 px-4 py-3 transition-colors hover:border-[var(--color-border-emphasized)] hover:bg-surface">
+                  className="group flex h-full flex-col rounded-lg border border-border bg-surface/80 px-4 py-3 transition-colors hover:border-(--color-border-emphasized) hover:bg-surface">
                   <span className="flex items-center gap-2 text-2xl font-extrabold text-accent">
                     GitHub
                     {/* No room beside the name in a phone's two-column grid. */}
@@ -191,7 +194,7 @@ function AboutPage() {
               </div>
             </Panel>
             <Panel title={t('about.standard')} icon={Binary} hue="cyan">
-              <dl className="flex flex-col divide-y divide-[var(--color-border)]">
+              <dl className="flex flex-col divide-y divide-(--color-border)">
                 {SPEC.map(([label, value]) => (
                   <div key={label} className="flex items-center justify-between gap-3 py-2">
                     <dt className="text-sm text-secondary">{t(label)}</dt>
@@ -204,7 +207,7 @@ function AboutPage() {
 
           <Panel title={t('faq.title')} icon={CircleHelp} hue="blue">
             {/* Native <details>: answers stay in the DOM (searchable, indexable) while collapsed. */}
-            <div className="flex flex-col divide-y divide-[var(--color-border)]">
+            <div className="flex flex-col divide-y divide-(--color-border)">
               {FAQ.map(([q, a], i) => (
                 <details key={q} className="group py-1" open={i === 0}>
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-md py-2 [&::-webkit-details-marker]:hidden">
@@ -228,7 +231,7 @@ function AboutPage() {
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group flex items-center gap-3 rounded-lg border border-border px-3 py-2 transition-colors hover:border-[var(--color-border-emphasized)] hover:bg-muted">
+                    className="group flex items-center gap-3 rounded-lg border border-border px-3 py-2 transition-colors hover:border-(--color-border-emphasized) hover:bg-muted">
                     <span className="flex min-w-0 flex-1 flex-col">
                       <span className="truncate text-sm font-semibold group-hover:text-accent">{name}</span>
                       <span className="truncate text-xs text-secondary">{note}</span>
