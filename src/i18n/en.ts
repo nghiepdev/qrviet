@@ -401,6 +401,7 @@ export const en: Record<MessageKey, string> = {
   'pay.link': 'Link',
   'pay.qrOfLink': 'QR to the link',
   'pay.open': 'Open payment page',
+  'pay.done': 'Done',
   'pay.preview': 'Show name and amount in link previews',
   'pay.previewHint': 'Zalo, Facebook and other apps then show the bank, name and amount when you send the link. These three travel with the link to this site’s server; the account number and message do not.',
   'pay.secure': 'This page stores nothing and sends your data nowhere.',

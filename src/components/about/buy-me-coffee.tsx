@@ -7,6 +7,7 @@ import {BankLogo} from '#/components/bank/bank-logo'
 import {CopyField} from '#/components/common/copy-field'
 import {HUES, type Hue} from '#/components/common/icon-badge'
 import {Panel} from '#/components/common/page-header'
+import {PaySheet, usePaySheet} from '#/components/pay/pay-sheet'
 import {ExportActions} from '#/components/qr/export-actions'
 import {QrStage} from '#/components/qr/qr-stage'
 import {resolveLogo, useQrScene} from '#/components/qr/use-qr-scene'
@@ -138,6 +139,7 @@ export function BuyMeCoffee() {
   const t = useT()
   const locale = useLocale()
   const copy = useCopy()
+  const paySheet = usePaySheet()
 
   const [drinkId, setDrinkId] = useState<DrinkId>('milkCoffee')
   const [breakfastId, setBreakfastId] = useState<BreakfastId>('fasting')
@@ -188,11 +190,12 @@ export function BuyMeCoffee() {
       memo: purpose,
       accent: DEFAULT_DESIGN.accent,
     })
-    window.open(url, 'qrviet-pay')?.focus()
+    paySheet.open(url)
   }
 
   return (
-    <Panel id="buy-me-a-coffee" title={t('support.title')} description={t('support.subtitle')} icon={Coffee} hue="amber">
+    <>
+      <Panel id="buy-me-a-coffee" title={t('support.title')} description={t('support.subtitle')} icon={Coffee} hue="amber">
       <div className="grid grid-cols-1 gap-5 md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] items-start">
         <div className="flex min-w-0 flex-col gap-5">
           <div className="flex flex-col gap-2">
@@ -332,6 +335,8 @@ export function BuyMeCoffee() {
           />
         </div>
       </div>
-    </Panel>
+      </Panel>
+      <PaySheet {...paySheet.sheetProps} />
+    </>
   )
 }

@@ -410,6 +410,7 @@ export const vi = {
   'pay.link': 'Đường link',
   'pay.qrOfLink': 'QR mở link',
   'pay.open': 'Mở trang thanh toán',
+  'pay.done': 'Xong',
   'pay.preview': 'Hiện tên và số tiền trong ô xem trước',
   'pay.previewHint': 'Zalo, Facebook… sẽ hiện ngân hàng, tên và số tiền khi bạn gửi link. Ba thông tin này đi kèm link tới máy chủ của trang; số tài khoản và nội dung thì không.',
   'pay.secure': 'Trang này không lưu và không gửi dữ liệu của bạn đi đâu.',

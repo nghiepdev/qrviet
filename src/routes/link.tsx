@@ -16,6 +16,7 @@ import {ExportActions} from '#/components/qr/export-actions'
 import {useTextMeasure} from '#/components/qr/use-qr-scene'
 import {EMPTY_FORM, draftStore, formFromAccount, useDerivedVietQr, type VietQrForm} from '#/components/vietqr/form'
 import {LogoMark} from '#/components/brand/logo'
+import {PaySheet, usePaySheet} from '#/components/pay/pay-sheet'
 import {payLinkUrl} from '#/lib/paylink'
 import {layoutQr, makeQr, DEFAULT_QR_STYLE} from '#/lib/qr/render'
 import {buildCaptionScene} from '#/lib/qr/templates'
@@ -40,13 +41,6 @@ const EXPIRY: Array<{value: string; ms: number}> = [
   {value: '7d', ms: 7 * 86_400_000},
 ]
 
-/**
- * The payment page opens in one named tab: opening it again shows the fresh link in that tab
- * instead of adding a tab each time. No `noopener`, since browsers ignore a target name given with
- * it and always open a new tab; the page is our own, so the opener reference is harmless.
- */
-const PAY_TAB = 'qrviet-pay'
-
 /** QR that opens the payment link, with a caption — for printing or showing at the counter. */
 function linkQrScene(url: string, caption: string, accent: string, measure: Measure) {
   if (!url) return null
@@ -59,6 +53,7 @@ function linkQrScene(url: string, caption: string, accent: string, measure: Meas
 function LinkBuilder() {
   const t = useT()
   const copy = useCopy()
+  const paySheet = usePaySheet()
   const contentMode = useSettings((s) => s.contentMode)
   const [form, setForm] = useState<VietQrForm>(() => ({...EMPTY_FORM, bin: draftStore.state.bin, accountNumber: draftStore.state.accountNumber, accountName: draftStore.state.accountName, service: draftStore.state.service}))
   const [note, setNote] = useState('')
@@ -153,7 +148,7 @@ function LinkBuilder() {
                         if (r === 'unsupported') await copy(fresh, t('gen.linkCopied'))
                       }}
                     />
-                    <Button label={t('pay.open')} icon={<ExternalLink size={16} />} variant="ghost" onClick={() => window.open(buildUrl(Date.now()), PAY_TAB)?.focus()} />
+                    <Button label={t('pay.open')} icon={<ExternalLink size={16} />} variant="ghost" onClick={() => paySheet.open(buildUrl(Date.now()))} />
                   </div>
                 </div>
               ) : (
@@ -171,6 +166,7 @@ function LinkBuilder() {
           </div>
         </div>
       </PageBody>
+      <PaySheet {...paySheet.sheetProps} />
     </>
   )
 }
