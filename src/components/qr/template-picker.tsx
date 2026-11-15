@@ -75,7 +75,7 @@ export function TemplatePicker({value, onChange}: {value: TemplateId; onChange: 
   }, [value])
 
   return (
-    <Carousel aria-label={t('gen.templates')} gap={2} hasButtons={canAnchor}>
+    <Carousel aria-label={t('gen.templates')} gap={2} padding={0.5} className="-mx-0.5" style={{maxWidth: 'none'}} hasButtons={canAnchor}>
       {TEMPLATE_IDS.map((id) => {
         const Icon = ICONS[id]
         return (

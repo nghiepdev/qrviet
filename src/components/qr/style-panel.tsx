@@ -65,8 +65,8 @@ function Tiles<T extends string>({
   return (
     <fieldset className="flex flex-col gap-2">
       <legend className="text-sm font-semibold mb-2">{label}</legend>
-      {/* Fixed-width tiles, as many per row as fit: wide enough for the longest name ("Thanh ngang") on one line. */}
-      <div className="grid grid-cols-[repeat(auto-fill,5.5rem)] gap-2" role="radiogroup" aria-label={label}>
+      {/* Auto-fill tiles at least 4.5rem wide so 4 fit per row on mobile while keeping uniform widths. */}
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(4.5rem,1fr))] gap-2" role="radiogroup" aria-label={label}>
         {options.map((o) => (
           <button
             key={o}
@@ -74,7 +74,7 @@ function Tiles<T extends string>({
             role="radio"
             aria-checked={o === value}
             onClick={() => onChange(o)}
-            className="qv-tile flex flex-col items-center gap-1 px-1.5 py-2 text-[11px] font-medium text-secondary"
+            className="qv-tile flex flex-col items-center gap-1 px-1 py-2 text-[11px] font-medium text-secondary"
             title={t(labelKey(o))}>
             {render(o)}
             <span className="truncate max-w-full">{t(labelKey(o))}</span>

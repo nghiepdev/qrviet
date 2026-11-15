@@ -129,14 +129,14 @@ function BankSheet({value, isOpen, onOpenChange, onSelect}: {value: string; isOp
             onEnter={() => first && onSelect(first)}
           />
         </div>
-        <div className={`flex flex-col gap-4 -mx-1 px-1 pb-2 ${touch ? '' : 'max-h-[60dvh] overflow-y-auto'}`} role="list">
+        <div className={`flex flex-col gap-4 -mx-1 px-1 pb-2 ${touch ? '' : 'max-h-[60dvh] overflow-y-auto overflow-x-hidden'}`} role="list">
           {sections.map((section) =>
             section.banks.length ? (
-              <section key={section.title} aria-label={section.title}>
+              <section key={section.title} aria-label={section.title} className="min-w-0">
                 <Text type="supporting" color="secondary" weight="semibold">
                   {section.title}
                 </Text>
-                <ul className="mt-1.5 grid gap-1">
+                <ul className="mt-1.5 grid grid-cols-1 gap-1">
                   {section.banks.map((b) => (
                     <BankRow key={`${section.title}-${b.bin}`} bank={b} selected={b.bin === value} favorite={favorites.includes(b.bin)} onSelect={onSelect} />
                   ))}
@@ -156,12 +156,12 @@ function BankSheet({value, isOpen, onOpenChange, onSelect}: {value: string; isOp
 function BankRow({bank, selected, favorite, onSelect}: {bank: Bank; selected: boolean; favorite: boolean; onSelect: (b: Bank) => void}) {
   const t = useT()
   return (
-    <li className="flex items-center gap-1">
+    <li className="flex items-center gap-1 min-w-0">
       <button
         type="button"
         onClick={() => onSelect(bank)}
         aria-pressed={selected}
-        className={`flex-1 min-w-0 flex items-center gap-3 p-2 rounded-md text-left transition-colors hover:bg-[var(--color-overlay-hover)] ${
+        className={`flex-1 min-w-0 flex items-center gap-3 p-2 rounded-md text-left transition-colors hover:bg-(--color-overlay-hover) ${
           selected ? 'bg-accent-muted' : ''
         }`}>
         <BankLogo bank={bank} size={34} />
@@ -170,7 +170,7 @@ function BankRow({bank, selected, favorite, onSelect}: {bank: Bank; selected: bo
             <span className="font-semibold truncate">{bank.shortName}</span>
             {!bank.transfer && <Badge variant="neutral" label={t('bank.napasNo')} />}
           </span>
-          <span className="block text-xs text-secondary truncate">{bank.name}</span>
+          <span className="block text-xs text-secondary leading-snug wrap-break-word">{bank.name}</span>
         </span>
         <span className="text-xs text-secondary qv-mono shrink-0">{bank.bin}</span>
         {selected && <Check size={18} className="text-accent shrink-0" aria-hidden />}
@@ -180,7 +180,7 @@ function BankRow({bank, selected, favorite, onSelect}: {bank: Bank; selected: bo
         onClick={() => toggleFavoriteBank(bank.bin)}
         aria-label={favorite ? t('bank.unfavorite') : t('bank.favorite')}
         aria-pressed={favorite}
-        className="p-2 rounded-md text-secondary hover:bg-[var(--color-overlay-hover)]">
+        className="shrink-0 p-2 rounded-md text-secondary hover:bg-(--color-overlay-hover)">
         <Star size={16} fill={favorite ? '#ffc93c' : 'none'} stroke={favorite ? '#d4a017' : 'currentColor'} aria-hidden />
       </button>
     </li>
