@@ -36,10 +36,10 @@ export function resolveLogo(design: Pick<QrDesign, 'logoMode' | 'customLogo' | '
   switch (design.logoMode) {
     case 'bank': {
       const src = bankIconUrl(bank)
-      return src ? {...base, src, plate: design.logoPlate === 'none' ? 'rounded' : design.logoPlate} : null
+      return src ? {...base, src} : null
     }
     case 'brand':
-      return {...base, src: `${import.meta.env.BASE_URL}logo.svg`, plate: design.logoPlate}
+      return {...base, src: `${import.meta.env.BASE_URL}logo.svg`}
     case 'custom':
       return design.customLogo ? {...base, src: design.customLogo} : null
     default:

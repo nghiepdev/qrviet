@@ -10,7 +10,7 @@ import {CopyField} from '#/components/common/copy-field'
 import {BankLogo} from '#/components/bank/bank-logo'
 import {QrStage} from '#/components/qr/qr-stage'
 import {exportPng} from '#/components/qr/export-actions'
-import {useQrScene} from '#/components/qr/use-qr-scene'
+import {resolveLogo, useQrScene} from '#/components/qr/use-qr-scene'
 import {buildTemplateInfo} from '#/components/vietqr/template-info'
 import {speakAmount} from '#/components/vietqr/amount-field'
 import {LogoMark} from '#/components/brand/logo'
@@ -79,7 +79,7 @@ function PayPage() {
   const info = payload && data ? buildTemplateInfo({bank, accountName: data.name, accountNumber: data.acc, amount: data.amount, purpose: data.memo, design, locale, t}) : null
   // Consumers of the derived values come after them, so the once-a-second countdown
   // re-render does not rebuild the QR.
-  const {scene} = useQrScene(payload, 'compact', info, PAY_QR_STYLE, null)
+  const {scene} = useQrScene(payload, 'compact', info, PAY_QR_STYLE, resolveLogo(design, bank))
   const countdown = useCountdown(data?.exp)
 
   if (!data || !bank || !payload) {

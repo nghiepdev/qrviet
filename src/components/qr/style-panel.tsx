@@ -276,18 +276,20 @@ export function StylePanel({style, onStyle, design, onDesign, allowBankLogo = tr
         </div>
       )}
 
-      <div className="grid sm:grid-cols-2 gap-4">
-        <div className="flex flex-col gap-2">
-          <SegmentedControl label={t('style.ecc')} value={ecc} onChange={(v) => onStyle({ecc: v as Ecc})} layout="fill">
-            {ECC_LEVELS.map((e, i) => (
-              <SegmentedControlItem key={e} value={e} label={e} isDisabled={i < lowest} />
-            ))}
-          </SegmentedControl>
+      <div className="grid sm:grid-cols-2 gap-x-4 gap-y-2 items-center">
+        <SegmentedControl label={t('style.ecc')} value={ecc} onChange={(v) => onStyle({ecc: v as Ecc})} layout="fill">
+          {ECC_LEVELS.map((e, i) => (
+            <SegmentedControlItem key={e} value={e} label={e} isDisabled={i < lowest} />
+          ))}
+        </SegmentedControl>
+        <div className="sm:order-3 sm:col-span-2">
           <Text type="supporting" color="secondary">
             {lowest > 0 ? t('style.ecc.logo', {level: ECC_LEVELS[lowest]}) : `${t('style.ecc')}: ${t('style.ecc.hint')}`}
           </Text>
         </div>
-        <Slider label={t('style.margin')} value={style.margin} min={0} max={6} step={1} onChange={(v: number) => onStyle({margin: v})} valueDisplay="text" />
+        <div className="pt-2 sm:pt-0 sm:order-2">
+          <Slider label={t('style.margin')} value={style.margin} min={0} max={6} step={1} onChange={(v: number) => onStyle({margin: v})} valueDisplay="text" />
+        </div>
       </div>
 
       <div>
@@ -298,7 +300,7 @@ export function StylePanel({style, onStyle, design, onDesign, allowBankLogo = tr
           size="sm"
           onClick={() => {
             onStyle({...DEFAULT_QR_STYLE})
-            onDesign?.({logoMode: 'none', logoSize: 0.22, logoPlate: 'rounded'})
+            onDesign?.({logoMode: allowBankLogo ? 'bank' : 'none', logoSize: 0.22, logoPlate: 'rounded'})
           }}
         />
       </div>

@@ -41,7 +41,7 @@ export const DEFAULT_DESIGN: QrDesign = {
   template: 'compact',
   accent: '#d7263d',
   style: {...DEFAULT_QR_STYLE, ecc: 'M', margin: 2},
-  logoMode: 'none',
+  logoMode: 'bank',
   customLogo: null,
   logoSize: 0.22,
   logoPlate: 'rounded',
@@ -66,8 +66,18 @@ export const DEFAULT_SETTINGS: Settings = {
 
 export const settingsStore = persistedStore<Settings>({
   key: 'settings',
-  version: 1,
+  version: 2,
   initial: DEFAULT_SETTINGS,
+  migrate: (p, v) => {
+    const prev = p as Partial<Settings> | undefined
+    if (!prev) return undefined
+    const logoMode = v < 2 && (!prev.design?.logoMode || prev.design.logoMode === 'none') ? 'bank' : (prev.design?.logoMode ?? 'bank')
+    return {
+      ...DEFAULT_SETTINGS,
+      ...prev,
+      design: {...DEFAULT_DESIGN, ...prev.design, logoMode, style: {...DEFAULT_DESIGN.style, ...prev.design?.style}},
+    }
+  },
   merge: (p, init) => ({
     ...init,
     ...p,

@@ -9,7 +9,7 @@ import {HUES, type Hue} from '#/components/common/icon-badge'
 import {Panel} from '#/components/common/page-header'
 import {ExportActions} from '#/components/qr/export-actions'
 import {QrStage} from '#/components/qr/qr-stage'
-import {useQrScene} from '#/components/qr/use-qr-scene'
+import {resolveLogo, useQrScene} from '#/components/qr/use-qr-scene'
 import {speakAmount} from '#/components/vietqr/amount-field'
 import {buildTemplateInfo} from '#/components/vietqr/template-info'
 import {getBankByBin} from '#/data/banks'
@@ -173,7 +173,7 @@ export function BuyMeCoffee() {
         t,
       })
     : null
-  const {scene} = useQrScene(payload, 'compact', info, SUPPORT_QR_STYLE, null)
+  const {scene} = useQrScene(payload, 'compact', info, SUPPORT_QR_STYLE, resolveLogo(DEFAULT_DESIGN, bank))
 
   const words = totalAmount > 0 ? amountToWords(totalAmount, locale) : ''
   const canSpeak = totalAmount > 0 && typeof speechSynthesis !== 'undefined'
