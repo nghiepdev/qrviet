@@ -3,7 +3,7 @@ import {layoutQr, makeQr, type Ecc, type QrLogo, type QrStyle} from '#/lib/qr/re
 import {buildTemplateScene, type TemplateId, type TemplateInfo} from '#/lib/qr/templates'
 import type {Measure, Scene} from '#/lib/qr/scene'
 import {createMeasure, ensureExportFonts} from '#/lib/qr/export'
-import {bankLogoUrl, type Bank} from '#/data/banks'
+import {bankIconUrl, type Bank} from '#/data/banks'
 import type {QrDesign} from '#/stores/settings'
 
 /** A fresh measurer per fonts version: its identity is what tells layouts to re-measure. */
@@ -35,7 +35,7 @@ export function resolveLogo(design: Pick<QrDesign, 'logoMode' | 'customLogo' | '
   const base = {size: design.logoSize, plate: design.logoPlate, plateColor: '#ffffff', excavate: true}
   switch (design.logoMode) {
     case 'bank': {
-      const src = bankLogoUrl(bank)
+      const src = bankIconUrl(bank)
       return src ? {...base, src, plate: design.logoPlate === 'none' ? 'rounded' : design.logoPlate} : null
     }
     case 'brand':

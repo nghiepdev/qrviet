@@ -187,23 +187,34 @@ export function layoutQr(model: QrModel, style: QrStyle, logo?: Pick<QrLogo, 'si
 
   // Logo box: odd module count keeps it centred on the grid.
   let logoBox: QrGeometry['logoBox'] = null
-  let hole: {x0: number; y0: number; x1: number; y1: number} | null = null
+  let hole: {cx: number; cy: number; half: number; r: number} | null = null
   if (logo && logo.size > 0) {
     let w = Math.round(size * Math.min(0.32, Math.max(0.1, logo.size)))
     if (w % 2 !== size % 2) w += 1
     const start = (size - w) / 2
-    const plate = logo.plate === 'none' ? 0 : 0.6
+    const plate = logo.plate === 'none' ? 0 : 0.3
     logoBox = {x: start + m, y: start + m, w, h: w, plate}
     if (logo.excavate) {
-      const pad = logo.plate === 'none' ? 0.5 : 0.35
-      hole = {x0: start - pad, y0: start - pad, x1: start + w + pad, y1: start + w + pad}
+      const half = w / 2 + (logo.plate === 'none' ? 0.15 : plate + 0.05)
+      const r = logo.plate === 'circle' ? half : logo.plate === 'rounded' ? half * 0.44 : 0
+      hole = {cx: size / 2, cy: size / 2, half, r}
     }
+  }
+
+  const inHole = (x: number, y: number) => {
+    if (!hole) return false
+    const dx = Math.abs(x + 0.5 - hole.cx)
+    const dy = Math.abs(y + 0.5 - hole.cy)
+    const inner = hole.half - hole.r
+    const qx = Math.max(0, dx - inner)
+    const qy = Math.max(0, dy - inner)
+    return qx * qx + qy * qy < (hole.r + 0.25) ** 2
   }
 
   const dark = (x: number, y: number) => {
     if (x < 0 || y < 0 || x >= size || y >= size) return false
     if (isFinderZone(x, y, size)) return false
-    if (hole && x + 1 > hole.x0 && x < hole.x1 && y + 1 > hole.y0 && y < hole.y1) return false
+    if (inHole(x, y)) return false
     return data[y][x]
   }
 
@@ -323,13 +334,19 @@ export function qrToSvgParts(geo: QrGeometry, x: number, y: number, px: number, 
   body += `<path d="${geo.eyeBalls}" fill="${esc(ballFill)}"/>`
   if (geo.logoBox && logo?.src) {
     const b = geo.logoBox
+    const inset = logo.plate === 'circle' ? b.w * 0.1 : 0
     if (logo.plate !== 'none') {
       const p = b.plate
-      const r = logo.plate === 'circle' ? (b.w + p * 2) / 2 : logo.plate === 'rounded' ? (b.w + p * 2) * 0.22 : 0
-      body += `<rect x="${f(b.x - p)}" y="${f(b.y - p)}" width="${f(b.w + p * 2)}" height="${f(b.h + p * 2)}" rx="${f(r)}" fill="${esc(logo.plateColor)}"/>`
+      const pw = b.w + p * 2
+      const ph = b.h + p * 2
+      const r = logo.plate === 'circle' ? pw / 2 : logo.plate === 'rounded' ? pw * 0.22 : 0
+      const clipId = `${id}-logo-clip`
+      defs += `<clipPath id="${clipId}"><rect x="${f(b.x - p)}" y="${f(b.y - p)}" width="${f(pw)}" height="${f(ph)}" rx="${f(r)}"/></clipPath>`
+      body += `<rect x="${f(b.x - p)}" y="${f(b.y - p)}" width="${f(pw)}" height="${f(ph)}" rx="${f(r)}" fill="${esc(logo.plateColor)}" shape-rendering="geometricPrecision"/>`
+      body += `<image href="${esc(logo.src)}" x="${f(b.x + inset)}" y="${f(b.y + inset)}" width="${f(b.w - inset * 2)}" height="${f(b.h - inset * 2)}" preserveAspectRatio="xMidYMid meet" clip-path="url(#${clipId})"/>`
+    } else {
+      body += `<image href="${esc(logo.src)}" x="${f(b.x + inset)}" y="${f(b.y + inset)}" width="${f(b.w - inset * 2)}" height="${f(b.h - inset * 2)}" preserveAspectRatio="xMidYMid meet"/>`
     }
-    const inset = logo.plate === 'circle' ? b.w * 0.14 : logo.plate === 'none' ? 0 : b.w * 0.04
-    body += `<image href="${esc(logo.src)}" x="${f(b.x + inset)}" y="${f(b.y + inset)}" width="${f(b.w - inset * 2)}" height="${f(b.h - inset * 2)}" preserveAspectRatio="xMidYMid meet"/>`
   }
   body += '</g>'
   return {defs, body}
@@ -380,17 +397,22 @@ export function paintQr(
   ctx.fill(new Path2D(geo.eyeBalls))
   if (geo.logoBox && logo && logoImage) {
     const b = geo.logoBox
+    const inset = logo.plate === 'circle' ? b.w * 0.1 : 0
     if (logo.plate !== 'none') {
       const p = b.plate
       const w = b.w + p * 2
       const r = logo.plate === 'circle' ? w / 2 : logo.plate === 'rounded' ? w * 0.22 : 0
-      ctx.fillStyle = logo.plateColor
+      ctx.save()
       ctx.beginPath()
       ctx.roundRect(b.x - p, b.y - p, w, w, r)
+      ctx.fillStyle = logo.plateColor
       ctx.fill()
+      ctx.clip()
+      drawContain(ctx, logoImage, b.x + inset, b.y + inset, b.w - inset * 2, b.h - inset * 2)
+      ctx.restore()
+    } else {
+      drawContain(ctx, logoImage, b.x + inset, b.y + inset, b.w - inset * 2, b.h - inset * 2)
     }
-    const inset = logo.plate === 'circle' ? b.w * 0.14 : logo.plate === 'none' ? 0 : b.w * 0.04
-    drawContain(ctx, logoImage, b.x + inset, b.y + inset, b.w - inset * 2, b.h - inset * 2)
   }
   ctx.restore()
 }

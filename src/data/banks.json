@@ -7,7 +7,8 @@
     "swift": "ICBVVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/icb.webp"
+    "logo": "banks/icb.webp",
+    "icon": "banks/icons/icb.svg"
   },
   {
     "bin": "970436",
@@ -17,7 +18,8 @@
     "swift": "BFTVVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/vcb.webp"
+    "logo": "banks/vcb.webp",
+    "icon": "banks/icons/vcb.svg"
   },
   {
     "bin": "970418",
@@ -27,7 +29,8 @@
     "swift": "BIDVVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/bidv.webp"
+    "logo": "banks/bidv.webp",
+    "icon": "banks/icons/bidv.svg"
   },
   {
     "bin": "970405",
@@ -37,7 +40,8 @@
     "swift": "VBAAVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/vba.webp"
+    "logo": "banks/vba.webp",
+    "icon": "banks/icons/vba.svg"
   },
   {
     "bin": "970448",
@@ -47,7 +51,8 @@
     "swift": "ORCOVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/ocb.webp"
+    "logo": "banks/ocb.webp",
+    "icon": "banks/icons/ocb.svg"
   },
   {
     "bin": "970422",
@@ -57,7 +62,8 @@
     "swift": "MSCBVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/mb.webp"
+    "logo": "banks/mb.webp",
+    "icon": "banks/icons/mb.webp"
   },
   {
     "bin": "970407",
@@ -67,7 +73,8 @@
     "swift": "VTCBVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/tcb.webp"
+    "logo": "banks/tcb.webp",
+    "icon": "banks/icons/tcb.svg"
   },
   {
     "bin": "970416",
@@ -77,7 +84,8 @@
     "swift": "ASCBVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/acb.webp"
+    "logo": "banks/acb.webp",
+    "icon": "banks/icons/acb.webp"
   },
   {
     "bin": "970432",
@@ -87,7 +95,8 @@
     "swift": "VPBKVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/vpb.webp"
+    "logo": "banks/vpb.webp",
+    "icon": "banks/icons/vpb.svg"
   },
   {
     "bin": "970423",
@@ -97,7 +106,8 @@
     "swift": "TPBVVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/tpb.webp"
+    "logo": "banks/tpb.webp",
+    "icon": "banks/icons/tpb.svg"
   },
   {
     "bin": "970403",
@@ -107,7 +117,8 @@
     "swift": "SGTTVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/stb.webp"
+    "logo": "banks/stb.webp",
+    "icon": "banks/icons/stb.webp"
   },
   {
     "bin": "970437",
@@ -117,7 +128,8 @@
     "swift": "HDBCVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/hdb.webp"
+    "logo": "banks/hdb.webp",
+    "icon": "banks/icons/hdb.svg"
   },
   {
     "bin": "970454",
@@ -127,7 +139,8 @@
     "swift": "VCBCVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/vccb.webp"
+    "logo": "banks/vccb.webp",
+    "icon": "banks/icons/vccb.svg"
   },
   {
     "bin": "970429",
@@ -137,7 +150,8 @@
     "swift": "SACLVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/scb.webp"
+    "logo": "banks/scb.webp",
+    "icon": "banks/icons/scb.svg"
   },
   {
     "bin": "970441",
@@ -147,7 +161,8 @@
     "swift": "VNIBVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/vib.webp"
+    "logo": "banks/vib.webp",
+    "icon": "banks/icons/vib.svg"
   },
   {
     "bin": "970443",
@@ -157,7 +172,8 @@
     "swift": "SHBAVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/shb.webp"
+    "logo": "banks/shb.webp",
+    "icon": "banks/icons/shb.svg"
   },
   {
     "bin": "970431",
@@ -167,7 +183,8 @@
     "swift": "EBVIVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/eib.webp"
+    "logo": "banks/eib.webp",
+    "icon": "banks/icons/eib.svg"
   },
   {
     "bin": "970426",
@@ -177,7 +194,8 @@
     "swift": "MCOBVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/msb.webp"
+    "logo": "banks/msb.webp",
+    "icon": "banks/icons/msb.svg"
   },
   {
     "bin": "546034",
@@ -187,7 +205,8 @@
     "swift": null,
     "transfer": true,
     "lookup": true,
-    "logo": "banks/cake.webp"
+    "logo": "banks/cake.webp",
+    "icon": "banks/icons/cake.webp"
   },
   {
     "bin": "546035",
@@ -197,7 +216,8 @@
     "swift": null,
     "transfer": true,
     "lookup": true,
-    "logo": "banks/ubank.webp"
+    "logo": "banks/ubank.webp",
+    "icon": "banks/icons/ubank.webp"
   },
   {
     "bin": "963388",
@@ -207,7 +227,8 @@
     "swift": null,
     "transfer": true,
     "lookup": false,
-    "logo": "banks/timo.webp"
+    "logo": "banks/timo.webp",
+    "icon": "banks/icons/timo.svg"
   },
   {
     "bin": "971005",
@@ -217,7 +238,8 @@
     "swift": null,
     "transfer": false,
     "lookup": true,
-    "logo": "banks/vtlmoney.webp"
+    "logo": "banks/vtlmoney.webp",
+    "icon": "banks/icons/vtlmoney.webp"
   },
   {
     "bin": "971011",
@@ -227,7 +249,8 @@
     "swift": null,
     "transfer": false,
     "lookup": true,
-    "logo": "banks/vnptmoney.webp"
+    "logo": "banks/vnptmoney.webp",
+    "icon": "banks/icons/vnptmoney.webp"
   },
   {
     "bin": "970400",
@@ -237,7 +260,8 @@
     "swift": "SBITVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/sgicb.webp"
+    "logo": "banks/sgicb.webp",
+    "icon": "banks/icons/sgicb.webp"
   },
   {
     "bin": "970409",
@@ -247,7 +271,8 @@
     "swift": "NASCVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/bab.webp"
+    "logo": "banks/bab.webp",
+    "icon": "banks/icons/bab.webp"
   },
   {
     "bin": "971133",
@@ -257,7 +282,8 @@
     "swift": "WBVNVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/pvdb.webp"
+    "logo": "banks/pvdb.webp",
+    "icon": "banks/icons/pvdb.svg"
   },
   {
     "bin": "971025",
@@ -267,7 +293,8 @@
     "swift": null,
     "transfer": true,
     "lookup": true,
-    "logo": "banks/momo.webp"
+    "logo": "banks/momo.webp",
+    "icon": "banks/icons/momo.webp"
   },
   {
     "bin": "970412",
@@ -277,7 +304,8 @@
     "swift": "WBVNVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/pvcb.webp"
+    "logo": "banks/pvcb.webp",
+    "icon": "banks/icons/pvcb.svg"
   },
   {
     "bin": "970414",
@@ -287,7 +315,8 @@
     "swift": "OCBKUS3M",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/mbv.webp"
+    "logo": "banks/mbv.webp",
+    "icon": "banks/icons/mbv.webp"
   },
   {
     "bin": "970419",
@@ -297,7 +326,8 @@
     "swift": "NVBAVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/ncb.webp"
+    "logo": "banks/ncb.webp",
+    "icon": "banks/icons/ncb.svg"
   },
   {
     "bin": "970424",
@@ -307,7 +337,8 @@
     "swift": "SHBKVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/shbvn.webp"
+    "logo": "banks/shbvn.webp",
+    "icon": "banks/icons/shbvn.svg"
   },
   {
     "bin": "970425",
@@ -317,7 +348,8 @@
     "swift": "ABBKVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/abb.webp"
+    "logo": "banks/abb.webp",
+    "icon": "banks/icons/abb.webp"
   },
   {
     "bin": "970427",
@@ -327,7 +359,8 @@
     "swift": "VNACVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/vab.webp"
+    "logo": "banks/vab.webp",
+    "icon": "banks/icons/vab.svg"
   },
   {
     "bin": "970428",
@@ -337,7 +370,8 @@
     "swift": "NAMAVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/nab.webp"
+    "logo": "banks/nab.webp",
+    "icon": "banks/icons/nab.webp"
   },
   {
     "bin": "970430",
@@ -347,7 +381,8 @@
     "swift": "PGBLVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/pgb.webp"
+    "logo": "banks/pgb.webp",
+    "icon": "banks/icons/pgb.svg"
   },
   {
     "bin": "970433",
@@ -357,7 +392,8 @@
     "swift": "VNTTVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/vietbank.webp"
+    "logo": "banks/vietbank.webp",
+    "icon": "banks/icons/vietbank.webp"
   },
   {
     "bin": "970438",
@@ -367,7 +403,8 @@
     "swift": "BVBVVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/bvb.webp"
+    "logo": "banks/bvb.webp",
+    "icon": "banks/icons/bvb.webp"
   },
   {
     "bin": "970440",
@@ -377,7 +414,8 @@
     "swift": "SEAVVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/seab.webp"
+    "logo": "banks/seab.webp",
+    "icon": "banks/icons/seab.svg"
   },
   {
     "bin": "970446",
@@ -387,7 +425,8 @@
     "swift": null,
     "transfer": true,
     "lookup": true,
-    "logo": "banks/coopbank.webp"
+    "logo": "banks/coopbank.webp",
+    "icon": "banks/icons/coopbank.webp"
   },
   {
     "bin": "970449",
@@ -397,7 +436,8 @@
     "swift": "LVBKVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/lpb.webp"
+    "logo": "banks/lpb.webp",
+    "icon": "banks/icons/lpb.webp"
   },
   {
     "bin": "970452",
@@ -407,7 +447,8 @@
     "swift": "KLBKVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/klb.webp"
+    "logo": "banks/klb.webp",
+    "icon": "banks/icons/klb.svg"
   },
   {
     "bin": "668888",
@@ -417,7 +458,8 @@
     "swift": "KASIVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/kbank.webp"
+    "logo": "banks/kbank.webp",
+    "icon": "banks/icons/kbank.webp"
   },
   {
     "bin": "970466",
@@ -427,7 +469,8 @@
     "swift": null,
     "transfer": false,
     "lookup": false,
-    "logo": "banks/kebhanahcm.webp"
+    "logo": "banks/kebhanahcm.webp",
+    "icon": "banks/icons/kebhanahcm.svg"
   },
   {
     "bin": "970467",
@@ -437,7 +480,8 @@
     "swift": null,
     "transfer": false,
     "lookup": false,
-    "logo": "banks/kebhanahn.webp"
+    "logo": "banks/kebhanahn.webp",
+    "icon": "banks/icons/kebhanahn.svg"
   },
   {
     "bin": "977777",
@@ -447,7 +491,8 @@
     "swift": null,
     "transfer": false,
     "lookup": false,
-    "logo": "banks/mafc.webp"
+    "logo": "banks/mafc.webp",
+    "icon": "banks/icons/mafc.webp"
   },
   {
     "bin": "999888",
@@ -457,7 +502,8 @@
     "swift": null,
     "transfer": false,
     "lookup": false,
-    "logo": "banks/vbsp.webp"
+    "logo": "banks/vbsp.webp",
+    "icon": "banks/icons/vbsp.svg"
   },
   {
     "bin": "963668",
@@ -467,7 +513,8 @@
     "swift": null,
     "transfer": false,
     "lookup": false,
-    "logo": "banks/bnp-hn.webp"
+    "logo": "banks/bnp-hn.webp",
+    "icon": "banks/icons/bnp-hn.svg"
   },
   {
     "bin": "555666",
@@ -477,7 +524,8 @@
     "swift": null,
     "transfer": false,
     "lookup": false,
-    "logo": "banks/bidc.webp"
+    "logo": "banks/bidc.webp",
+    "icon": "banks/icons/bidc.webp"
   },
   {
     "bin": "963666",
@@ -487,7 +535,8 @@
     "swift": null,
     "transfer": false,
     "lookup": false,
-    "logo": "banks/bnp-hcm.webp"
+    "logo": "banks/bnp-hcm.webp",
+    "icon": "banks/icons/bnp-hcm.svg"
   },
   {
     "bin": "971101",
@@ -497,7 +546,8 @@
     "swift": null,
     "transfer": true,
     "lookup": false,
-    "logo": "banks/zalopay.webp"
+    "logo": "banks/zalopay.webp",
+    "icon": "banks/icons/zalopay.webp"
   },
   {
     "bin": "963688",
@@ -507,7 +557,8 @@
     "swift": null,
     "transfer": false,
     "lookup": false,
-    "logo": "banks/bochk.webp"
+    "logo": "banks/bochk.webp",
+    "icon": "banks/icons/bochk.svg"
   },
   {
     "bin": "970465",
@@ -517,7 +568,8 @@
     "swift": null,
     "transfer": false,
     "lookup": false,
-    "logo": "banks/bsp.webp"
+    "logo": "banks/bsp.webp",
+    "icon": "banks/icons/bsp.svg"
   },
   {
     "bin": "168999",
@@ -527,7 +579,8 @@
     "swift": null,
     "transfer": false,
     "lookup": false,
-    "logo": "banks/cubhcm.webp"
+    "logo": "banks/cubhcm.webp",
+    "icon": "banks/icons/cubhcm.svg"
   },
   {
     "bin": "963686",
@@ -537,7 +590,8 @@
     "swift": null,
     "transfer": false,
     "lookup": false,
-    "logo": "banks/esun.webp"
+    "logo": "banks/esun.webp",
+    "icon": "banks/icons/esun.svg"
   },
   {
     "bin": "963669",
@@ -547,7 +601,8 @@
     "swift": null,
     "transfer": false,
     "lookup": false,
-    "logo": "banks/icbc.webp"
+    "logo": "banks/icbc.webp",
+    "icon": "banks/icons/icbc.svg"
   },
   {
     "bin": "971032",
@@ -557,7 +612,8 @@
     "swift": null,
     "transfer": true,
     "lookup": false,
-    "logo": "banks/mvas.webp"
+    "logo": "banks/mvas.webp",
+    "icon": "banks/icons/mvas.webp"
   },
   {
     "bin": "963326",
@@ -567,7 +623,8 @@
     "swift": null,
     "transfer": false,
     "lookup": false,
-    "logo": "banks/tnex.webp"
+    "logo": "banks/tnex.webp",
+    "icon": "banks/icons/tnex.webp"
   },
   {
     "bin": "458761",
@@ -577,7 +634,8 @@
     "swift": "HSBCVNVX",
     "transfer": false,
     "lookup": true,
-    "logo": "banks/hsbc.webp"
+    "logo": "banks/hsbc.webp",
+    "icon": "banks/icons/hsbc.svg"
   },
   {
     "bin": "970442",
@@ -587,7 +645,8 @@
     "swift": "HLBBVNVX",
     "transfer": false,
     "lookup": true,
-    "logo": "banks/hlbvn.webp"
+    "logo": "banks/hlbvn.webp",
+    "icon": "banks/icons/hlbvn.svg"
   },
   {
     "bin": "970455",
@@ -597,7 +656,8 @@
     "swift": null,
     "transfer": false,
     "lookup": false,
-    "logo": "banks/ibk-hn.webp"
+    "logo": "banks/ibk-hn.webp",
+    "icon": "banks/icons/ibk-hn.svg"
   },
   {
     "bin": "970456",
@@ -607,7 +667,8 @@
     "swift": null,
     "transfer": false,
     "lookup": false,
-    "logo": "banks/ibk-hcm.webp"
+    "logo": "banks/ibk-hcm.webp",
+    "icon": "banks/icons/ibk-hcm.svg"
   },
   {
     "bin": "970434",
@@ -617,7 +678,8 @@
     "swift": null,
     "transfer": true,
     "lookup": true,
-    "logo": "banks/ivb.webp"
+    "logo": "banks/ivb.webp",
+    "icon": "banks/icons/ivb.svg"
   },
   {
     "bin": "970406",
@@ -627,7 +689,8 @@
     "swift": "EACBVNVX",
     "transfer": false,
     "lookup": true,
-    "logo": "banks/vikki.webp"
+    "logo": "banks/vikki.webp",
+    "icon": "banks/icons/vikki.webp"
   },
   {
     "bin": "801011",
@@ -637,7 +700,8 @@
     "swift": null,
     "transfer": false,
     "lookup": false,
-    "logo": "banks/nhb-hn.webp"
+    "logo": "banks/nhb-hn.webp",
+    "icon": "banks/icons/nhb-hn.webp"
   },
   {
     "bin": "796500",
@@ -647,7 +711,8 @@
     "swift": "DBSSVNVX",
     "transfer": false,
     "lookup": false,
-    "logo": "banks/dbs.webp"
+    "logo": "banks/dbs.webp",
+    "icon": "banks/icons/dbs.svg"
   },
   {
     "bin": "970439",
@@ -657,7 +722,8 @@
     "swift": "VIDPVNVX",
     "transfer": false,
     "lookup": true,
-    "logo": "banks/pbvn.webp"
+    "logo": "banks/pbvn.webp",
+    "icon": "banks/icons/pbvn.svg"
   },
   {
     "bin": "970410",
@@ -667,7 +733,8 @@
     "swift": "SCBLVNVX",
     "transfer": false,
     "lookup": true,
-    "logo": "banks/scvn.webp"
+    "logo": "banks/scvn.webp",
+    "icon": "banks/icons/scvn.svg"
   },
   {
     "bin": "533948",
@@ -677,7 +744,8 @@
     "swift": null,
     "transfer": false,
     "lookup": false,
-    "logo": "banks/citibank.webp"
+    "logo": "banks/citibank.webp",
+    "icon": "banks/icons/citibank.svg"
   },
   {
     "bin": "422589",
@@ -687,7 +755,8 @@
     "swift": "CIBBVNVN",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/cimb.webp"
+    "logo": "banks/cimb.webp",
+    "icon": "banks/icons/cimb.svg"
   },
   {
     "bin": "970458",
@@ -697,7 +766,8 @@
     "swift": null,
     "transfer": false,
     "lookup": true,
-    "logo": "banks/uob.webp"
+    "logo": "banks/uob.webp",
+    "icon": "banks/icons/uob.webp"
   },
   {
     "bin": "970444",
@@ -707,7 +777,8 @@
     "swift": "GTBAVNVX",
     "transfer": true,
     "lookup": true,
-    "logo": "banks/cbb.webp"
+    "logo": "banks/cbb.webp",
+    "icon": "banks/icons/cbb.svg"
   },
   {
     "bin": "970408",
@@ -717,7 +788,8 @@
     "swift": "GBNKVNVX",
     "transfer": false,
     "lookup": true,
-    "logo": "banks/gpb.webp"
+    "logo": "banks/gpb.webp",
+    "icon": "banks/icons/gpb.svg"
   },
   {
     "bin": "970421",
@@ -727,7 +799,8 @@
     "swift": null,
     "transfer": false,
     "lookup": true,
-    "logo": "banks/vrb.webp"
+    "logo": "banks/vrb.webp",
+    "icon": "banks/icons/vrb.webp"
   },
   {
     "bin": "970457",
@@ -737,7 +810,8 @@
     "swift": null,
     "transfer": true,
     "lookup": true,
-    "logo": "banks/wvn.webp"
+    "logo": "banks/wvn.webp",
+    "icon": "banks/icons/wvn.svg"
   },
   {
     "bin": "970462",
@@ -747,7 +821,8 @@
     "swift": null,
     "transfer": true,
     "lookup": false,
-    "logo": "banks/kbhn.webp"
+    "logo": "banks/kbhn.webp",
+    "icon": "banks/icons/kbhn.svg"
   },
   {
     "bin": "970463",
@@ -757,6 +832,7 @@
     "swift": null,
     "transfer": true,
     "lookup": false,
-    "logo": "banks/kbhcm.webp"
+    "logo": "banks/kbhcm.webp",
+    "icon": "banks/icons/kbhcm.svg"
   }
 ]

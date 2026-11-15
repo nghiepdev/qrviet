@@ -10,6 +10,7 @@ export interface Bank {
   transfer: boolean
   lookup: boolean
   logo: string | null
+  icon?: string | null
 }
 
 export const BANKS: Bank[] = raw as Bank[]
@@ -32,6 +33,12 @@ export function resolveBank(ref: string | null | undefined): Bank | undefined {
 export function bankLogoUrl(bank: Bank | undefined | null): string | null {
   if (!bank?.logo) return null
   return `${import.meta.env.BASE_URL}${bank.logo}`
+}
+
+/** Square symbol mark for the center of a QR code, falling back to the full logo. */
+export function bankIconUrl(bank: Bank | undefined | null): string | null {
+  const path = bank?.icon ?? bank?.logo
+  return path ? `${import.meta.env.BASE_URL}${path}` : null
 }
 
 /** Most-used banks shown first in the picker. */
