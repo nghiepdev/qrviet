@@ -221,7 +221,7 @@ function SettingsPage() {
                   <div className="flex flex-col gap-2">
                     <Banner status="info" title={t('app.installIosTitle')} description={t('app.installIosBody')} icon={<Share size={16} />} />
                     <div>
-                      <Button label={t('app.installIosGuideAction')} icon={<Smartphone size={15} />} size="sm" variant="primary" onClick={() => openIosInstallGuide()} />
+                      <Button label={t('app.installIosGuideAction')} icon={<Smartphone size={15} />} size="sm" variant="primary" clickAction={() => openIosInstallGuide()} />
                     </div>
                   </div>
                 )}

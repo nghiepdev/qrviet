@@ -21,7 +21,7 @@ export function IosInstallGuide() {
       title={t('app.installIosGuideTitle')}
       subtitle={t('app.installIosGuideSubtitle')}
       width={440}
-      sheetHeight="tall"
+      sheetHeight="hug"
       footer={<Button label={t('app.installIosGotIt')} variant="primary" width="100%" onClick={() => setOpen(false)} />}>
       <div className="flex flex-col gap-3">
         <Text type="supporting" className="md:hidden">
@@ -31,12 +31,14 @@ export function IosInstallGuide() {
           {isOpen ? (
             <video
               src={`${BASE}guides/safari-install.mp4`}
+              width={720}
+              height={1564}
               autoPlay
               muted
               loop
               playsInline
-              preload="metadata"
-              className="max-h-[54dvh] w-auto rounded-xl object-contain"
+              preload="auto"
+              className="aspect-720/1564 h-auto max-h-[54dvh] w-[min(100%,calc(54dvh*720/1564))] rounded-xl object-contain"
             />
           ) : null}
         </div>

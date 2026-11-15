@@ -33,7 +33,7 @@ export function SideNavFooter() {
                 await promptInstall()
                 return
               }
-              openIosInstallGuide()
+              await openIosInstallGuide()
             }}
           />
         </VStack>

@@ -46,11 +46,59 @@ export function useInstallState() {
   return {canPrompt, installed: installed || isStandalone(), ios: isIos()}
 }
 
+const IOS_GUIDE_VIDEO_SRC = `${import.meta.env.BASE_URL}guides/safari-install.mp4`
+const IOS_GUIDE_PRELOAD_TIMEOUT_MS = 8000
+
+let iosGuideVideoLoaded = false
+let iosGuidePreloadPromise: Promise<void> | null = null
+
+export function preloadIosInstallGuideVideo(): Promise<void> {
+  if (typeof document === 'undefined' || iosGuideVideoLoaded) return Promise.resolve()
+  if (iosGuidePreloadPromise) return iosGuidePreloadPromise
+
+  iosGuidePreloadPromise = new Promise<void>((resolve) => {
+    const video = document.createElement('video')
+    video.src = IOS_GUIDE_VIDEO_SRC
+    video.muted = true
+    video.playsInline = true
+    video.preload = 'auto'
+    video.setAttribute('aria-hidden', 'true')
+    video.style.cssText = 'position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;left:-9999px;top:0'
+
+    let settled = false
+    const finish = (loaded: boolean) => {
+      if (settled) return
+      settled = true
+      window.clearTimeout(timer)
+      video.removeEventListener('canplay', onReady)
+      video.removeEventListener('loadeddata', onReady)
+      video.removeEventListener('error', onError)
+      video.remove()
+      if (loaded) iosGuideVideoLoaded = true
+      iosGuidePreloadPromise = null
+      resolve()
+    }
+    const onReady = () => finish(true)
+    const onError = () => finish(false)
+    const timer = window.setTimeout(() => finish(false), IOS_GUIDE_PRELOAD_TIMEOUT_MS)
+
+    video.addEventListener('canplay', onReady, {once: true})
+    video.addEventListener('loadeddata', onReady, {once: true})
+    video.addEventListener('error', onError, {once: true})
+    document.body.appendChild(video)
+    video.load()
+    if (video.readyState >= 2) finish(true)
+  })
+
+  return iosGuidePreloadPromise
+}
+
 export function setIosInstallGuideOpen(iosGuideOpen: boolean) {
   pwaStore.setState((s) => ({...s, iosGuideOpen}))
 }
 
-export function openIosInstallGuide() {
+export async function openIosInstallGuide() {
+  await preloadIosInstallGuideVideo()
   setIosInstallGuideOpen(true)
 }
 

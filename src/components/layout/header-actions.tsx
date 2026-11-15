@@ -59,7 +59,7 @@ export function HeaderActions({onOpenPalette}: {onOpenPalette: () => void}) {
                 await promptInstall()
                 return
               }
-              openIosInstallGuide()
+              await openIosInstallGuide()
             }}
           />
         </span>
