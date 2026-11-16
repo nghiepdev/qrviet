@@ -16,7 +16,13 @@ interface Props {
 }
 
 /** Bank + destination type + account number + holder name. */
-export function AccountFields({form, onChange, errors = {}, showErrors = false, showName = true}: Props) {
+export function AccountFields({
+  form,
+  onChange,
+  errors = {},
+  showErrors = false,
+  showName = true,
+}: Props) {
   const t = useT()
   const pasteAccount = async () => {
     try {
@@ -35,9 +41,22 @@ export function AccountFields({form, onChange, errors = {}, showErrors = false, 
         isRequired
         error={showErrors && errors.bin ? t(errors.bin) : undefined}
       />
-      <SegmentedControl label={t('gen.service')} value={form.service} onChange={(v) => onChange({service: v as VietQrForm['service']})} layout="fill">
-        <SegmentedControlItem value="account" label={t('gen.serviceAccount')} icon={<Landmark size={14} />} />
-        <SegmentedControlItem value="card" label={t('gen.serviceCard')} icon={<CreditCard size={14} />} />
+      <SegmentedControl
+        label={t('gen.service')}
+        value={form.service}
+        onChange={(v) => onChange({service: v as VietQrForm['service']})}
+        layout="fill"
+      >
+        <SegmentedControlItem
+          value="account"
+          label={t('gen.serviceAccount')}
+          icon={<Landmark size={14} />}
+        />
+        <SegmentedControlItem
+          value="card"
+          label={t('gen.serviceCard')}
+          icon={<CreditCard size={14} />}
+        />
       </SegmentedControl>
       <div className="flex items-end gap-2">
         <div className="flex-1 min-w-0">
@@ -55,13 +74,25 @@ export function AccountFields({form, onChange, errors = {}, showErrors = false, 
             hasSpellCheck={false}
             hasAutoCorrect={false}
             autoCapitalize="characters"
-            status={showErrors && errors.accountNumber ? {type: 'error', message: t(errors.accountNumber)} : undefined}
+            status={
+              showErrors && errors.accountNumber
+                ? {type: 'error', message: t(errors.accountNumber)}
+                : undefined
+            }
             controlClassName="qv-mono"
           />
         </div>
-        {typeof navigator !== 'undefined' && 'clipboard' in navigator && 'readText' in navigator.clipboard && (
-          <IconButton label={t('common.import')} tooltip="Paste" icon={<ClipboardPaste size={18} />} variant="secondary" onClick={() => void pasteAccount()} />
-        )}
+        {typeof navigator !== 'undefined' &&
+          'clipboard' in navigator &&
+          'readText' in navigator.clipboard && (
+            <IconButton
+              label={t('common.import')}
+              tooltip="Paste"
+              icon={<ClipboardPaste size={18} />}
+              variant="secondary"
+              onClick={() => void pasteAccount()}
+            />
+          )}
       </div>
       {showName && (
         <TextInput

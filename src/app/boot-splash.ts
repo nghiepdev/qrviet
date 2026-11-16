@@ -64,7 +64,8 @@ export const BOOT_HTML = `<div id="boot" role="status" aria-live="polite">
   <div class="qv-dots" aria-label="Đang tải"><i></i><i></i><i></i></div>
 </div>`
 
-export const BOT_UA_RE = /googlebot|google-inspectiontool|adsbot-google|mediapartners-google|bingbot|applebot|duckduckbot|slurp|yandex|baiduspider|facebookexternalhit|zalo/i
+export const BOT_UA_RE =
+  /googlebot|google-inspectiontool|adsbot-google|mediapartners-google|bingbot|applebot|duckduckbot|slurp|yandex|baiduspider|facebookexternalhit|zalo/i
 
 export function isSearchBot(): boolean {
   if (typeof document === 'undefined') return false

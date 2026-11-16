@@ -12,42 +12,42 @@
   "theme_color": "#d7263d",
   "categories": ["finance", "utilities", "productivity"],
   "icons": [
-    { "src": "pwa-64x64.png", "sizes": "64x64", "type": "image/png" },
-    { "src": "pwa-192x192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "pwa-512x512.png", "sizes": "512x512", "type": "image/png" },
+    {"src": "pwa-64x64.png", "sizes": "64x64", "type": "image/png"},
+    {"src": "pwa-192x192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "pwa-512x512.png", "sizes": "512x512", "type": "image/png"},
     {
       "src": "maskable-icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     },
-    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+    {"src": "favicon.svg", "sizes": "any", "type": "image/svg+xml"}
   ],
   "shortcuts": [
     {
       "name": "Tạo mã VietQR",
       "short_name": "Tạo QR",
       "url": "./?source=shortcut",
-      "icons": [{ "src": "shortcuts/create.png", "sizes": "96x96", "type": "image/png" }]
+      "icons": [{"src": "shortcuts/create.png", "sizes": "96x96", "type": "image/png"}]
     },
     {
       "name": "Quét mã QR",
       "short_name": "Quét QR",
       "url": "./scan?source=shortcut",
-      "icons": [{ "src": "shortcuts/scan.png", "sizes": "96x96", "type": "image/png" }]
+      "icons": [{"src": "shortcuts/scan.png", "sizes": "96x96", "type": "image/png"}]
     },
     {
       "name": "Sổ tài khoản",
       "short_name": "Tài khoản",
       "url": "./accounts?source=shortcut",
-      "icons": [{ "src": "shortcuts/accounts.png", "sizes": "96x96", "type": "image/png" }]
+      "icons": [{"src": "shortcuts/accounts.png", "sizes": "96x96", "type": "image/png"}]
     }
   ],
   "share_target": {
     "action": "./scan",
     "method": "GET",
     "enctype": "application/x-www-form-urlencoded",
-    "params": { "title": "title", "text": "text", "url": "url" }
+    "params": {"title": "title", "text": "text", "url": "url"}
   },
   "screenshots": [
     {

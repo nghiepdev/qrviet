@@ -2,7 +2,10 @@ import {useEffect, useRef} from 'react'
 import {annotate, annotationGroup} from 'rough-notation'
 import type {RoughAnnotationConfig} from 'rough-notation/lib/model'
 
-export type MarkStyle = Pick<RoughAnnotationConfig, 'type' | 'multiline' | 'padding' | 'strokeWidth' | 'iterations' | 'animationDuration'>
+export type MarkStyle = Pick<
+  RoughAnnotationConfig,
+  'type' | 'multiline' | 'padding' | 'strokeWidth' | 'iterations' | 'animationDuration'
+>
 
 /**
  * Text whose `*marked*` parts get hand-drawn Rough Notation marks, drawn one after another.
@@ -17,7 +20,9 @@ export function MarkedText({text, marks}: {text: string; marks: readonly MarkSty
     const root = ref.current
     if (!root) return
     const still = matchMedia('(prefers-reduced-motion: reduce)').matches
-    const annotations = [...root.querySelectorAll<HTMLElement>('[data-rough]')].map((el, i) => annotate(el, {...marks[i % marks.length], animate: !still}))
+    const annotations = [...root.querySelectorAll<HTMLElement>('[data-rough]')].map((el, i) =>
+      annotate(el, {...marks[i % marks.length], animate: !still}),
+    )
     const timer = window.setTimeout(() => annotationGroup(annotations).show(), still ? 0 : 400)
     return () => {
       window.clearTimeout(timer)

@@ -73,11 +73,19 @@ export const settingsStore = persistedStore<Settings>({
   migrate: (p, v) => {
     const prev = p as Partial<Settings> | undefined
     if (!prev) return undefined
-    const logoMode = v < 2 && (!prev.design?.logoMode || prev.design.logoMode === 'none') ? 'bank' : (prev.design?.logoMode ?? 'bank')
+    const logoMode =
+      v < 2 && (!prev.design?.logoMode || prev.design.logoMode === 'none')
+        ? 'bank'
+        : (prev.design?.logoMode ?? 'bank')
     return {
       ...DEFAULT_SETTINGS,
       ...prev,
-      design: {...DEFAULT_DESIGN, ...prev.design, logoMode, style: {...DEFAULT_DESIGN.style, ...prev.design?.style}},
+      design: {
+        ...DEFAULT_DESIGN,
+        ...prev.design,
+        logoMode,
+        style: {...DEFAULT_DESIGN.style, ...prev.design?.style},
+      },
     }
   },
   merge: (p, init) => ({
@@ -100,18 +108,26 @@ export function updateDesign(patch: Partial<QrDesign>) {
 }
 
 export function updateQrStyle(patch: Partial<QrStyle>) {
-  settingsStore.setState((s) => ({...s, design: {...s.design, style: {...s.design.style, ...patch}}}))
+  settingsStore.setState((s) => ({
+    ...s,
+    design: {...s.design, style: {...s.design.style, ...patch}},
+  }))
 }
 
 export function toggleFavoriteBank(bin: string) {
   settingsStore.setState((s) => ({
     ...s,
-    favoriteBins: s.favoriteBins.includes(bin) ? s.favoriteBins.filter((b) => b !== bin) : [bin, ...s.favoriteBins],
+    favoriteBins: s.favoriteBins.includes(bin)
+      ? s.favoriteBins.filter((b) => b !== bin)
+      : [bin, ...s.favoriteBins],
   }))
 }
 
 export function pushRecentBank(bin: string) {
-  settingsStore.setState((s) => ({...s, recentBins: [bin, ...s.recentBins.filter((b) => b !== bin)].slice(0, 6)}))
+  settingsStore.setState((s) => ({
+    ...s,
+    recentBins: [bin, ...s.recentBins.filter((b) => b !== bin)].slice(0, 6),
+  }))
 }
 
 export function setPreferredBankApp(bin: string | null) {
@@ -120,7 +136,8 @@ export function setPreferredBankApp(bin: string | null) {
 
 export function cycleMode() {
   settingsStore.setState((s) => {
-    const prefersDark = typeof matchMedia !== 'undefined' && matchMedia('(prefers-color-scheme: dark)').matches
+    const prefersDark =
+      typeof matchMedia !== 'undefined' && matchMedia('(prefers-color-scheme: dark)').matches
     const effective = s.mode === 'system' ? (prefersDark ? 'dark' : 'light') : s.mode
     return {...s, mode: effective === 'dark' ? 'light' : 'dark'}
   })

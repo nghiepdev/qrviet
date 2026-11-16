@@ -1,7 +1,17 @@
 /** Builders and a classifier for general-purpose QR payloads (Wi-Fi, vCard, …). */
 import {looksLikeEmv, parseEmvQr, type EmvParseResult} from './vietqr.ts'
 
-export type QrKind = 'url' | 'text' | 'wifi' | 'vcard' | 'email' | 'sms' | 'phone' | 'geo' | 'event' | 'social'
+export type QrKind =
+  | 'url'
+  | 'text'
+  | 'wifi'
+  | 'vcard'
+  | 'email'
+  | 'sms'
+  | 'phone'
+  | 'geo'
+  | 'event'
+  | 'social'
 
 export interface WifiData {
   ssid: string
@@ -43,7 +53,16 @@ export interface EventData {
   allDay: boolean
   description: string
 }
-export type SocialPlatform = 'zalo' | 'facebook' | 'messenger' | 'tiktok' | 'instagram' | 'youtube' | 'telegram' | 'x' | 'shopee'
+export type SocialPlatform =
+  | 'zalo'
+  | 'facebook'
+  | 'messenger'
+  | 'tiktok'
+  | 'instagram'
+  | 'youtube'
+  | 'telegram'
+  | 'x'
+  | 'shopee'
 export interface SocialData {
   platform: SocialPlatform
   handle: string
@@ -62,7 +81,10 @@ export function buildWifi(d: WifiData): string {
 }
 
 function escV(v: string): string {
-  return v.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/([,;])/g, '\\$1')
+  return v
+    .replace(/\\/g, '\\\\')
+    .replace(/\n/g, '\\n')
+    .replace(/([,;])/g, '\\$1')
 }
 
 export function buildVCard(d: VCardData): string {
@@ -209,7 +231,12 @@ function parseWifi(text: string): WifiData | null {
   return {
     ssid: map.S ?? '',
     password: map.P ?? '',
-    security: t === 'WEP' ? 'WEP' : t === 'WPA' || t === 'WPA2' || t === 'WPA3' || t === 'SAE' ? 'WPA' : 'nopass',
+    security:
+      t === 'WEP'
+        ? 'WEP'
+        : t === 'WPA' || t === 'WPA2' || t === 'WPA3' || t === 'SAE'
+          ? 'WPA'
+          : 'nopass',
     hidden: (map.H ?? '').toLowerCase() === 'true',
   }
 }
@@ -253,7 +280,15 @@ function parseMeCard(text: string): {fields: Array<[string, string]>; name: stri
   const body = text.slice(7)
   const fields: Array<[string, string]> = []
   let name = ''
-  const map: Record<string, string> = {N: 'name', TEL: 'phone', EMAIL: 'email', URL: 'website', ADR: 'address', NOTE: 'note', ORG: 'org'}
+  const map: Record<string, string> = {
+    N: 'name',
+    TEL: 'phone',
+    EMAIL: 'email',
+    URL: 'website',
+    ADR: 'address',
+    NOTE: 'note',
+    ORG: 'org',
+  }
   const re = /([A-Z-]+):((?:\\.|[^;])*);/gi
   let m: RegExpExecArray | null
   while ((m = re.exec(body))) {
@@ -331,16 +366,30 @@ function classifyUnsafe(raw: string): Classified {
     if (start) extra.push(['start', formatIcs(start)])
     if (end) extra.push(['end', formatIcs(end)])
     if (loc) extra.push(['location', loc.trim()])
-    return {type: 'event', fields: [...extra, ...fields.filter(([k]) => k === 'note')], title: summary}
+    return {
+      type: 'event',
+      fields: [...extra, ...fields.filter(([k]) => k === 'note')],
+      title: summary,
+    }
   }
   if (/^mailto:/i.test(text)) {
     const [address, query = ''] = text.slice(7).split('?')
     const q = safeParams(query)
-    return {type: 'email', to: safeDecode(address), subject: q.get('subject') ?? '', body: q.get('body') ?? ''}
+    return {
+      type: 'email',
+      to: safeDecode(address),
+      subject: q.get('subject') ?? '',
+      body: q.get('body') ?? '',
+    }
   }
   if (/^MATMSG:/i.test(text)) {
     const to = /TO:([^;]*)/i.exec(text)?.[1] ?? ''
-    return {type: 'email', to, subject: /SUB:([^;]*)/i.exec(text)?.[1] ?? '', body: /BODY:([^;]*)/i.exec(text)?.[1] ?? ''}
+    return {
+      type: 'email',
+      to,
+      subject: /SUB:([^;]*)/i.exec(text)?.[1] ?? '',
+      body: /BODY:([^;]*)/i.exec(text)?.[1] ?? '',
+    }
   }
   if (/^tel:/i.test(text)) return {type: 'phone', phone: text.slice(4)}
   // RFC 5724 URI ("sms:+849…?body=Hi") — checked before the colon form it would otherwise match.

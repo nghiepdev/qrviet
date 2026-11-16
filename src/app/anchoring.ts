@@ -6,12 +6,17 @@
  * lists, the browser's own date pickers, and no carousel buttons (swipe, trackpad and keyboard still
  * scroll). Tooltips are hidden by a rule in styles.css.
  */
-export const canAnchor = typeof CSS !== 'undefined' && typeof CSS.supports === 'function' && CSS.supports('anchor-name', '--qv')
+export const canAnchor =
+  typeof CSS !== 'undefined' &&
+  typeof CSS.supports === 'function' &&
+  CSS.supports('anchor-name', '--qv')
 
 /** `presentation` for date and time inputs: Astryx's own calendar where it can be anchored, the browser's pickers otherwise. */
 export const datePickerPresentation = canAnchor ? ('adaptive-native' as const) : ('native' as const)
 
 /** `presentation` for a menu or option list where layers can be anchored, a bottom sheet otherwise. */
-export function sheetUnlessAnchored<T extends 'popover' | 'adaptive'>(presentation: T): T | 'bottom-sheet' {
+export function sheetUnlessAnchored<T extends 'popover' | 'adaptive'>(
+  presentation: T,
+): T | 'bottom-sheet' {
   return canAnchor ? presentation : 'bottom-sheet'
 }

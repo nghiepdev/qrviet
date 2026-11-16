@@ -5,7 +5,16 @@
  *   38 = 00:A000000727 · 01:{00:BIN 01:account/card} · 02:QRIBFTTA|QRIBFTTC
  *   62 = 01 bill number · 05 reference label · 08 purpose (each ANS ≤ 25 per spec)
  */
-import {checkCrc, findField, parseTlv, splitCrc, tlv, withCrc, type CrcCheck, type TlvField} from './emv.ts'
+import {
+  checkCrc,
+  findField,
+  parseTlv,
+  splitCrc,
+  tlv,
+  withCrc,
+  type CrcCheck,
+  type TlvField,
+} from './emv.ts'
 import {removeDiacritics} from './text.ts'
 
 export const NAPAS_GUID = 'A000000727'
@@ -69,7 +78,10 @@ export function normalizeAmount(amount: VietQrInput['amount']): string {
   else {
     const v = amount.trim()
     // "50000.00" is a decimal (EMV allows it); "1.234.567" is Vietnamese grouping.
-    n = /^\d+(\.\d+)?$/.test(v) && !/^\d{1,3}(\.\d{3})+$/.test(v) ? Number(v) : Number(v.replace(/[^\d]/g, '') || '0')
+    n =
+      /^\d+(\.\d+)?$/.test(v) && !/^\d{1,3}(\.\d{3})+$/.test(v)
+        ? Number(v)
+        : Number(v.replace(/[^\d]/g, '') || '0')
   }
   if (!Number.isFinite(n) || n <= 0) return ''
   // BigInt keeps huge values as plain digits (never "1e+23"), so the 13-digit check stays honest.
@@ -79,28 +91,40 @@ export function normalizeAmount(amount: VietQrInput['amount']): string {
 export function validateVietQr(input: VietQrInput): VietQrIssue[] {
   const issues: VietQrIssue[] = []
   if (!input.bin) issues.push({field: 'bin', code: 'required', severity: 'error'})
-  else if (!/^\d{6}$/.test(input.bin)) issues.push({field: 'bin', code: 'bin-format', severity: 'error'})
+  else if (!/^\d{6}$/.test(input.bin))
+    issues.push({field: 'bin', code: 'bin-format', severity: 'error'})
 
   const acc = input.accountNumber.trim()
   if (!acc) issues.push({field: 'accountNumber', code: 'required', severity: 'error'})
-  else if (!/^[0-9A-Za-z]+$/.test(acc)) issues.push({field: 'accountNumber', code: 'account-format', severity: 'error'})
-  else if (acc.length > ACCOUNT_MAX) issues.push({field: 'accountNumber', code: 'account-length', severity: 'error'})
+  else if (!/^[0-9A-Za-z]+$/.test(acc))
+    issues.push({field: 'accountNumber', code: 'account-format', severity: 'error'})
+  else if (acc.length > ACCOUNT_MAX)
+    issues.push({field: 'accountNumber', code: 'account-length', severity: 'error'})
 
   if (input.amount !== undefined && input.amount !== null && input.amount !== '') {
     const raw = typeof input.amount === 'number' ? String(input.amount) : input.amount
-    if (typeof input.amount === 'number' ? !Number.isFinite(input.amount) || input.amount < 0 : /[^\d.,\s]/.test(raw)) {
+    if (
+      typeof input.amount === 'number'
+        ? !Number.isFinite(input.amount) || input.amount < 0
+        : /[^\d.,\s]/.test(raw)
+    ) {
       issues.push({field: 'amount', code: 'amount-format', severity: 'error'})
     } else {
       const normalized = normalizeAmount(input.amount)
-      if (normalized && (normalized.length > AMOUNT_MAX_DIGITS || BigInt(normalized) > BigInt(AMOUNT_MAX))) {
+      if (
+        normalized &&
+        (normalized.length > AMOUNT_MAX_DIGITS || BigInt(normalized) > BigInt(AMOUNT_MAX))
+      ) {
         issues.push({field: 'amount', code: 'amount-too-large', severity: 'error'})
       }
     }
   }
 
   const purpose = toQrAscii(input.purpose ?? '')
-  if (purpose.length > PURPOSE_MAX) issues.push({field: 'purpose', code: 'purpose-too-long', severity: 'error'})
-  else if (purpose.length > PURPOSE_SPEC_LIMIT) issues.push({field: 'purpose', code: 'purpose-long', severity: 'warning'})
+  if (purpose.length > PURPOSE_MAX)
+    issues.push({field: 'purpose', code: 'purpose-too-long', severity: 'error'})
+  else if (purpose.length > PURPOSE_SPEC_LIMIT)
+    issues.push({field: 'purpose', code: 'purpose-long', severity: 'warning'})
 
   if (input.initiation === 'dynamic' && !normalizeAmount(input.amount)) {
     issues.push({field: 'amount', code: 'dynamic-needs-amount', severity: 'warning'})
@@ -111,15 +135,20 @@ export function validateVietQr(input: VietQrInput): VietQrIssue[] {
 /** Build the EMV string. Throws on hard errors; call validateVietQr first for UI feedback. */
 export function buildVietQr(input: VietQrInput): string {
   const errors = validateVietQr(input).filter((i) => i.severity === 'error')
-  if (errors.length) throw new Error(`Invalid VietQR input: ${errors.map((e) => `${e.field}:${e.code}`).join(', ')}`)
+  if (errors.length)
+    throw new Error(`Invalid VietQR input: ${errors.map((e) => `${e.field}:${e.code}`).join(', ')}`)
 
   const account = input.accountNumber.trim().toUpperCase()
   const amount = normalizeAmount(input.amount)
   const purpose = toQrAscii(input.purpose ?? '').slice(0, PURPOSE_MAX)
   const bill = toQrAscii(input.billNumber ?? '').slice(0, PURPOSE_SPEC_LIMIT)
   const reference = toQrAscii(input.referenceLabel ?? '').slice(0, PURPOSE_SPEC_LIMIT)
-  const name = toQrAscii(input.merchantName ?? '').toUpperCase().slice(0, 25)
-  const city = toQrAscii(input.merchantCity ?? '').toUpperCase().slice(0, 15)
+  const name = toQrAscii(input.merchantName ?? '')
+    .toUpperCase()
+    .slice(0, 25)
+  const city = toQrAscii(input.merchantCity ?? '')
+    .toUpperCase()
+    .slice(0, 15)
 
   const beneficiary = tlv('00', input.bin) + tlv('01', account)
   const tag38 =
@@ -131,7 +160,8 @@ export function buildVietQr(input: VietQrInput): string {
   if (additional.length > 99) {
     // Keep the purpose, trim it so the whole template fits.
     const room = 99 - (tlv('01', bill) + tlv('05', reference)).length - 4
-    additional = tlv('01', bill) + tlv('05', reference) + tlv('08', purpose.slice(0, Math.max(0, room)))
+    additional =
+      tlv('01', bill) + tlv('05', reference) + tlv('08', purpose.slice(0, Math.max(0, room)))
   }
 
   const dynamic =
@@ -184,7 +214,7 @@ export type EmvParseResult = ParsedVietQr | ParsedEmv
 
 /** Looks like an EMV MPM payload (starts with tag 00 = 01). */
 export function looksLikeEmv(text: string): boolean {
-  return /^000201/.test(text.trim())
+  return text.trim().startsWith('000201')
 }
 
 /** Parse any EMV MPM payload; returns a VietQR view when the NAPAS GUID is present. */
@@ -220,7 +250,12 @@ export function parseEmvQr(text: string): EmvParseResult {
     raw,
     bin: findField(nested, '00')?.value ?? '',
     accountNumber: findField(nested, '01')?.value ?? '',
-    service: serviceCode === SERVICE_ACCOUNT ? 'account' : serviceCode === SERVICE_CARD ? 'card' : 'unknown',
+    service:
+      serviceCode === SERVICE_ACCOUNT
+        ? 'account'
+        : serviceCode === SERVICE_CARD
+          ? 'card'
+          : 'unknown',
     serviceCode,
     amount: findField(fields, '54')?.value ?? '',
     currency: findField(fields, '53')?.value ?? '',
@@ -247,5 +282,7 @@ function safeParse(value: string): TlvField[] | undefined {
 /** Mask the middle of an account number: 0123456789 → 012****789. */
 export function maskAccount(account: string, visible = 3): string {
   if (account.length <= visible * 2) return account
-  return account.slice(0, visible) + '*'.repeat(account.length - visible * 2) + account.slice(-visible)
+  return (
+    account.slice(0, visible) + '*'.repeat(account.length - visible * 2) + account.slice(-visible)
+  )
 }

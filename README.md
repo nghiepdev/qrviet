@@ -93,14 +93,20 @@ Then open <http://localhost:3000>.
 
 ### Scripts
 
-| Command | Description |
-| --- | --- |
-| `pnpm dev` | Start the development server on port 3000. |
-| `pnpm build` | Type-check, then build the static site into `dist/client/` with the service worker. |
-| `pnpm preview` | Serve the production build on port 4173, service worker and offline mode included. |
-| `pnpm typecheck` | Type-check the project without building it. |
-| `pnpm gen:splash` | Re-render the iOS launch screens after a change to the boot splash in `src/app/boot-splash.ts`. Needs Chrome; shrinks the images with ffmpeg when it is installed. |
-| `pnpm sync:banks` | Refresh `src/data/banks.json`, `public/banks/` logos, and `src/data/bank-apps.json` by crawling VietQR APIs, `dl.vietqr.io`, and `vietqr-core`. Needs network access; converts logos to WebP with cwebp when installed (supports `--no-logos`, `--deeplinks-only`, `--no-deeplinks`). |
+| Command             | Description                                                                                                                                                                                                                                                                           |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm dev`          | Start the development server on port 3000.                                                                                                                                                                                                                                            |
+| `pnpm build`        | Build the static site into `dist/client/` with the service worker.                                                                                                                                                                                                                    |
+| `pnpm preview`      | Serve the production build on port 4173, service worker and offline mode included.                                                                                                                                                                                                    |
+| `pnpm typecheck`    | Type-check the project without building it.                                                                                                                                                                                                                                           |
+| `pnpm lint`         | Run Oxlint, including type-aware TypeScript rules, React Hooks and accessibility checks.                                                                                                                                                                                              |
+| `pnpm lint:fix`     | Apply safe Oxlint fixes.                                                                                                                                                                                                                                                              |
+| `pnpm format`       | Format the project with Oxfmt.                                                                                                                                                                                                                                                        |
+| `pnpm format:check` | Check formatting without changing files.                                                                                                                                                                                                                                              |
+| `pnpm check`        | Run lint, formatting checks and the TypeScript compiler, as in CI.                                                                                                                                                                                                                    |
+| `pnpm fix`          | Apply safe lint fixes, then format.                                                                                                                                                                                                                                                   |
+| `pnpm gen:splash`   | Re-render the iOS launch screens after a change to the boot splash in `src/app/boot-splash.ts`. Needs Chrome; shrinks the images with ffmpeg when it is installed.                                                                                                                    |
+| `pnpm sync:banks`   | Refresh `src/data/banks.json`, `public/banks/` logos, and `src/data/bank-apps.json` by crawling VietQR APIs, `dl.vietqr.io`, and `vietqr-core`. Needs network access; converts logos to WebP with cwebp when installed (supports `--no-logos`, `--deeplinks-only`, `--no-deeplinks`). |
 
 Node.js runs the TypeScript in `scripts/` directly (type stripping), so the scripts need no build step.
 
@@ -108,11 +114,11 @@ Node.js runs the TypeScript in `scripts/` directly (type stripping), so the scri
 
 The app has no runtime configuration. These environment variables are read at build time:
 
-| Variable | Default | Description |
-| --- | --- | --- |
-| `BASE_PATH` | `/` | Public base path when the app is not served from the root of its domain, for example `/qrviet/`. Starts and ends with `/`. |
-| `SITE_URL` | Detected on Netlify and Vercel | Public URL of the deployment, as an origin or a full URL. Link previews need it for the absolute URL of their image; the base path is appended when it is missing. |
-| `CHROME_PATH` | Detected | Chrome or Chromium binary for `pnpm gen:splash`. |
+| Variable      | Default                        | Description                                                                                                                                                        |
+| ------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `BASE_PATH`   | `/`                            | Public base path when the app is not served from the root of its domain, for example `/qrviet/`. Starts and ends with `/`.                                         |
+| `SITE_URL`    | Detected on Netlify and Vercel | Public URL of the deployment, as an origin or a full URL. Link previews need it for the absolute URL of their image; the base path is appended when it is missing. |
+| `CHROME_PATH` | Detected                       | Chrome or Chromium binary for `pnpm gen:splash`.                                                                                                                   |
 
 ## Deployment
 

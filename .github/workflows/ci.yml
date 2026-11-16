@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   check:
-    name: Build
+    name: Check and build
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -31,5 +31,5 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
-      # Also type-checks.
+      - run: pnpm check
       - run: pnpm build

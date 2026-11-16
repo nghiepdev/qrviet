@@ -22,7 +22,15 @@ export function IosInstallGuide() {
       subtitle={t('app.installIosGuideSubtitle')}
       width={440}
       sheetHeight="hug"
-      footer={<Button label={t('app.installIosGotIt')} variant="primary" width="100%" onClick={() => setOpen(false)} />}>
+      footer={
+        <Button
+          label={t('app.installIosGotIt')}
+          variant="primary"
+          width="100%"
+          onClick={() => setOpen(false)}
+        />
+      }
+    >
       <div className="flex flex-col gap-3">
         <Text type="supporting" className="md:hidden">
           {t('app.installIosGuideSubtitle')}

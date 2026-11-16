@@ -1,6 +1,7 @@
 import type {CSSProperties} from 'react'
 
-const STAR = '376.0,306.0 393.6,351.7 442.6,354.4 404.5,385.3 417.1,432.6 376.0,406.0 334.9,432.6 347.5,385.3 309.4,354.4 358.4,351.7'
+const STAR =
+  '376.0,306.0 393.6,351.7 442.6,354.4 404.5,385.3 417.1,432.6 376.0,406.0 334.9,432.6 347.5,385.3 309.4,354.4 358.4,351.7'
 
 interface MarkProps {
   size?: number
@@ -23,7 +24,8 @@ export function LogoMark({size = 32, animated = false, className, style, title}:
       style={style}
       role={title ? 'img' : undefined}
       aria-hidden={title ? undefined : true}
-      aria-label={title}>
+      aria-label={title}
+    >
       <defs>
         <linearGradient id={`${id}-bg`} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stopColor="#f0435a" />
@@ -55,7 +57,14 @@ export function LogoMark({size = 32, animated = false, className, style, title}:
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <polygon className="qv-star" points={STAR} fill={`url(#${id}-star)`} stroke="#ffc93c" strokeWidth="10" strokeLinejoin="round" />
+      <polygon
+        className="qv-star"
+        points={STAR}
+        fill={`url(#${id}-star)`}
+        stroke="#ffc93c"
+        strokeWidth="10"
+        strokeLinejoin="round"
+      />
     </svg>
   )
 }

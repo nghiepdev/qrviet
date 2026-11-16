@@ -2,7 +2,8 @@ import type {MessageKey} from './vi'
 
 export const en: Record<MessageKey, string> = {
   'app.name': 'QRViet',
-  'app.tagline': 'Free VietQR toolkit — create, scan, payment links & banking app Deeplinks. Works offline.',
+  'app.tagline':
+    'Free VietQR toolkit — create, scan, payment links & banking app Deeplinks. Works offline.',
   'app.loading': 'Getting ready…',
   'app.offline': 'Offline',
   'app.offlineHint': 'You are offline — every feature still works.',
@@ -117,7 +118,8 @@ export const en: Record<MessageKey, string> = {
   'bank.createWith': 'Create a QR with this bank',
   'bank.count': '{count} banks & wallets',
   'bank.directoryTitle': 'Bank directory',
-  'bank.directorySubtitle': 'BIN, bank code, SWIFT and app Deeplink support for {count} banks & wallets that support VietQR.',
+  'bank.directorySubtitle':
+    'BIN, bank code, SWIFT and app Deeplink support for {count} banks & wallets that support VietQR.',
   'bank.filterNapas': 'Napas 247 only',
   'bank.filterAll': 'All',
   'bank.filterDeeplink': 'Deeplink',
@@ -127,12 +129,14 @@ export const en: Record<MessageKey, string> = {
   'bank.tagQrPay': 'Deeplink · QR Pay',
   'bank.tagQrPayShort': 'Deeplink · QR',
   'bank.tagOpenApp': 'Deeplink',
-  'bank.tagLegend': 'Deeplink · Auto-fill: opens app & pre-fills account, amount, note • Deeplink · QR Pay: passes VietQR payload (depends on app) • Deeplink: quick launch & copy account',
+  'bank.tagLegend':
+    'Deeplink · Auto-fill: opens app & pre-fills account, amount, note • Deeplink · QR Pay: passes VietQR payload (depends on app) • Deeplink: quick launch & copy account',
   'bank.copyBin': 'Copy BIN',
 
   'gen.title': 'Create a VietQR code',
   'gen.formTitle': 'Payee details',
-  'gen.subtitle': 'NAPAS 247 transfer codes — scannable by every banking app & e-wallet, with payment links & app Deeplinks.',
+  'gen.subtitle':
+    'NAPAS 247 transfer codes — scannable by every banking app & e-wallet, with payment links & app Deeplinks.',
   'gen.account': 'Account number',
   'gen.card': 'Card number',
   'gen.accountPlaceholder': 'e.g. 0123456789',
@@ -156,7 +160,8 @@ export const en: Record<MessageKey, string> = {
   'gen.merchantCity': 'City (tag 60)',
   'gen.initiation': 'Code type',
   'gen.initiationAuto': 'Automatic',
-  'gen.initiationAutoHint': 'Dynamic when there is an amount, bill number or reference; static otherwise.',
+  'gen.initiationAutoHint':
+    'Dynamic when there is an amount, bill number or reference; static otherwise.',
   'gen.initiationStatic': 'Static',
   'gen.initiationStaticHint': 'Reusable; the payer types in the amount.',
   'gen.initiationDynamic': 'Dynamic',
@@ -233,7 +238,8 @@ export const en: Record<MessageKey, string> = {
   'style.logoPlate': 'Logo backing',
   'style.ecc': 'Error correction',
   'style.ecc.hint': 'Higher levels keep the code scannable with a logo or smudges.',
-  'style.ecc.logo': 'The logo covers part of the code, so QRViet uses at least level {level} to keep it scannable.',
+  'style.ecc.logo':
+    'The logo covers part of the code, so QRViet uses at least level {level} to keep it scannable.',
   'style.margin': 'Quiet zone',
   'style.reset': 'Reset style',
   'style.presets': 'Colour presets',
@@ -257,7 +263,8 @@ export const en: Record<MessageKey, string> = {
   'plate.circle': 'Circle',
 
   'scan.title': 'Scan & decode',
-  'scan.subtitle': 'Use the camera, upload or paste an image (Ctrl/⌘+V), or drag & drop. Includes banking app Deeplink launch — 100% on-device.',
+  'scan.subtitle':
+    'Use the camera, upload or paste an image (Ctrl/⌘+V), or drag & drop. Includes banking app Deeplink launch — 100% on-device.',
   'scan.camera': 'Camera',
   'scan.image': 'Image',
   'scan.text': 'Paste text',
@@ -268,7 +275,8 @@ export const en: Record<MessageKey, string> = {
   'scan.uploadImage': 'Upload image',
   'scan.paste': 'Paste',
   'scan.pasteEmpty': 'Clipboard has no image or text',
-  'scan.pastePermission': 'Could not read the clipboard. Allow paste access or use the Paste text tab.',
+  'scan.pastePermission':
+    'Could not read the clipboard. Allow paste access or use the Paste text tab.',
   'scan.continuous': 'Keep scanning',
   'scan.pick': 'Choose an image with a QR code',
   'scan.drop': 'Drop the image here',
@@ -390,7 +398,8 @@ export const en: Record<MessageKey, string> = {
   'pay.invalidBody': 'The link is missing the bank or account number.',
   'pay.makeOwn': 'Create your own link',
   'pay.builderTitle': 'Create a payment link',
-  'pay.builderSubtitle': 'Share one link — the payer gets the QR, banking app Deeplink launcher and copy buttons. The data lives in the link (#), never on a server.',
+  'pay.builderSubtitle':
+    'Share one link — the payer gets the QR, banking app Deeplink launcher and copy buttons. The data lives in the link (#), never on a server.',
   'pay.expires': 'Expires',
   'pay.expired': 'This link has expired',
   'pay.expiresIn': '{time} left',
@@ -407,17 +416,20 @@ export const en: Record<MessageKey, string> = {
   'pay.open': 'Open payment page',
   'pay.done': 'Done',
   'pay.preview': 'Show name and amount in link previews',
-  'pay.previewHint': 'Zalo, Facebook and other apps then show the bank, name and amount when you send the link. These three travel with the link to this site’s server; the account number and message do not.',
+  'pay.previewHint':
+    'Zalo, Facebook and other apps then show the bank, name and amount when you send the link. These three travel with the link to this site’s server; the account number and message do not.',
   'pay.secure': 'This page stores nothing and sends your data nowhere.',
   'pay.openAppTitle': 'Banking app Deeplink',
-  'pay.openAppSubtitle': 'Launch your banking app via Deeplink — runs 100% offline on your device, no server involved.',
+  'pay.openAppSubtitle':
+    'Launch your banking app via Deeplink — runs 100% offline on your device, no server involved.',
   'pay.selectApp': 'Choose your app',
   'pay.otherApp': 'Other bank',
   'pay.openButton': 'Open {bank}',
   'pay.opening': 'Opening {bank}…',
   'pay.openedTitle': 'Switched to {bank}',
   'pay.openedAutofill': 'Check the pre-filled details in your app before confirming.',
-  'pay.openedQrPay': 'If your app didn’t auto-fill, scan the saved QR image or paste the copied account.',
+  'pay.openedQrPay':
+    'If your app didn’t auto-fill, scan the saved QR image or paste the copied account.',
   'pay.openedManual': 'Account number copied. Paste it in your app or save the QR image to scan.',
   'pay.fallbackTitle': 'Couldn’t open {bank}?',
   'pay.fallbackBody': 'The app may not be installed, or this browser blocks Deeplinks.',
@@ -425,17 +437,22 @@ export const en: Record<MessageKey, string> = {
   'pay.openStore': 'Open {store}',
   'pay.storeIos': 'App Store',
   'pay.storeAndroid': 'Google Play',
-  'pay.desktopHint': 'Banking app Deeplinks work on phones (iOS/Android). On desktop, scan the QR code with your phone.',
+  'pay.desktopHint':
+    'Banking app Deeplinks work on phones (iOS/Android). On desktop, scan the QR code with your phone.',
   'pay.iabTitle': 'Opened inside {app}',
-  'pay.iabBody': 'In-app browsers often block banking app Deeplinks. Choose “Open in Safari / Chrome” or copy the link below.',
+  'pay.iabBody':
+    'In-app browsers often block banking app Deeplinks. Choose “Open in Safari / Chrome” or copy the link below.',
   'pay.iabCopyLink': 'Copy link',
   'pay.modeConfirmed': 'Opens app & pre-fills account, amount and description (iOS & Android).',
-  'pay.modeQrPay': 'Opens app with VietQR payload (depends on app support) & copies account number.',
-  'pay.modeLaunch': 'Opens the app & copies the account number so you can paste or scan the QR image.',
+  'pay.modeQrPay':
+    'Opens app with VietQR payload (depends on app support) & copies account number.',
+  'pay.modeLaunch':
+    'Opens the app & copies the account number so you can paste or scan the QR image.',
   'pay.copiedAccOpening': 'Account copied • Opening {bank}…',
 
   'batch.title': 'Batch create',
-  'batch.subtitle': 'Paste a list from Excel/CSV to create many codes at once — download a ZIP or print A4 label sheets.',
+  'batch.subtitle':
+    'Paste a list from Excel/CSV to create many codes at once — download a ZIP or print A4 label sheets.',
   'batch.account': 'Receiving account',
   'batch.input': 'List (one per line: amount, description, label)',
   'batch.inputHint': 'Tab, semicolon or comma separators are detected. A header row is skipped.',
@@ -458,7 +475,8 @@ export const en: Record<MessageKey, string> = {
   'batch.row': 'Row {n}',
 
   'acc.title': 'Accounts',
-  'acc.subtitle': 'Save the accounts you use most to create codes in one tap. Stored on this device only.',
+  'acc.subtitle':
+    'Save the accounts you use most to create codes in one tap. Stored on this device only.',
   'acc.add': 'Add account',
   'acc.edit': 'Edit account',
   'acc.nickname': 'Nickname',
@@ -467,7 +485,8 @@ export const en: Record<MessageKey, string> = {
   'acc.setDefault': 'Set as default',
   'acc.createQr': 'Create QR',
   'acc.empty': 'No accounts yet',
-  'acc.emptyBody': 'Add an account to create VietQR codes faster, or scan an existing code to save it.',
+  'acc.emptyBody':
+    'Add an account to create VietQR codes faster, or scan an existing code to save it.',
   'acc.importJson': 'Import file',
   'acc.exportJson': 'Export file',
   'acc.imported': 'Imported {count} accounts',
@@ -575,7 +594,8 @@ export const en: Record<MessageKey, string> = {
   'set.shortcut.theme': 'Toggle light/dark',
 
   'about.title': 'About QRViet',
-  'about.lead': 'QRViet is an *open-source* VietQR toolkit that runs entirely in your browser: *no server, no tracking, no ads*.',
+  'about.lead':
+    'QRViet is an *open-source* VietQR toolkit that runs entirely in your browser: *no server, no tracking, no ads*.',
   'about.ctaLink': 'Link & Deeplink',
   'about.features': 'Highlights',
   'about.f1': 'NAPAS 247 VietQR codes for 70+ banks & wallets',
@@ -603,11 +623,14 @@ export const en: Record<MessageKey, string> = {
   'about.specCurrency': 'Currency',
   'about.specChecksum': 'Checksum',
   'about.privacy': 'Privacy',
-  'about.privacyBody': 'Account numbers, history and settings are stored only in your browser (localStorage). QRViet never sends your data to any server.',
-  'about.disclaimer': 'QRViet is an independent project, not affiliated with NAPAS, VietQR or any bank. Bank names and logos belong to their respective owners.',
+  'about.privacyBody':
+    'Account numbers, history and settings are stored only in your browser (localStorage). QRViet never sends your data to any server.',
+  'about.disclaimer':
+    'QRViet is an independent project, not affiliated with NAPAS, VietQR or any bank. Bank names and logos belong to their respective owners.',
   'about.credits': 'Built with',
   'about.standard': 'Standards',
-  'about.standardBody': 'EMVCo Merchant-Presented QR + the NAPAS VietQR profile: GUID A000000727, services QRIBFTTA/QRIBFTTC, currency 704, CRC16-CCITT.',
+  'about.standardBody':
+    'EMVCo Merchant-Presented QR + the NAPAS VietQR profile: GUID A000000727, services QRIBFTTA/QRIBFTTC, currency 704, CRC16-CCITT.',
 
   // About → Support
   'support.title': 'Buy me a coffee',
@@ -634,23 +657,30 @@ export const en: Record<MessageKey, string> = {
   // About → FAQ
   'faq.title': 'Frequently asked questions',
   'faq.q1': 'What is VietQR?',
-  'faq.a1': "VietQR is Vietnam's interbank transfer QR standard, run by NAPAS on top of EMVCo. Almost every Vietnamese banking app and many e-wallets can scan it, and transfers arrive instantly 24/7 via Napas 247.",
+  'faq.a1':
+    "VietQR is Vietnam's interbank transfer QR standard, run by NAPAS on top of EMVCo. Almost every Vietnamese banking app and many e-wallets can scan it, and transfers arrive instantly 24/7 via Napas 247.",
   'faq.q2': 'Is QRViet free?',
   'faq.a2': 'Yes. QRViet is completely free, with no sign-up and no ads.',
   'faq.q3': 'Is my account information safe?',
-  'faq.a3': 'Everything runs in your browser. Accounts, history and settings stay on your device; QRViet has no server that receives your data and does no tracking.',
+  'faq.a3':
+    'Everything runs in your browser. Accounts, history and settings stay on your device; QRViet has no server that receives your data and does no tracking.',
   'faq.q4': 'Does it work offline?',
-  'faq.a4': 'Yes. After the first visit QRViet keeps everything it needs — bank logos included — to create and scan codes offline. You can also install it as an app on your phone or computer.',
+  'faq.a4':
+    'Yes. After the first visit QRViet keeps everything it needs — bank logos included — to create and scan codes offline. You can also install it as an app on your phone or computer.',
   'faq.q5': 'What is the difference between static and dynamic QR codes?',
-  'faq.a5': 'A static code only holds the account details, so the payer types the amount, and it can be reused for a long time. A dynamic code also carries the amount and message, which suits invoices, orders and one-off payments.',
+  'faq.a5':
+    'A static code only holds the account details, so the payer types the amount, and it can be reused for a long time. A dynamic code also carries the amount and message, which suits invoices, orders and one-off payments.',
   'faq.q6': 'Why are accents removed from the transfer message?',
-  'faq.a6': 'VietQR codes only support unaccented characters, so QRViet converts the message automatically. NAPAS recommends at most 25 characters; some banks accept longer messages.',
+  'faq.a6':
+    'VietQR codes only support unaccented characters, so QRViet converts the message automatically. NAPAS recommends at most 25 characters; some banks accept longer messages.',
   'faq.q7': 'How does banking app Deeplink work?',
-  'faq.a7': 'When opening a payment link or scanning a VietQR code on mobile, QRViet uses Deeplinks to launch 40+ banking and e-wallet apps directly on your device with zero intermediary servers. MoMo, ZaloPay, MBBank, BIDV, TPBank, OCB and CAKE support pre-filling account, amount and description on both iOS and Android; QR Pay apps pass the VietQR payload; other apps launch immediately with the account number copied to your clipboard.',
+  'faq.a7':
+    'When opening a payment link or scanning a VietQR code on mobile, QRViet uses Deeplinks to launch 40+ banking and e-wallet apps directly on your device with zero intermediary servers. MoMo, ZaloPay, MBBank, BIDV, TPBank, OCB and CAKE support pre-filling account, amount and description on both iOS and Android; QR Pay apps pass the VietQR payload; other apps launch immediately with the account number copied to your clipboard.',
 
   // SEO
   'seo.home.title': 'QRViet — Free VietQR & Banking App Deeplink Toolkit',
-  'seo.home.description': 'Create VietQR transfer codes for Vietnamese banks: templates, PNG export, scan & verify, payment links with banking app Deeplinks. Runs 100% offline.',
+  'seo.home.description':
+    'Create VietQR transfer codes for Vietnamese banks: templates, PNG export, scan & verify, payment links with banking app Deeplinks. Runs 100% offline.',
   'seo.scan.title': 'Scan QR, verify VietQR & Deeplink banking app | QRViet',
   'seo.qr.title': 'QR code generator for WiFi, contacts & links | QRViet',
   'seo.link.title': 'Create VietQR payment links & app Deeplinks | QRViet',
@@ -662,7 +692,8 @@ export const en: Record<MessageKey, string> = {
   'seo.settings.title': 'Appearance, language & data settings | QRViet',
   'seo.about.title': 'About QRViet & VietQR FAQ | QRViet',
   'seo.pay.title': 'Pay via VietQR & Banking App Deeplink | QRViet',
-  'seo.pay.description': 'Scan the VietQR code, launch your banking app via Deeplink, or copy account details and amount to transfer.',
+  'seo.pay.description':
+    'Scan the VietQR code, launch your banking app via Deeplink, or copy account details and amount to transfer.',
   'seo.pay.sendTo': 'Send {amount} to {name} | QRViet',
   'seo.pay.to': 'Bank transfer to {name} | QRViet',
   'seo.pay.amount': 'Bank transfer of {amount} | QRViet',

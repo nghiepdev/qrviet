@@ -68,7 +68,9 @@ export function parseTlv(input: string, parent?: string, depth = 0): TlvField[] 
     const value = input.slice(i + 4, i + 4 + length)
     if (value.length !== length) throw new TlvParseError(`Field ${id} is truncated`, i)
     const field: TlvField = {id, length, value}
-    const nested = isTemplate(id, parent) || (depth === 1 && parent && Number(parent) >= 26 && Number(parent) <= 51 && id === '01')
+    const nested =
+      isTemplate(id, parent) ||
+      (depth === 1 && parent && Number(parent) >= 26 && Number(parent) <= 51 && id === '01')
     if (nested && depth < 2) {
       try {
         field.children = parseTlv(value, id, depth + 1)
@@ -103,7 +105,10 @@ export function splitCrc(payload: string): {body: string; crc: string | null} | 
   while (i < payload.length) {
     const id = payload.slice(i, i + 2)
     if (id === '63') {
-      const complete = payload.slice(i + 2, i + 4) === '04' && payload.length === i + 8 && /^[0-9A-Fa-f]{4}$/.test(payload.slice(i + 4))
+      const complete =
+        payload.slice(i + 2, i + 4) === '04' &&
+        payload.length === i + 8 &&
+        /^[0-9A-Fa-f]{4}$/.test(payload.slice(i + 4))
       return {body: payload.slice(0, i), crc: complete ? payload.slice(i + 4).toUpperCase() : null}
     }
     const lenStr = payload.slice(i + 2, i + 4)

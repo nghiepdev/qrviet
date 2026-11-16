@@ -44,7 +44,9 @@ export function useHistory<T = HistoryItem[]>(selector?: (h: HistoryItem[]) => T
 
 /** Add an entry; identical payloads of the same kind are moved to the top instead of duplicated. */
 export function addHistory(item: Omit<HistoryItem, 'id' | 'createdAt' | 'pinned'>): HistoryItem {
-  const existing = historyStore.state.find((h) => h.kind === item.kind && h.payload === item.payload)
+  const existing = historyStore.state.find(
+    (h) => h.kind === item.kind && h.payload === item.payload,
+  )
   const record: HistoryItem = {
     ...item,
     id: existing?.id ?? uid(),
@@ -70,7 +72,9 @@ export function removeHistory(id: string): HistoryItem | undefined {
 
 export function restoreHistory(item: HistoryItem) {
   historyStore.setState((list) =>
-    list.some((h) => h.id === item.id) ? list : [...list, item].sort((a, b) => b.createdAt - a.createdAt),
+    list.some((h) => h.id === item.id)
+      ? list
+      : [...list, item].sort((a, b) => b.createdAt - a.createdAt),
   )
 }
 

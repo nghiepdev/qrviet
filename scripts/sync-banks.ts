@@ -88,7 +88,8 @@ const BANKS_API = 'https://api.vietqr.io/v2/banks'
 const IOS_DEEPLINKS_API = 'https://api.vietqr.io/v2/ios-app-deeplinks'
 const ANDROID_DEEPLINKS_API = 'https://api.vietqr.io/v2/android-app-deeplinks'
 const DL_VIETQR_BASE = 'https://dl.vietqr.io/pay'
-const VIETQR_CORE_DISCOVERY_URL = 'https://raw.githubusercontent.com/Ngochiendev/vietqr-core/main/vietqr-discovery.json'
+const VIETQR_CORE_DISCOVERY_URL =
+  'https://raw.githubusercontent.com/Ngochiendev/vietqr-core/main/vietqr-discovery.json'
 
 const IOS_UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15'
 const ANDROID_UA = 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36'
@@ -162,7 +163,19 @@ async function syncBanksDirectory(): Promise<BankRecord[]> {
         if (cwebp) {
           const png = join(tmpDir, `${slug(code)}.png`)
           writeFileSync(png, bytes)
-          execFileSync('cwebp', ['-quiet', '-q', '86', '-alpha_q', '90', '-resize', '240', '0', png, '-o', out])
+          execFileSync('cwebp', [
+            '-quiet',
+            '-q',
+            '86',
+            '-alpha_q',
+            '90',
+            '-resize',
+            '240',
+            '0',
+            png,
+            '-o',
+            out,
+          ])
         } else {
           writeFileSync(out, bytes)
         }
@@ -187,7 +200,9 @@ async function syncBanksDirectory(): Promise<BankRecord[]> {
 
   writeFileSync(outBanksJson, `${JSON.stringify(banks, null, 2)}\n`)
   if (existsSync(tmpDir)) rmSync(tmpDir, {recursive: true, force: true})
-  console.log(`Synced ${banks.length} banks${withLogos ? ` (+ logos as ${cwebp ? 'webp' : 'png'})` : ''}.`)
+  console.log(
+    `Synced ${banks.length} banks${withLogos ? ` (+ logos as ${cwebp ? 'webp' : 'png'})` : ''}.`,
+  )
   return banks
 }
 
@@ -199,8 +214,12 @@ function normalizeAppIdToCode(appId: string): string | null {
   return clean.toUpperCase()
 }
 
-async function mapConcurrent<T, R>(items: readonly T[], limit: number, fn: (item: T) => Promise<R>): Promise<R[]> {
-  const out = new Array<R>(items.length)
+async function mapConcurrent<T, R>(
+  items: readonly T[],
+  limit: number,
+  fn: (item: T) => Promise<R>,
+): Promise<R[]> {
+  const out: R[] = []
   let next = 0
   await Promise.all(
     Array.from({length: Math.min(limit, items.length)}, async () => {
@@ -223,8 +242,16 @@ interface DlProbeResult {
 async function probeDlVietQr(appId: string, code: string): Promise<DlProbeResult> {
   const url = `${DL_VIETQR_BASE}?app=${encodeURIComponent(appId)}`
   const [iosRes, andRes] = await Promise.all([
-    fetch(url, {redirect: 'manual', headers: {'User-Agent': IOS_UA}, signal: AbortSignal.timeout(10_000)}).catch(() => null),
-    fetch(url, {redirect: 'manual', headers: {'User-Agent': ANDROID_UA}, signal: AbortSignal.timeout(10_000)}).catch(() => null),
+    fetch(url, {
+      redirect: 'manual',
+      headers: {'User-Agent': IOS_UA},
+      signal: AbortSignal.timeout(10_000),
+    }).catch(() => null),
+    fetch(url, {
+      redirect: 'manual',
+      headers: {'User-Agent': ANDROID_UA},
+      signal: AbortSignal.timeout(10_000),
+    }).catch(() => null),
   ])
 
   let iosScheme = ''
@@ -254,9 +281,12 @@ async function probeDlVietQr(appId: string, code: string): Promise<DlProbeResult
 async function isPlayStoreLive(pkg: string): Promise<boolean> {
   if (!pkg) return false
   try {
-    const res = await fetch(`https://play.google.com/store/apps/details?id=${encodeURIComponent(pkg)}`, {
-      signal: AbortSignal.timeout(10_000),
-    })
+    const res = await fetch(
+      `https://play.google.com/store/apps/details?id=${encodeURIComponent(pkg)}`,
+      {
+        signal: AbortSignal.timeout(10_000),
+      },
+    )
     return res.ok
   } catch {
     return false
@@ -304,19 +334,26 @@ async function syncDeeplinks(banks: readonly BankRecord[]) {
   if (!gateway) {
     console.warn('! vietqr-core discovery unreachable; skipping vietqr-core check.')
   }
-  const vietqrCoreCatalog = gateway ? await fetchJson<{code?: string; data?: VietQrCoreApp[]}>(`${gateway}/v1/apps`) : null
+  const vietqrCoreCatalog = gateway
+    ? await fetchJson<{code?: string; data?: VietQrCoreApp[]}>(`${gateway}/v1/apps`)
+    : null
 
   const iosApps = iosCatalog?.apps ?? []
   const androidApps = androidCatalog?.apps ?? []
   const vietqrCoreApps = vietqrCoreCatalog?.data ?? []
 
   if (!iosApps.length && !androidApps.length && !vietqrCoreApps.length) {
-    console.warn('! Deeplink crawler: all upstream sources unreachable; keeping existing bank-apps.json.')
+    console.warn(
+      '! Deeplink crawler: all upstream sources unreachable; keeping existing bank-apps.json.',
+    )
     return
   }
 
   // Build unique probe targets from api.vietqr.io (prefer `vib-2` over legacy `vib` alias).
-  const rawIds = new Map<string, {appId: string; code: string; appName: string; autofill: boolean}>()
+  const rawIds = new Map<
+    string,
+    {appId: string; code: string; appName: string; autofill: boolean}
+  >()
   for (const app of [...iosApps, ...androidApps]) {
     const code = normalizeAppIdToCode(app.appId)
     if (!code) continue
@@ -332,7 +369,9 @@ async function syncDeeplinks(banks: readonly BankRecord[]) {
   }
 
   // 2. Crawl dl.vietqr.io for live iOS schemes & Android package names.
-  const probes = await mapConcurrent([...rawIds.values()], 6, (item) => probeDlVietQr(item.appId, item.code))
+  const probes = await mapConcurrent([...rawIds.values()], 6, (item) =>
+    probeDlVietQr(item.appId, item.code),
+  )
   const probeByCode = new Map(probes.map((p) => [p.code, p]))
 
   const added: string[] = []
@@ -347,7 +386,9 @@ async function syncDeeplinks(banks: readonly BankRecord[]) {
 
     if (!existing) {
       if (!probe?.iosScheme || !probe.androidPackage) {
-        missingSpecs.push(`${code} (dl.vietqr.io missing ${!probe?.iosScheme ? 'iosScheme' : 'androidPackage'})`)
+        missingSpecs.push(
+          `${code} (dl.vietqr.io missing ${!probe?.iosScheme ? 'iosScheme' : 'androidPackage'})`,
+        )
         continue
       }
       const [pkgLive, appStoreId] = await Promise.all([
@@ -388,7 +429,9 @@ async function syncDeeplinks(banks: readonly BankRecord[]) {
     } else if (probe?.androidPackage && probe.androidPackage !== existing.android.package) {
       const upstreamLive = await isPlayStoreLive(probe.androidPackage)
       if (upstreamLive) {
-        notices.push(`${code}: upstream android.package differs (${existing.android.package} vs ${probe.androidPackage})`)
+        notices.push(
+          `${code}: upstream android.package differs (${existing.android.package} vs ${probe.androidPackage})`,
+        )
       }
     }
     if (meta.autofill && existing.tier === 'launch') {
@@ -405,12 +448,16 @@ async function syncDeeplinks(banks: readonly BankRecord[]) {
     const existing = byCode.get(bankCode)
     if (!existing) {
       if (!rawIds.has(bankCode)) {
-        missingSpecs.push(`${bankCode} (listed by vietqr-core as ${item.appName}; needs iOS scheme + Android package)`)
+        missingSpecs.push(
+          `${bankCode} (listed by vietqr-core as ${item.appName}; needs iOS scheme + Android package)`,
+        )
       }
       continue
     }
     if (item.supportsAutofill && existing.tier === 'launch') {
-      notices.push(`${bankCode}: vietqr-core reports supportsAutofill=true (currently tier='launch')`)
+      notices.push(
+        `${bankCode}: vietqr-core reports supportsAutofill=true (currently tier='launch')`,
+      )
     }
   }
 

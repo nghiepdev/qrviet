@@ -21,7 +21,8 @@ export function useMasonry<T extends HTMLElement>() {
     grid.style.rowGap = '0px'
     grid.style.alignItems = 'start'
     const span = (card: Element) => {
-      if (card instanceof HTMLElement) card.style.gridRowEnd = `span ${Math.round(card.getBoundingClientRect().height + gap)}`
+      if (card instanceof HTMLElement)
+        card.style.gridRowEnd = `span ${Math.round(card.getBoundingClientRect().height + gap)}`
     }
     const resize = new ResizeObserver((entries) => entries.forEach((entry) => span(entry.target)))
     const watch = () => {
@@ -37,8 +38,10 @@ export function useMasonry<T extends HTMLElement>() {
     return () => {
       children.disconnect()
       resize.disconnect()
-      for (const card of grid.children) if (card instanceof HTMLElement) card.style.removeProperty('grid-row-end')
-      for (const prop of ['grid-auto-rows', 'row-gap', 'align-items']) grid.style.removeProperty(prop)
+      for (const card of grid.children)
+        if (card instanceof HTMLElement) card.style.removeProperty('grid-row-end')
+      for (const prop of ['grid-auto-rows', 'row-gap', 'align-items'])
+        grid.style.removeProperty(prop)
     }
   }, [])
 }

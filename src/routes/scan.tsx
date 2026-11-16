@@ -29,7 +29,8 @@ interface ScanSearch {
 export const Route = createFileRoute('/scan')({
   head: () => pageHead('scan'),
   validateSearch: (s: Record<string, unknown>): ScanSearch => {
-    const str = (v: unknown) => (typeof v === 'string' ? v : typeof v === 'number' ? String(v) : undefined)
+    const str = (v: unknown) =>
+      typeof v === 'string' ? v : typeof v === 'number' ? String(v) : undefined
     return {text: str(s.text), url: str(s.url), title: str(s.title)}
   },
   component: ScanPage,
@@ -51,8 +52,17 @@ function historyEntry(text: string) {
     const bank = getBankByBin(p.bin)
     return {
       title: p.merchantName || bank?.shortName || p.accountNumber,
-      subtitle: [bank?.shortName, p.accountNumber, p.amount ? formatVnd(p.amount, true) : ''].filter(Boolean).join(' · '),
-      meta: {bin: p.bin, accountNumber: p.accountNumber, accountName: p.merchantName, amount: p.amount || undefined, purpose: p.purpose, qrType: 'vietqr'},
+      subtitle: [bank?.shortName, p.accountNumber, p.amount ? formatVnd(p.amount, true) : '']
+        .filter(Boolean)
+        .join(' · '),
+      meta: {
+        bin: p.bin,
+        accountNumber: p.accountNumber,
+        accountName: p.merchantName,
+        amount: p.amount || undefined,
+        purpose: p.purpose,
+        qrType: 'vietqr',
+      },
     }
   }
   return {title: text.slice(0, 60), subtitle: c.type, meta: {qrType: c.type}}
@@ -80,16 +90,24 @@ function ScanPage() {
   const push = (value: string, source: ScanResult['source']) => {
     const trimmed = value.trim()
     if (!trimmed) return
-    setResults((list) => [{id: uid(), text: trimmed, at: Date.now(), source}, ...list.filter((r) => r.text !== trimmed)].slice(0, 20))
+    setResults((list) =>
+      [
+        {id: uid(), text: trimmed, at: Date.now(), source},
+        ...list.filter((r) => r.text !== trimmed),
+      ].slice(0, 20),
+    )
     if (autoSave) addHistory({kind: 'scan', payload: trimmed, ...historyEntry(trimmed)})
-    requestAnimationFrame(() => resultsRef.current?.scrollIntoView({behavior: 'smooth', block: 'nearest'}))
+    requestAnimationFrame(() =>
+      resultsRef.current?.scrollIntoView({behavior: 'smooth', block: 'nearest'}),
+    )
   }
 
   const decodeImage = async (file: Blob) => {
     setBusy(true)
     const found = await decodeImageFile(file)
     setBusy(false)
-    if (!found?.length) return showToast({body: t('scan.notFound'), type: 'error', uniqueID: 'scan'})
+    if (!found?.length)
+      return showToast({body: t('scan.notFound'), type: 'error', uniqueID: 'scan'})
     found.forEach((f) => push(f, 'image'))
     setExternalScanCount((c) => c + 1)
   }
@@ -221,8 +239,13 @@ function ScanPage() {
         if (e.currentTarget === e.target) setDragging(false)
       }}
       onDrop={onDrop}
-      className="relative">
-      <PageHeader title={t('scan.title')} subtitle={t('scan.subtitle')} icon={<ScanLine size={22} />} />
+      className="relative"
+    >
+      <PageHeader
+        title={t('scan.title')}
+        subtitle={t('scan.subtitle')}
+        icon={<ScanLine size={22} />}
+      />
       <PageBody>
         {/* Side by side, the results column takes the row's height, so an empty list fills it; the
             scanner keeps its own height when many results make the row taller. */}
@@ -235,49 +258,67 @@ function ScanPage() {
                 <Tab value="text" label={t('scan.text')} panelId="scan-panel" />
               </TabList>
               <div id="scan-panel" role="tabpanel" className="flex flex-col gap-4">
-              {activeTab === 'camera' && (
-                <CameraScanner
-                  onResult={(r) => push(r, 'camera')}
-                  onPickImage={() => fileRef.current?.click()}
-                  isPickingImage={busy}
-                  onPaste={() => void pasteFromClipboard()}
-                  isPasting={pasting}
-                  externalScanCount={externalScanCount}
-                  startRequest={startRequest}
+                {activeTab === 'camera' && (
+                  <CameraScanner
+                    onResult={(r) => push(r, 'camera')}
+                    onPickImage={() => fileRef.current?.click()}
+                    isPickingImage={busy}
+                    onPaste={() => void pasteFromClipboard()}
+                    isPasting={pasting}
+                    externalScanCount={externalScanCount}
+                    startRequest={startRequest}
+                  />
+                )}
+                {activeTab === 'image' && (
+                  <button
+                    type="button"
+                    onClick={() => fileRef.current?.click()}
+                    className={`flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-10 text-center transition-colors ${
+                      dragging
+                        ? 'border-accent bg-accent-muted'
+                        : 'border-border hover:border-strong'
+                    }`}
+                  >
+                    <ImageUp size={36} className="text-accent" aria-hidden />
+                    <span className="font-semibold">
+                      {dragging ? t('scan.drop') : t('scan.pick')}
+                    </span>
+                    <span className="text-sm text-secondary">{t('scan.pasteHint')}</span>
+                    {busy && <span className="text-sm text-secondary">…</span>}
+                  </button>
+                )}
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  onChange={(e) => {
+                    const f = e.target.files?.[0]
+                    if (f) void decodeImage(f)
+                    e.target.value = ''
+                  }}
                 />
-              )}
-              {activeTab === 'image' && (
-                <button
-                  type="button"
-                  onClick={() => fileRef.current?.click()}
-                  className={`flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-10 text-center transition-colors ${
-                    dragging ? 'border-accent bg-accent-muted' : 'border-border hover:border-strong'
-                  }`}>
-                  <ImageUp size={36} className="text-accent" aria-hidden />
-                  <span className="font-semibold">{dragging ? t('scan.drop') : t('scan.pick')}</span>
-                  <span className="text-sm text-secondary">{t('scan.pasteHint')}</span>
-                  {busy && <span className="text-sm text-secondary">…</span>}
-                </button>
-              )}
-              <input
-                ref={fileRef}
-                type="file"
-                accept="image/*"
-                hidden
-                onChange={(e) => {
-                  const f = e.target.files?.[0]
-                  if (f) void decodeImage(f)
-                  e.target.value = ''
-                }}
-              />
-              {activeTab === 'text' && (
-                <div className="flex flex-col gap-3">
-                  <TextArea label={t('scan.text')} isLabelHidden value={text} onChange={setText} placeholder={t('scan.textPlaceholder')} rows={5} hasSpellCheck={false} />
-                  <div>
-                    <Button label={t('scan.decode')} variant="primary" isDisabled={!text.trim()} onClick={() => push(text, 'text')} />
+                {activeTab === 'text' && (
+                  <div className="flex flex-col gap-3">
+                    <TextArea
+                      label={t('scan.text')}
+                      isLabelHidden
+                      value={text}
+                      onChange={setText}
+                      placeholder={t('scan.textPlaceholder')}
+                      rows={5}
+                      hasSpellCheck={false}
+                    />
+                    <div>
+                      <Button
+                        label={t('scan.decode')}
+                        variant="primary"
+                        isDisabled={!text.trim()}
+                        onClick={() => push(text, 'text')}
+                      />
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
               </div>
             </div>
           </Panel>
@@ -287,16 +328,36 @@ function ScanPage() {
               title={t('scan.results')}
               icon={History}
               hue="violet"
-              actions={results.length > 0 && <Button label={t('scan.clearResults')} size="sm" variant="ghost" icon={<Trash2 size={14} />} onClick={() => setResults([])} />}
-              className="flex flex-1 flex-col">
+              actions={
+                results.length > 0 && (
+                  <Button
+                    label={t('scan.clearResults')}
+                    size="sm"
+                    variant="ghost"
+                    icon={<Trash2 size={14} />}
+                    onClick={() => setResults([])}
+                  />
+                )
+              }
+              className="flex flex-1 flex-col"
+            >
               {results.length === 0 ? (
                 <div className="flex flex-1 flex-col justify-center">
-                  <EmptyState icon={<ScanLine size={36} aria-hidden />} title={t('common.empty')} description={t('scan.pasteHint')} isCompact />
+                  <EmptyState
+                    icon={<ScanLine size={36} aria-hidden />}
+                    title={t('common.empty')}
+                    description={t('scan.pasteHint')}
+                    isCompact
+                  />
                 </div>
               ) : (
                 <div className="flex flex-col gap-3">
                   {results.map((r) => (
-                    <ResultCard key={r.id} result={r} onRemove={() => setResults((list) => list.filter((x) => x.id !== r.id))} />
+                    <ResultCard
+                      key={r.id}
+                      result={r}
+                      onRemove={() => setResults((list) => list.filter((x) => x.id !== r.id))}
+                    />
                   ))}
                 </div>
               )}
@@ -306,7 +367,9 @@ function ScanPage() {
       </PageBody>
       {dragging && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-[color-mix(in_srgb,var(--color-accent)_18%,transparent)] backdrop-blur-sm pointer-events-none">
-          <div className="rounded-2xl bg-surface px-8 py-6 shadow-lg font-bold text-lg">{t('scan.drop')}</div>
+          <div className="rounded-2xl bg-surface px-8 py-6 shadow-lg font-bold text-lg">
+            {t('scan.drop')}
+          </div>
         </div>
       )}
     </div>

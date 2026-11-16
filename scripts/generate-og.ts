@@ -10,7 +10,13 @@ import {existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync} from 'node
 import {tmpdir} from 'node:os'
 import {join, resolve} from 'node:path'
 import {pathToFileURL} from 'node:url'
-import {DEFAULT_QR_STYLE, layoutQr, makeQr, qrToSvgParts, type QrLogo} from '../src/lib/qr/render.ts'
+import {
+  DEFAULT_QR_STYLE,
+  layoutQr,
+  makeQr,
+  qrToSvgParts,
+  type QrLogo,
+} from '../src/lib/qr/render.ts'
 
 const root = resolve(import.meta.dirname, '..')
 
@@ -58,7 +64,10 @@ function fontFacesCss(): string {
   const rules: string[] = []
   for (const w of weights) {
     for (const s of subsets) {
-      const file = join(root, `node_modules/@fontsource/be-vietnam-pro/files/be-vietnam-pro-${s}-${w}-normal.woff2`)
+      const file = join(
+        root,
+        `node_modules/@fontsource/be-vietnam-pro/files/be-vietnam-pro-${s}-${w}-normal.woff2`,
+      )
       rules.push(`@font-face {
         font-family: 'Be Vietnam Pro';
         font-style: normal;
@@ -350,7 +359,16 @@ async function openPage(userDataDir: string) {
   if (!chrome) throw new Error('Chrome/Chromium not found — set CHROME_PATH')
   const proc = spawn(
     chrome,
-    ['--headless=new', '--remote-debugging-port=0', `--user-data-dir=${userDataDir}`, '--no-first-run', '--no-default-browser-check', '--hide-scrollbars', '--force-color-profile=srgb', 'about:blank'],
+    [
+      '--headless=new',
+      '--remote-debugging-port=0',
+      `--user-data-dir=${userDataDir}`,
+      '--no-first-run',
+      '--no-default-browser-check',
+      '--hide-scrollbars',
+      '--force-color-profile=srgb',
+      'about:blank',
+    ],
     {stdio: ['ignore', 'ignore', 'pipe']},
   )
   const browserWs = await new Promise<string>((resolveWs, reject) => {
@@ -363,11 +381,17 @@ async function openPage(userDataDir: string) {
     proc.on('exit', () => reject(new Error(`Chrome exited early:\n${log}`)))
   })
   const port = new URL(browserWs).port
-  const targets = (await (await fetch(`http://127.0.0.1:${port}/json/list`)).json()) as Array<{type: string; webSocketDebuggerUrl: string}>
+  const targets = (await (await fetch(`http://127.0.0.1:${port}/json/list`)).json()) as Array<{
+    type: string
+    webSocketDebuggerUrl: string
+  }>
   const ws = new WebSocket(targets.find((t) => t.type === 'page')!.webSocketDebuggerUrl)
   await new Promise((r) => ws.addEventListener('open', r, {once: true}))
   let nextId = 0
-  const pending = new Map<number, {resolve: (v: Record<string, unknown>) => void; reject: (e: Error) => void}>()
+  const pending = new Map<
+    number,
+    {resolve: (v: Record<string, unknown>) => void; reject: (e: Error) => void}
+  >()
   ws.addEventListener('message', (event) => {
     const msg = JSON.parse(String(event.data))
     const entry = msg.id ? pending.get(msg.id) : undefined
@@ -395,9 +419,21 @@ const hasFfmpeg = spawnSync('ffmpeg', ['-version'], {stdio: 'ignore'}).status ==
 
 function quantize(file: string) {
   const tmp = `${file}.tmp.png`
-  const filter = 'split[a][b];[a]palettegen=max_colors=256:stats_mode=full[p];[b][p]paletteuse=dither=sierra2_4a'
-  const run = spawnSync('ffmpeg', ['-loglevel', 'error', '-y', '-i', file, '-vf', filter, '-pix_fmt', 'pal8', tmp])
-  if (run.status !== 0) throw new Error(`ffmpeg failed for ${file}: ${run.stderr}`)
+  const filter =
+    'split[a][b];[a]palettegen=max_colors=256:stats_mode=full[p];[b][p]paletteuse=dither=sierra2_4a'
+  const run = spawnSync('ffmpeg', [
+    '-loglevel',
+    'error',
+    '-y',
+    '-i',
+    file,
+    '-vf',
+    filter,
+    '-pix_fmt',
+    'pal8',
+    tmp,
+  ])
+  if (run.status !== 0) throw new Error(`ffmpeg failed for ${file}: ${run.stderr.toString()}`)
   rmSync(file)
   writeFileSync(file, readFileSync(tmp))
   rmSync(tmp)
@@ -423,7 +459,12 @@ async function main() {
   const {send, close} = await openPage(join(work, 'profile'))
   try {
     await send('Page.enable')
-    await send('Emulation.setDeviceMetricsOverride', {width: 1200, height: 630, deviceScaleFactor: 1, mobile: false})
+    await send('Emulation.setDeviceMetricsOverride', {
+      width: 1200,
+      height: 630,
+      deviceScaleFactor: 1,
+      mobile: false,
+    })
     for (const card of cards) {
       const pagePath = join(work, `${card.file.replace(/\W+/g, '_')}.html`)
       writeFileSync(pagePath, card.html)

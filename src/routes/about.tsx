@@ -46,17 +46,34 @@ const CREDITS = [
   ['Lucide', 'https://lucide.dev', 'Icons'],
   ['Be Vietnam Pro', 'https://fonts.google.com/specimen/Be+Vietnam+Pro', 'Typeface (OFL)'],
   ['VietQR API & Deeplink', 'https://api.vietqr.io/v2/banks', 'Bank directory & deeplinks'],
-  ['vietqr-core', 'https://raw.githubusercontent.com/Ngochiendev/vietqr-core/main/vietqr-discovery.json', 'vietqr-discovery.json (Ngochiendev)'],
+  [
+    'vietqr-core',
+    'https://raw.githubusercontent.com/Ngochiendev/vietqr-core/main/vietqr-discovery.json',
+    'vietqr-discovery.json (Ngochiendev)',
+  ],
 ] as const
 
 /** The lead's selling points: an underline for open source, a marker over the privacy promise. */
 const LEAD_MARKS: readonly MarkStyle[] = [
-  {type: 'underline', multiline: true, strokeWidth: 2, padding: 2, iterations: 2, animationDuration: 600},
+  {
+    type: 'underline',
+    multiline: true,
+    strokeWidth: 2,
+    padding: 2,
+    iterations: 2,
+    animationDuration: 600,
+  },
   {type: 'highlight', multiline: true, iterations: 1, animationDuration: 1000},
 ]
 
 /** What QRViet does, each card linking to the page that does it. */
-const FEATURES: ReadonlyArray<{title: MessageKey; body: MessageKey; icon: LucideIcon; hue: Hue; to: string}> = [
+const FEATURES: ReadonlyArray<{
+  title: MessageKey
+  body: MessageKey
+  icon: LucideIcon
+  hue: Hue
+  to: string
+}> = [
   {title: 'about.f1Title', body: 'about.f1', icon: QrCode, hue: 'red', to: '/'},
   {title: 'about.f2Title', body: 'about.f2', icon: Smartphone, hue: 'indigo', to: '/link'},
   {title: 'about.f3Title', body: 'about.f3', icon: ScanLine, hue: 'blue', to: '/scan'},
@@ -91,7 +108,8 @@ const FAQ: ReadonlyArray<readonly [MessageKey, MessageKey]> = [
 
 function AboutPage() {
   const t = useT()
-  const withBankCount = (text: string) => text.replace('70+', `${BANKS.length}`).replace('40+', `${DEEPLINK_BANKS.length}`)
+  const withBankCount = (text: string) =>
+    text.replace('70+', `${BANKS.length}`).replace('40+', `${DEEPLINK_BANKS.length}`)
   const stats: ReadonlyArray<readonly [string, MessageKey]> = [
     [`${BANKS.length}`, 'about.statBanks'],
     ['100%', 'about.statLocal'],
@@ -112,13 +130,21 @@ function AboutPage() {
                   </Text>
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  <Button label={t('nav.create')} icon={<QrCode size={16} />} variant="primary" href="/" />
+                  <Button
+                    label={t('nav.create')}
+                    icon={<QrCode size={16} />}
+                    variant="primary"
+                    href="/"
+                  />
                   <Button label={t('about.ctaLink')} icon={<Smartphone size={16} />} href="/link" />
                   <Button label={t('nav.scan')} icon={<ScanLine size={16} />} href="/scan" />
                 </div>
               </div>
             </div>
-            <ul className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4" aria-label={t('about.stats')}>
+            <ul
+              className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4"
+              aria-label={t('about.stats')}
+            >
               {stats.map(([value, label]) => (
                 <li key={label} className="rounded-lg border border-border bg-surface/80 px-4 py-3">
                   <span className="qv-num block text-2xl font-extrabold text-accent">{value}</span>
@@ -131,11 +157,16 @@ function AboutPage() {
                   href={`https://github.com/${REPO}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex h-full flex-col rounded-lg border border-border bg-surface/80 px-4 py-3 transition-colors hover:border-(--color-border-emphasized) hover:bg-surface">
+                  className="group flex h-full flex-col rounded-lg border border-border bg-surface/80 px-4 py-3 transition-colors hover:border-(--color-border-emphasized) hover:bg-surface"
+                >
                   <span className="flex items-center gap-2 text-2xl font-extrabold text-accent">
                     GitHub
                     {/* No room beside the name in a phone's two-column grid. */}
-                    <ArrowUpRight size={18} className="ml-auto hidden shrink-0 text-secondary group-hover:text-accent sm:block" aria-hidden />
+                    <ArrowUpRight
+                      size={18}
+                      className="ml-auto hidden shrink-0 text-secondary group-hover:text-accent sm:block"
+                      aria-hidden
+                    />
                   </span>{' '}
                   <span className="qv-mono block text-sm text-secondary">
                     {/* Breaks after the slash rather than mid-word when the tile is narrow. */}
@@ -158,7 +189,8 @@ function AboutPage() {
                   <li key={f.title}>
                     <Link
                       to={f.to}
-                      className={`${HUES[f.hue]} qv-tint group flex h-full items-start gap-3 rounded-2xl border border-border p-4 shadow-sm transition hover:border-[color-mix(in_srgb,var(--qv-hue)_45%,transparent)] hover:shadow-md`}>
+                      className={`${HUES[f.hue]} qv-tint group flex h-full items-start gap-3 rounded-2xl border border-border p-4 shadow-sm transition hover:border-[color-mix(in_srgb,var(--qv-hue)_45%,transparent)] hover:shadow-md`}
+                    >
                       <IconBadge hue={f.hue}>
                         <Icon size={20} />
                       </IconBadge>
@@ -177,7 +209,10 @@ function AboutPage() {
             <Panel title={t('about.privacy')} icon={Lock} hue="green">
               <ul className="mb-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
                 {PROMISES.map(({label, icon: Icon}) => (
-                  <li key={label} className="flex items-center gap-2.5 rounded-lg bg-success-muted/60 px-3 py-2.5 text-sm font-semibold">
+                  <li
+                    key={label}
+                    className="flex items-center gap-2.5 rounded-lg bg-success-muted/60 px-3 py-2.5 text-sm font-semibold"
+                  >
                     <Icon size={18} className="shrink-0 text-success" aria-hidden />
                     {t(label)}
                   </li>
@@ -198,7 +233,9 @@ function AboutPage() {
                 {SPEC.map(([label, value]) => (
                   <div key={label} className="flex items-center justify-between gap-3 py-2">
                     <dt className="text-sm text-secondary">{t(label)}</dt>
-                    <dd className="qv-mono rounded-md bg-muted px-2 py-0.5 text-right text-sm font-semibold">{value}</dd>
+                    <dd className="qv-mono rounded-md bg-muted px-2 py-0.5 text-right text-sm font-semibold">
+                      {value}
+                    </dd>
                   </div>
                 ))}
               </dl>
@@ -212,7 +249,11 @@ function AboutPage() {
                 <details key={q} className="group py-1" open={i === 0}>
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-md py-2 [&::-webkit-details-marker]:hidden">
                     <h3 className="text-base font-semibold">{t(q)}</h3>
-                    <ChevronDown size={18} className="shrink-0 text-secondary transition-transform group-open:rotate-180" aria-hidden />
+                    <ChevronDown
+                      size={18}
+                      className="shrink-0 text-secondary transition-transform group-open:rotate-180"
+                      aria-hidden
+                    />
                   </summary>
                   <p className="pb-3">
                     <Text type="body" color="secondary">
@@ -231,12 +272,19 @@ function AboutPage() {
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group flex items-center gap-3 rounded-lg border border-border px-3 py-2 transition-colors hover:border-(--color-border-emphasized) hover:bg-muted">
+                    className="group flex items-center gap-3 rounded-lg border border-border px-3 py-2 transition-colors hover:border-(--color-border-emphasized) hover:bg-muted"
+                  >
                     <span className="flex min-w-0 flex-1 flex-col">
-                      <span className="truncate text-sm font-semibold group-hover:text-accent">{name}</span>
+                      <span className="truncate text-sm font-semibold group-hover:text-accent">
+                        {name}
+                      </span>
                       <span className="truncate text-xs text-secondary">{note}</span>
                     </span>
-                    <ArrowUpRight size={16} className="shrink-0 text-secondary group-hover:text-accent" aria-hidden />
+                    <ArrowUpRight
+                      size={16}
+                      className="shrink-0 text-secondary group-hover:text-accent"
+                      aria-hidden
+                    />
                   </a>
                 </li>
               ))}

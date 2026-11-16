@@ -1,7 +1,17 @@
 import {useEffect, useRef, useState} from 'react'
 import {createFileRoute, useNavigate} from '@tanstack/react-router'
 import {useSelector} from '@tanstack/react-store'
-import {ArrowDown, BookmarkPlus, Code2, Eraser, Landmark, Link2, Palette, QrCode, Settings2} from 'lucide-react'
+import {
+  ArrowDown,
+  BookmarkPlus,
+  Code2,
+  Eraser,
+  Landmark,
+  Link2,
+  Palette,
+  QrCode,
+  Settings2,
+} from 'lucide-react'
 import {Button} from '@astryxdesign/core/Button'
 import {Collapsible} from '@astryxdesign/core/Collapsible'
 import {TextInput} from '@astryxdesign/core/TextInput'
@@ -16,7 +26,13 @@ import {AmountField} from '#/components/vietqr/amount-field'
 import {PurposeField} from '#/components/vietqr/purpose-field'
 import {SavedAccountsStrip} from '#/components/vietqr/saved-accounts-strip'
 import {ScanCheckBadge, useScanCheck} from '#/components/vietqr/scan-check'
-import {EMPTY_FORM, draftStore, formFromAccount, useDerivedVietQr, type VietQrForm} from '#/components/vietqr/form'
+import {
+  EMPTY_FORM,
+  draftStore,
+  formFromAccount,
+  useDerivedVietQr,
+  type VietQrForm,
+} from '#/components/vietqr/form'
 import {buildTemplateInfo} from '#/components/vietqr/template-info'
 import {QrStage} from '#/components/qr/qr-stage'
 import {ExportActions, type ExportKind} from '#/components/qr/export-actions'
@@ -26,7 +42,13 @@ import {resolveLogo, useQrScene} from '#/components/qr/use-qr-scene'
 import {LogoMark} from '#/components/brand/logo'
 import {getBankByBin, resolveBank} from '#/data/banks'
 import {useLocale, useT} from '#/i18n'
-import {accountsStore, findDuplicate, getDefaultAccount, saveAccount, touchAccount} from '#/stores/accounts'
+import {
+  accountsStore,
+  findDuplicate,
+  getDefaultAccount,
+  saveAccount,
+  touchAccount,
+} from '#/stores/accounts'
 import {addHistory, historyStore} from '#/stores/history'
 import {applyHistoryEntry} from '#/components/vietqr/history-entry'
 import {saveSceneThumb} from '#/lib/thumbs'
@@ -98,14 +120,19 @@ function GeneratorPage() {
       // Only on first mount (not after we clear the URL): an empty draft starts from the default account.
       if (firstRun && !draftStore.state.accountNumber) {
         const def = getDefaultAccount()
-        if (def) draftStore.setState((f) => formFromAccount(def, {amountText: f.amountText, purpose: f.purpose}))
+        if (def)
+          draftStore.setState((f) =>
+            formFromAccount(def, {amountText: f.amountText, purpose: f.purpose}),
+          )
       }
       return
     }
     if (search.account) {
       const a = accountsStore.state.find((x) => x.id === search.account)
       if (a) {
-        draftStore.setState((f) => formFromAccount(a, {amountText: f.amountText, purpose: f.purpose}))
+        draftStore.setState((f) =>
+          formFromAccount(a, {amountText: f.amountText, purpose: f.purpose}),
+        )
         touchAccount(a.id)
       }
     } else {
@@ -146,7 +173,10 @@ function GeneratorPage() {
     const entry = historyStore.state.find((h) => h.id === search.h)
     if (!entry || !applyHistoryEntry(entry)) return leave()
     const design = settingsStore.state.design
-    const subs = [draftStore.subscribe(() => stop()), settingsStore.subscribe((s) => s.design !== design && stop())]
+    const subs = [
+      draftStore.subscribe(() => stop()),
+      settingsStore.subscribe((s) => s.design !== design && stop()),
+    ]
     function stop() {
       subs.forEach((s) => s.unsubscribe())
       leave()
@@ -176,12 +206,16 @@ function GeneratorPage() {
   useEffect(() => {
     const el = previewRef.current
     if (!el || typeof IntersectionObserver === 'undefined') return
-    const io = new IntersectionObserver(([entry]) => setPreviewVisible(entry.isIntersecting), {threshold: 0.15})
+    const io = new IntersectionObserver(([entry]) => setPreviewVisible(entry.isIntersecting), {
+      threshold: 0.15,
+    })
     io.observe(el)
     return () => io.disconnect()
   }, [])
 
-  const filename = slugify(`qrviet-${bank?.shortName ?? ''}-${form.accountNumber}${derived.amount ? `-${derived.amount}` : ''}`)
+  const filename = slugify(
+    `qrviet-${bank?.shortName ?? ''}-${form.accountNumber}${derived.amount ? `-${derived.amount}` : ''}`,
+  )
 
   const onExported = (_kind: ExportKind) => {
     if (!derived.payload || !autoSave) return
@@ -190,7 +224,13 @@ function GeneratorPage() {
       thumb: Boolean(scene),
       payload: derived.payload,
       title: form.accountName || bank?.shortName || form.accountNumber,
-      subtitle: [bank?.shortName, form.accountNumber, derived.amount ? formatVnd(derived.amount, true) : ''].filter(Boolean).join(' · '),
+      subtitle: [
+        bank?.shortName,
+        form.accountNumber,
+        derived.amount ? formatVnd(derived.amount, true) : '',
+      ]
+        .filter(Boolean)
+        .join(' · '),
       meta: {
         bin: form.bin,
         accountNumber: form.accountNumber,
@@ -245,7 +285,15 @@ function GeneratorPage() {
             <Panel
               actions={
                 <>
-                  <Button label={t('gen.saveAccount')} isIconOnly tooltip={t('gen.saveAccount')} icon={<BookmarkPlus size={18} />} variant="ghost" onClick={saveCurrentAccount} isDisabled={!derived.payload} />
+                  <Button
+                    label={t('gen.saveAccount')}
+                    isIconOnly
+                    tooltip={t('gen.saveAccount')}
+                    icon={<BookmarkPlus size={18} />}
+                    variant="ghost"
+                    onClick={saveCurrentAccount}
+                    isDisabled={!derived.payload}
+                  />
                   <Button
                     label={t('gen.clearForm')}
                     isIconOnly
@@ -260,17 +308,29 @@ function GeneratorPage() {
                 </>
               }
               title={t('gen.formTitle')}
-              icon={Landmark}>
+              icon={Landmark}
+            >
               <div className="flex flex-col gap-5">
                 <SavedAccountsStrip
                   activeKey={`${form.bin}:${form.accountNumber}`}
                   onPick={(a) => {
-                    draftStore.setState((f) => formFromAccount(a, {amountText: f.amountText, purpose: f.purpose}))
+                    draftStore.setState((f) =>
+                      formFromAccount(a, {amountText: f.amountText, purpose: f.purpose}),
+                    )
                     touchAccount(a.id)
                   }}
                 />
-                <AccountFields form={form} onChange={patch} errors={derived.errors} showErrors={showErrors} />
-                <AmountField value={form.amountText} onChange={(amountText) => patch({amountText})} error={derived.errors.amount ? t(derived.errors.amount) : undefined} />
+                <AccountFields
+                  form={form}
+                  onChange={patch}
+                  errors={derived.errors}
+                  showErrors={showErrors}
+                />
+                <AmountField
+                  value={form.amountText}
+                  onChange={(amountText) => patch({amountText})}
+                  error={derived.errors.amount ? t(derived.errors.amount) : undefined}
+                />
                 <PurposeField
                   value={form.purpose}
                   ascii={derived.purposeAscii}
@@ -284,21 +344,66 @@ function GeneratorPage() {
                     <span className="inline-flex items-center gap-2 font-semibold">
                       <Settings2 size={16} aria-hidden /> {t('gen.advanced')}
                     </span>
-                  }>
+                  }
+                >
                   <div className="@container flex flex-col gap-4 pt-3">
                     {/* Two columns only when the panel itself (not the screen) leaves room for each label, "Tuỳ chọn" included, on one line. */}
                     <div className="grid gap-3 @lg:grid-cols-2">
-                      <TextInput label={t('gen.billNumber')} value={form.billNumber} onChange={(billNumber) => patch({billNumber})} isOptional hasClear />
-                      <TextInput label={t('gen.reference')} value={form.referenceLabel} onChange={(referenceLabel) => patch({referenceLabel})} isOptional hasClear />
+                      <TextInput
+                        label={t('gen.billNumber')}
+                        value={form.billNumber}
+                        onChange={(billNumber) => patch({billNumber})}
+                        isOptional
+                        hasClear
+                      />
+                      <TextInput
+                        label={t('gen.reference')}
+                        value={form.referenceLabel}
+                        onChange={(referenceLabel) => patch({referenceLabel})}
+                        isOptional
+                        hasClear
+                      />
                     </div>
                     {/* Each choice says what it does: the names alone ("static", "dynamic") are EMV terms. */}
-                    <RadioList label={t('gen.initiation')} value={form.initiation} onChange={(v) => patch({initiation: v as VietQrForm['initiation']})} size="sm">
-                      <RadioListItem align="first-line" value="auto" label={t('gen.initiationAuto')} description={t('gen.initiationAutoHint')} />
-                      <RadioListItem align="first-line" value="static" label={t('gen.initiationStatic')} description={t('gen.initiationStaticHint')} />
-                      <RadioListItem align="first-line" value="dynamic" label={t('gen.initiationDynamic')} description={t('gen.initiationDynamicHint')} />
+                    <RadioList
+                      label={t('gen.initiation')}
+                      value={form.initiation}
+                      onChange={(v) => patch({initiation: v as VietQrForm['initiation']})}
+                      size="sm"
+                    >
+                      <RadioListItem
+                        align="first-line"
+                        value="auto"
+                        label={t('gen.initiationAuto')}
+                        description={t('gen.initiationAutoHint')}
+                      />
+                      <RadioListItem
+                        align="first-line"
+                        value="static"
+                        label={t('gen.initiationStatic')}
+                        description={t('gen.initiationStaticHint')}
+                      />
+                      <RadioListItem
+                        align="first-line"
+                        value="dynamic"
+                        label={t('gen.initiationDynamic')}
+                        description={t('gen.initiationDynamicHint')}
+                      />
                     </RadioList>
-                    <Switch label={t('gen.merchantName')} value={form.includeName} onChange={(includeName) => patch({includeName})} />
-                    {form.includeName && <TextInput label={t('gen.merchantCity')} value={form.merchantCity} onChange={(merchantCity) => patch({merchantCity})} isOptional hasClear />}
+                    <Switch
+                      label={t('gen.merchantName')}
+                      value={form.includeName}
+                      onChange={(includeName) => patch({includeName})}
+                    />
+                    {form.includeName && (
+                      <TextInput
+                        label={t('gen.merchantCity')}
+                        value={form.merchantCity}
+                        onChange={(merchantCity) => patch({merchantCity})}
+                        isOptional
+                        hasClear
+                      />
+                    )}
                   </div>
                 </Collapsible>
               </div>
@@ -309,7 +414,10 @@ function GeneratorPage() {
           <div className="flex flex-col gap-5 min-w-0 md:sticky md:top-20" ref={previewRef}>
             <Panel hue="violet">
               <div className="flex flex-col gap-4">
-                <TemplatePicker value={design.template} onChange={(template) => updateDesign({template})} />
+                <TemplatePicker
+                  value={design.template}
+                  onChange={(template) => updateDesign({template})}
+                />
                 <QrStage
                   scene={scene}
                   label={`VietQR ${bank?.shortName ?? ''} ${form.accountNumber}`}
@@ -327,9 +435,18 @@ function GeneratorPage() {
                 <ExportActions
                   scene={scene}
                   filename={filename}
-                  shareText={derived.amount ? `${t('tpl.transfer')} ${formatVnd(derived.amount, true)}` : t('tpl.transfer')}
+                  shareText={
+                    derived.amount
+                      ? `${t('tpl.transfer')} ${formatVnd(derived.amount, true)}`
+                      : t('tpl.transfer')
+                  }
                   onExported={onExported}
-                  side={{label: t('gen.shareLink'), icon: <Link2 size={16} />, isDisabled: !derived.payload, onClick: copyPayLink}}
+                  side={{
+                    label: t('gen.shareLink'),
+                    icon: <Link2 size={16} />,
+                    isDisabled: !derived.payload,
+                    onClick: copyPayLink,
+                  }}
                   menuItems={[
                     {
                       id: 'payload',
@@ -352,28 +469,46 @@ function GeneratorPage() {
                   <Tab value="style" label={t('gen.style')} panelId="design-panel" />
                 </TabList>
                 <div id="design-panel" role="tabpanel">
-                {designTab === 'template' ? (
-                  <div className="flex flex-col gap-4">
-                    <div className="flex flex-col gap-2">
-                      <span className="text-sm font-semibold">{t('gen.accent')}</span>
-                      <AccentPicker value={design.accent} onChange={(accent) => updateDesign({accent})} label={t('gen.accent')} />
-                    </div>
-                    {(design.template === 'card' || design.template === 'standee') && (
-                      <TextInput
-                        label={t('gen.title.custom')}
-                        value={design.title}
-                        onChange={(title) => updateDesign({title})}
-                        placeholder={t('gen.title.customPlaceholder')}
-                        isOptional
-                        hasClear
+                  {designTab === 'template' ? (
+                    <div className="flex flex-col gap-4">
+                      <div className="flex flex-col gap-2">
+                        <span className="text-sm font-semibold">{t('gen.accent')}</span>
+                        <AccentPicker
+                          value={design.accent}
+                          onChange={(accent) => updateDesign({accent})}
+                          label={t('gen.accent')}
+                        />
+                      </div>
+                      {(design.template === 'card' || design.template === 'standee') && (
+                        <TextInput
+                          label={t('gen.title.custom')}
+                          value={design.title}
+                          onChange={(title) => updateDesign({title})}
+                          placeholder={t('gen.title.customPlaceholder')}
+                          isOptional
+                          hasClear
+                        />
+                      )}
+                      <Switch
+                        label={t('gen.maskAccount')}
+                        value={design.maskAccount}
+                        onChange={(maskAccount) => updateDesign({maskAccount})}
                       />
-                    )}
-                    <Switch label={t('gen.maskAccount')} value={design.maskAccount} onChange={(maskAccount) => updateDesign({maskAccount})} />
-                    <Switch label={t('gen.showBrand')} value={design.showBrand} onChange={(showBrand) => updateDesign({showBrand})} />
-                  </div>
-                ) : (
-                  <StylePanel style={design.style} onStyle={updateQrStyle} design={design} onDesign={updateDesign} logo={logo} />
-                )}
+                      <Switch
+                        label={t('gen.showBrand')}
+                        value={design.showBrand}
+                        onChange={(showBrand) => updateDesign({showBrand})}
+                      />
+                    </div>
+                  ) : (
+                    <StylePanel
+                      style={design.style}
+                      onStyle={updateQrStyle}
+                      design={design}
+                      onDesign={updateDesign}
+                      logo={logo}
+                    />
+                  )}
                 </div>
               </div>
             </Panel>
@@ -389,7 +524,9 @@ function GeneratorPage() {
               variant="primary"
               elevation="high"
               icon={<ArrowDown size={16} />}
-              onClick={() => previewRef.current?.scrollIntoView({behavior: 'smooth', block: 'start'})}
+              onClick={() =>
+                previewRef.current?.scrollIntoView({behavior: 'smooth', block: 'start'})
+              }
             />
           </span>
         </div>

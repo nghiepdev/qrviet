@@ -16,9 +16,22 @@ export interface SavedAccount {
   usedAt: number | null
 }
 
-export const ACCOUNT_COLORS = ['#d7263d', '#1d63d8', '#0b7f66', '#7c3aed', '#c2410c', '#c2185b', '#0f172a', '#ca8a04']
+export const ACCOUNT_COLORS = [
+  '#d7263d',
+  '#1d63d8',
+  '#0b7f66',
+  '#7c3aed',
+  '#c2410c',
+  '#c2185b',
+  '#0f172a',
+  '#ca8a04',
+]
 
-export const accountsStore = persistedStore<SavedAccount[]>({key: 'accounts', version: 1, initial: []})
+export const accountsStore = persistedStore<SavedAccount[]>({
+  key: 'accounts',
+  version: 1,
+  initial: [],
+})
 
 export function useAccounts<T = SavedAccount[]>(selector?: (a: SavedAccount[]) => T): T {
   return useSelector(accountsStore, selector ?? ((a) => a as unknown as T))
@@ -26,20 +39,29 @@ export function useAccounts<T = SavedAccount[]>(selector?: (a: SavedAccount[]) =
 
 export function findDuplicate(bin: string, accountNumber: string, ignoreId?: string) {
   return accountsStore.state.find(
-    (a) => a.bin === bin && a.accountNumber.toUpperCase() === accountNumber.toUpperCase() && a.id !== ignoreId,
+    (a) =>
+      a.bin === bin &&
+      a.accountNumber.toUpperCase() === accountNumber.toUpperCase() &&
+      a.id !== ignoreId,
   )
 }
 
 export function saveAccount(
-  input: Omit<SavedAccount, 'id' | 'createdAt' | 'usedAt' | 'isDefault' | 'color'> & Partial<Pick<SavedAccount, 'id' | 'color' | 'isDefault'>>,
+  input: Omit<SavedAccount, 'id' | 'createdAt' | 'usedAt' | 'isDefault' | 'color'> &
+    Partial<Pick<SavedAccount, 'id' | 'color' | 'isDefault'>>,
 ): SavedAccount {
-  const existing = input.id ? accountsStore.state.find((a) => a.id === input.id) : findDuplicate(input.bin, input.accountNumber)
+  const existing = input.id
+    ? accountsStore.state.find((a) => a.id === input.id)
+    : findDuplicate(input.bin, input.accountNumber)
   const isFirst = accountsStore.state.length === 0
   const record: SavedAccount = {
     id: existing?.id ?? uid(),
     createdAt: existing?.createdAt ?? Date.now(),
     usedAt: existing?.usedAt ?? null,
-    color: input.color ?? existing?.color ?? ACCOUNT_COLORS[accountsStore.state.length % ACCOUNT_COLORS.length],
+    color:
+      input.color ??
+      existing?.color ??
+      ACCOUNT_COLORS[accountsStore.state.length % ACCOUNT_COLORS.length],
     isDefault: input.isDefault ?? existing?.isDefault ?? isFirst,
     bin: input.bin,
     accountNumber: input.accountNumber,
@@ -82,20 +104,24 @@ export function touchAccount(id: string) {
   accountsStore.setState((list) => list.map((a) => (a.id === id ? {...a, usedAt: Date.now()} : a)))
 }
 
+function importText(value: unknown): string {
+  return typeof value === 'string' || typeof value === 'number' ? String(value) : ''
+}
+
 export function importAccounts(items: unknown): number {
   if (!Array.isArray(items)) throw new Error('not an array')
   let count = 0
   for (const raw of items) {
     if (!raw || typeof raw !== 'object') continue
     const r = raw as Record<string, unknown>
-    const bin = String(r.bin ?? '')
-    const accountNumber = String(r.accountNumber ?? r.account ?? '')
+    const bin = importText(r.bin)
+    const accountNumber = importText(r.accountNumber ?? r.account)
     if (!/^\d{6}$/.test(bin) || !accountNumber) continue
     saveAccount({
       bin,
       accountNumber,
-      accountName: String(r.accountName ?? r.name ?? ''),
-      nickname: String(r.nickname ?? ''),
+      accountName: importText(r.accountName ?? r.name),
+      nickname: importText(r.nickname),
       service: r.service === 'card' ? 'card' : 'account',
       color: typeof r.color === 'string' ? r.color : undefined,
     })

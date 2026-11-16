@@ -14,7 +14,17 @@ import {Heading} from '@astryxdesign/core/Heading'
 import {Text} from '@astryxdesign/core/Text'
 import {useTheme} from '@astryxdesign/core/theme'
 import {useToast} from '@astryxdesign/core/Toast'
-import {ACCENT_CHOICES, BASE_IDS, buildTheme, darkPartner, loadBase, useLoadedBase, type BaseId, type NeutralStyle, type ThemeRecipe} from '#/theme/presets'
+import {
+  ACCENT_CHOICES,
+  BASE_IDS,
+  buildTheme,
+  darkPartner,
+  loadBase,
+  useLoadedBase,
+  type BaseId,
+  type NeutralStyle,
+  type ThemeRecipe,
+} from '#/theme/presets'
 import {updateSettings, useSettings} from '#/stores/settings'
 import {downloadText} from '#/lib/qr/export'
 import {uid} from '#/lib/text'
@@ -40,7 +50,10 @@ function newRecipe(name: string): ThemeRecipe {
 function PreviewSample() {
   const t = useT()
   return (
-    <div className="flex flex-col gap-3 p-4 rounded-xl" style={{background: 'var(--color-background-body)', color: 'var(--color-text-primary)'}}>
+    <div
+      className="flex flex-col gap-3 p-4 rounded-xl"
+      style={{background: 'var(--color-background-body)', color: 'var(--color-text-primary)'}}
+    >
       <div className="flex items-center gap-2">
         <LogoMark size={26} />
         <Heading level={3}>QRViet</Heading>
@@ -85,7 +98,9 @@ export function ThemeBuilder() {
   const {mode} = useTheme()
   const modeSetting = useSettings((s) => s.mode)
   const editingExisting = customThemes.find((c) => c.id === themeId)
-  const [draft, setDraft] = useState<ThemeRecipe>(() => editingExisting ?? newRecipe(locale === 'vi' ? 'Chủ đề của tôi' : 'My theme'))
+  const [draft, setDraft] = useState<ThemeRecipe>(
+    () => editingExisting ?? newRecipe(locale === 'vi' ? 'Chủ đề của tôi' : 'My theme'),
+  )
   const base = useLoadedBase(draft.base)
   const fileRef = useRef<HTMLInputElement>(null)
   const isSaved = customThemes.some((c) => c.id === draft.id)
@@ -96,27 +111,45 @@ export function ThemeBuilder() {
 
   const preview = base ? buildTheme(draft, base, font) : null
   const patch = (p: Partial<ThemeRecipe>) => setDraft((d) => ({...d, ...p}))
-  const setAccent = (light: string, dark?: string) => patch({accent: [light, dark ?? darkPartner(light)], swatches: [light, dark ?? darkPartner(light), d3(draft)]})
+  const setAccent = (light: string, dark?: string) =>
+    patch({
+      accent: [light, dark ?? darkPartner(light)],
+      swatches: [light, dark ?? darkPartner(light), d3(draft)],
+    })
 
   const save = () => {
-    const recipe = {...draft, swatches: [draft.accent?.[0] ?? '#000', draft.accent?.[1] ?? '#fff', d3(draft)]}
+    const recipe = {
+      ...draft,
+      swatches: [draft.accent?.[0] ?? '#000', draft.accent?.[1] ?? '#fff', d3(draft)],
+    }
     updateSettings((s) => ({
-      customThemes: s.customThemes.some((c) => c.id === recipe.id) ? s.customThemes.map((c) => (c.id === recipe.id ? recipe : c)) : [...s.customThemes, recipe],
+      customThemes: s.customThemes.some((c) => c.id === recipe.id)
+        ? s.customThemes.map((c) => (c.id === recipe.id ? recipe : c))
+        : [...s.customThemes, recipe],
       themeId: recipe.id,
     }))
     showToast({body: t('common.saved'), uniqueID: 'theme'})
   }
 
   const remove = () => {
-    updateSettings((s) => ({customThemes: s.customThemes.filter((c) => c.id !== draft.id), themeId: s.themeId === draft.id ? 'son' : s.themeId}))
+    updateSettings((s) => ({
+      customThemes: s.customThemes.filter((c) => c.id !== draft.id),
+      themeId: s.themeId === draft.id ? 'son' : s.themeId,
+    }))
     setDraft(newRecipe(locale === 'vi' ? 'Chủ đề của tôi' : 'My theme'))
   }
 
   const importJson = async (file?: File) => {
     if (!file) return
     const data = await readThemeFile(file)
-    if (!data) return showToast({body: t('acc.importFailed'), type: 'error', uniqueID: 'theme-import'})
-    setDraft({...newRecipe(data.name?.vi ?? 'Imported'), ...data, id: `custom-${uid().slice(0, 8)}`, group: 'custom'})
+    if (!data)
+      return showToast({body: t('acc.importFailed'), type: 'error', uniqueID: 'theme-import'})
+    setDraft({
+      ...newRecipe(data.name?.vi ?? 'Imported'),
+      ...data,
+      id: `custom-${uid().slice(0, 8)}`,
+      group: 'custom',
+    })
   }
 
   return (
@@ -124,10 +157,34 @@ export function ThemeBuilder() {
       <div className="flex flex-col gap-4">
         <div className="flex flex-wrap items-end gap-3">
           <div className="flex-1 min-w-48">
-            <TextInput label={t('set.builderName')} value={draft.name.vi} onChange={(v) => patch({name: {vi: v, en: v}})} />
+            <TextInput
+              label={t('set.builderName')}
+              value={draft.name.vi}
+              onChange={(v) => patch({name: {vi: v, en: v}})}
+            />
           </div>
-          <Button label={t('set.builderNew')} icon={<Plus size={15} />} variant="ghost" size="sm" onClick={() => setDraft(newRecipe(locale === 'vi' ? 'Chủ đề mới' : 'New theme'))} />
-          {isSaved && <Button label={t('set.builderDuplicate')} icon={<Copy size={15} />} variant="ghost" size="sm" onClick={() => setDraft({...draft, id: `custom-${uid().slice(0, 8)}`, name: {vi: `${draft.name.vi} 2`, en: `${draft.name.en} 2`}})} />}
+          <Button
+            label={t('set.builderNew')}
+            icon={<Plus size={15} />}
+            variant="ghost"
+            size="sm"
+            onClick={() => setDraft(newRecipe(locale === 'vi' ? 'Chủ đề mới' : 'New theme'))}
+          />
+          {isSaved && (
+            <Button
+              label={t('set.builderDuplicate')}
+              icon={<Copy size={15} />}
+              variant="ghost"
+              size="sm"
+              onClick={() =>
+                setDraft({
+                  ...draft,
+                  id: `custom-${uid().slice(0, 8)}`,
+                  name: {vi: `${draft.name.vi} 2`, en: `${draft.name.en} 2`},
+                })
+              }
+            />
+          )}
         </div>
         <Selector
           label={t('set.builderBase')}
@@ -139,7 +196,11 @@ export function ThemeBuilder() {
         />
         <div className="flex flex-col gap-2">
           <span className="text-sm font-semibold">{t('set.builderAccent')}</span>
-          <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={t('set.builderAccent')}>
+          <div
+            className="flex flex-wrap gap-2"
+            role="radiogroup"
+            aria-label={t('set.builderAccent')}
+          >
             {ACCENT_CHOICES.map(([l, d]) => (
               <button
                 key={l}
@@ -148,30 +209,63 @@ export function ThemeBuilder() {
                 aria-checked={draft.accent?.[0] === l}
                 aria-label={l}
                 onClick={() => setAccent(l, d)}
-                className="qv-tile size-9 rounded-full p-1">
-                <span className="block size-full rounded-full" style={{background: `linear-gradient(135deg, ${l} 55%, ${d} 55%)`}} />
+                className="qv-tile size-9 rounded-full p-1"
+              >
+                <span
+                  className="block size-full rounded-full"
+                  style={{background: `linear-gradient(135deg, ${l} 55%, ${d} 55%)`}}
+                />
               </button>
             ))}
-            <label className="qv-tile size-9 rounded-full p-1 cursor-pointer relative overflow-hidden" title={t('common.custom')}>
-              <span className="block size-full rounded-full" style={{background: 'conic-gradient(red, yellow, lime, cyan, blue, magenta, red)'}} />
-              <input type="color" value={draft.accent?.[0] ?? '#d7263d'} onChange={(e) => setAccent(e.target.value.toUpperCase())} className="absolute inset-0 opacity-0 cursor-pointer" aria-label={t('common.custom')} />
+            <label
+              className="qv-tile size-9 rounded-full p-1 cursor-pointer relative overflow-hidden"
+              title={t('common.custom')}
+            >
+              <span
+                className="block size-full rounded-full"
+                style={{background: 'conic-gradient(red, yellow, lime, cyan, blue, magenta, red)'}}
+              />
+              <input
+                type="color"
+                value={draft.accent?.[0] ?? '#d7263d'}
+                onChange={(e) => setAccent(e.target.value.toUpperCase())}
+                className="absolute inset-0 opacity-0 cursor-pointer"
+                aria-label={t('common.custom')}
+              />
             </label>
             <Switch
               label={t('common.default')}
               value={!draft.accent}
-              onChange={(useBase) => patch(useBase ? {accent: undefined, onAccent: undefined} : {accent: ['#0B7F66', '#4FD1B0']})}
+              onChange={(useBase) =>
+                patch(
+                  useBase
+                    ? {accent: undefined, onAccent: undefined}
+                    : {accent: ['#0B7F66', '#4FD1B0']},
+                )
+              }
               size="sm"
             />
           </div>
         </div>
         {draft.accent && (
-          <SegmentedControl label={t('set.builderNeutral')} value={draft.neutral ?? 'neutral'} onChange={(v) => patch({neutral: v as NeutralStyle})} layout="fill">
+          <SegmentedControl
+            label={t('set.builderNeutral')}
+            value={draft.neutral ?? 'neutral'}
+            onChange={(v) => patch({neutral: v as NeutralStyle})}
+            layout="fill"
+          >
             <SegmentedControlItem value="warm" label={t('set.neutral.warm')} />
             <SegmentedControlItem value="neutral" label={t('set.neutral.neutral')} />
             <SegmentedControlItem value="cool" label={t('set.neutral.cool')} />
           </SegmentedControl>
         )}
-        {draft.accent && <Switch label={t('set.builderContrast')} value={draft.contrast === 'high'} onChange={(on) => patch({contrast: on ? 'high' : 'standard'})} />}
+        {draft.accent && (
+          <Switch
+            label={t('set.builderContrast')}
+            value={draft.contrast === 'high'}
+            onChange={(on) => patch({contrast: on ? 'high' : 'standard'})}
+          />
+        )}
         <Slider
           label={t('set.builderRadius')}
           value={draft.radius ?? 1}
@@ -192,11 +286,45 @@ export function ThemeBuilder() {
           formatValue={(v) => `${v}px`}
         />
         <div className="flex flex-wrap gap-2 pt-1">
-          <Button label={isSaved ? t('set.builderUpdate') : t('set.builderSave')} variant="primary" icon={<Save size={16} />} onClick={save} />
-          <Button label={t('set.themeExport')} icon={<Download size={15} />} variant="ghost" onClick={() => downloadText(JSON.stringify(draft, null, 2), `qrviet-theme-${draft.id}.json`, 'application/json')} />
-          <Button label={t('set.themeImport')} icon={<Upload size={15} />} variant="ghost" onClick={() => fileRef.current?.click()} />
-          <input ref={fileRef} type="file" accept="application/json,.json" hidden onChange={(e) => void importJson(e.target.files?.[0])} />
-          {isSaved && <Button label={t('common.delete')} icon={<Trash2 size={15} />} variant="destructive" onClick={remove} />}
+          <Button
+            label={isSaved ? t('set.builderUpdate') : t('set.builderSave')}
+            variant="primary"
+            icon={<Save size={16} />}
+            onClick={save}
+          />
+          <Button
+            label={t('set.themeExport')}
+            icon={<Download size={15} />}
+            variant="ghost"
+            onClick={() =>
+              downloadText(
+                JSON.stringify(draft, null, 2),
+                `qrviet-theme-${draft.id}.json`,
+                'application/json',
+              )
+            }
+          />
+          <Button
+            label={t('set.themeImport')}
+            icon={<Upload size={15} />}
+            variant="ghost"
+            onClick={() => fileRef.current?.click()}
+          />
+          <input
+            ref={fileRef}
+            type="file"
+            accept="application/json,.json"
+            hidden
+            onChange={(e) => void importJson(e.target.files?.[0])}
+          />
+          {isSaved && (
+            <Button
+              label={t('common.delete')}
+              icon={<Trash2 size={15} />}
+              variant="destructive"
+              onClick={remove}
+            />
+          )}
         </div>
       </div>
       <div className="flex flex-col gap-2">
@@ -205,7 +333,10 @@ export function ThemeBuilder() {
         </span>
         <div className="rounded-xl border border-border overflow-hidden min-h-64 grid">
           {preview ? (
-            <Theme theme={preview} mode={draft.forcedMode ?? (modeSetting === 'system' ? mode : modeSetting)}>
+            <Theme
+              theme={preview}
+              mode={draft.forcedMode ?? (modeSetting === 'system' ? mode : modeSetting)}
+            >
               <PreviewSample />
             </Theme>
           ) : (

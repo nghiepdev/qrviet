@@ -1,4 +1,12 @@
-import {buildVietQr, toQrAscii, validateVietQr, type Initiation, type ParsedVietQr, type VietQrIssue, type VietQrService} from '#/lib/vietqr'
+import {
+  buildVietQr,
+  toQrAscii,
+  validateVietQr,
+  type Initiation,
+  type ParsedVietQr,
+  type VietQrIssue,
+  type VietQrService,
+} from '#/lib/vietqr'
 import {formatVnd, parseAmount} from '#/lib/money'
 import {sanitizeTransferContent, type ContentMode} from '#/lib/text'
 import type {SavedAccount} from '#/stores/accounts'
@@ -34,10 +42,22 @@ export const EMPTY_FORM: VietQrForm = {
 }
 
 /** Last generator state, so reopening the app continues where you left off. */
-export const draftStore = persistedStore<VietQrForm>({key: 'draft', version: 1, initial: EMPTY_FORM, merge: (p, i) => ({...i, ...p})})
+export const draftStore = persistedStore<VietQrForm>({
+  key: 'draft',
+  version: 1,
+  initial: EMPTY_FORM,
+  merge: (p, i) => ({...i, ...p}),
+})
 
 export function formFromAccount(a: SavedAccount, keep?: Partial<VietQrForm>): VietQrForm {
-  return {...EMPTY_FORM, ...keep, bin: a.bin, accountNumber: a.accountNumber, accountName: a.accountName, service: a.service}
+  return {
+    ...EMPTY_FORM,
+    ...keep,
+    bin: a.bin,
+    accountNumber: a.accountNumber,
+    accountName: a.accountName,
+    service: a.service,
+  }
 }
 
 export function formFromParsed(p: ParsedVietQr): VietQrForm {
@@ -93,7 +113,16 @@ export function deriveVietQr(form: VietQrForm, contentMode: ContentMode): Derive
   const errors: DerivedVietQr['errors'] = {}
   const warnings: DerivedVietQr['warnings'] = {}
   for (const i of issues) {
-    const key = i.field === 'bin' ? 'bin' : i.field === 'accountNumber' ? 'accountNumber' : i.field === 'amount' ? 'amount' : i.field === 'purpose' ? 'purpose' : null
+    const key =
+      i.field === 'bin'
+        ? 'bin'
+        : i.field === 'accountNumber'
+          ? 'accountNumber'
+          : i.field === 'amount'
+            ? 'amount'
+            : i.field === 'purpose'
+              ? 'purpose'
+              : null
     if (!key) continue
     const msg = i.field === 'bin' ? 'gen.invalid.bin' : ISSUE_MESSAGE[i.code]
     if (i.severity === 'error') errors[key] ??= msg

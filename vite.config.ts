@@ -10,7 +10,9 @@ import {serwist, type PluginOptions, type SerwistViteApi} from '@serwist/vite'
 // (e.g. GitHub Pages project sites). Everything else is relative to it.
 const base = process.env.BASE_PATH ?? '/'
 
-const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')) as {version: string}
+const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')) as {
+  version: string
+}
 
 /**
  * Public production URL of the app, for the absolute image URL that link

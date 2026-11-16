@@ -64,7 +64,9 @@ export function decodePayLink(hash: string, search = ''): PayLinkData | null {
 }
 
 /** What a detailed link preview shows, from the query string; null when the link has none. */
-export function payLinkPreview(search: string): Pick<PayLinkData, 'bin' | 'name' | 'amount'> | null {
+export function payLinkPreview(
+  search: string,
+): Pick<PayLinkData, 'bin' | 'name' | 'amount'> | null {
   const {bin, name, amount} = readFields(new URLSearchParams(search))
   return name || amount ? {bin, name, amount} : null
 }

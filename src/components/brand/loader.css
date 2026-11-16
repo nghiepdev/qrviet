@@ -18,7 +18,11 @@
   inset: 0;
   z-index: 60;
   background:
-    radial-gradient(80% 60% at 50% 40%, color-mix(in srgb, var(--color-accent) 14%, transparent), transparent 70%),
+    radial-gradient(
+      80% 60% at 50% 40%,
+      color-mix(in srgb, var(--color-accent) 14%, transparent),
+      transparent 70%
+    ),
     var(--color-background-body);
 }
 .qv-loader-field {
@@ -40,7 +44,18 @@
 .qv-particle.is-star {
   border-radius: 0;
   background: #ffc93c;
-  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  clip-path: polygon(
+    50% 0%,
+    61% 35%,
+    98% 35%,
+    68% 57%,
+    79% 91%,
+    50% 70%,
+    21% 91%,
+    32% 57%,
+    2% 35%,
+    39% 35%
+  );
 }
 @keyframes qv-float {
   from {

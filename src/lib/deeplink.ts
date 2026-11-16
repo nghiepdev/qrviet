@@ -12,7 +12,14 @@ import {buildVietQr, normalizeAmount, toQrAscii, type VietQrService} from '#/lib
 
 export type Platform = 'ios' | 'android' | 'desktop'
 
-export type InAppBrowserKind = 'zalo' | 'messenger' | 'facebook' | 'instagram' | 'tiktok' | 'line' | 'webview'
+export type InAppBrowserKind =
+  | 'zalo'
+  | 'messenger'
+  | 'facebook'
+  | 'instagram'
+  | 'tiktok'
+  | 'line'
+  | 'webview'
 
 export interface InAppBrowserInfo {
   isInApp: boolean
@@ -75,7 +82,13 @@ export function detectInAppBrowser(): InAppBrowserInfo {
     (typeof matchMedia !== 'undefined' && matchMedia('(display-mode: standalone)').matches) ||
     Boolean((navigator as {standalone?: boolean}).standalone)
   const isIos = detectPlatform() === 'ios'
-  if (isIos && !standalone && /AppleWebKit/i.test(ua) && !/Safari\//i.test(ua) && !/CriOS|FxiOS|EdgiOS|OPiOS/i.test(ua)) {
+  if (
+    isIos &&
+    !standalone &&
+    /AppleWebKit/i.test(ua) &&
+    !/Safari\//i.test(ua) &&
+    !/CriOS|FxiOS|EdgiOS|OPiOS/i.test(ua)
+  ) {
     return {isInApp: true, app: 'webview'}
   }
   return {isInApp: false, app: null}
@@ -161,7 +174,12 @@ function buildNativeTargetUrl(
   return {url, carriesPayload, autofillMode}
 }
 
-function toAndroidIntentUrl(nativeUrl: string, schemeWithSep: string, androidPkg: string, fallbackUrl: string): string {
+function toAndroidIntentUrl(
+  nativeUrl: string,
+  schemeWithSep: string,
+  androidPkg: string,
+  fallbackUrl: string,
+): string {
   const schemeName = schemeWithSep.replace(/:\/\/$/, '')
   const rest = nativeUrl.startsWith(schemeWithSep) ? nativeUrl.slice(schemeWithSep.length) : ''
   return `intent://${rest}#Intent;scheme=${schemeName};package=${androidPkg};S.browser_fallback_url=${encodeURIComponent(fallbackUrl)};end`
@@ -201,7 +219,12 @@ export function buildBankLaunchPlan(
       appBank,
       spec,
       os,
-      launchUrl: toAndroidIntentUrl(target.url, spec.ios.scheme, spec.android.package, androidStoreUrl),
+      launchUrl: toAndroidIntentUrl(
+        target.url,
+        spec.ios.scheme,
+        spec.android.package,
+        androidStoreUrl,
+      ),
       carriesPayload: target.carriesPayload,
       autofillMode: target.autofillMode,
       storeUrl: androidStoreUrl,

@@ -1,6 +1,24 @@
 import {useEffect, useRef, useState} from 'react'
 import {createFileRoute} from '@tanstack/react-router'
-import {Check, Database, Download, HardDrive, Keyboard, Laptop, Moon, Paintbrush, Palette, QrCode, RefreshCw, Settings as SettingsIcon, Share, Smartphone, Sun, Trash2, Upload} from 'lucide-react'
+import {
+  Check,
+  Database,
+  Download,
+  HardDrive,
+  Keyboard,
+  Laptop,
+  Moon,
+  Paintbrush,
+  Palette,
+  QrCode,
+  RefreshCw,
+  Settings as SettingsIcon,
+  Share,
+  Smartphone,
+  Sun,
+  Trash2,
+  Upload,
+} from 'lucide-react'
 import {AlertDialog} from '@astryxdesign/core/AlertDialog'
 import {Badge} from '@astryxdesign/core/Badge'
 import {Button} from '@astryxdesign/core/Button'
@@ -27,18 +45,43 @@ export const Route = createFileRoute('/settings')({
   component: SettingsPage,
 })
 
-function ThemeCard({recipe, selected, onSelect}: {recipe: ThemeRecipe; selected: boolean; onSelect: () => void}) {
+function ThemeCard({
+  recipe,
+  selected,
+  onSelect,
+}: {
+  recipe: ThemeRecipe
+  selected: boolean
+  onSelect: () => void
+}) {
   const locale = useLocale()
   const [a, b, c] = recipe.swatches
   return (
     // items-stretch: Safari gives buttons align-items: flex-start, which shrank the preview (only absolutely placed shapes) to nothing.
-    <button type="button" role="radio" aria-checked={selected} onClick={onSelect} className="qv-tile p-2 flex flex-col items-stretch gap-2 text-left">
-      <span className="relative block h-16 rounded-md overflow-hidden" style={{background: c}} aria-hidden>
+    <button
+      type="button"
+      role="radio"
+      aria-checked={selected}
+      onClick={onSelect}
+      className="qv-tile p-2 flex flex-col items-stretch gap-2 text-left"
+    >
+      <span
+        className="relative block h-16 rounded-md overflow-hidden"
+        style={{background: c}}
+        aria-hidden
+      >
         <span className="absolute left-2 top-2 h-3 w-14 rounded-full" style={{background: a}} />
-        <span className="absolute left-2 top-7 h-2 w-20 rounded-full opacity-40" style={{background: a}} />
+        <span
+          className="absolute left-2 top-7 h-2 w-20 rounded-full opacity-40"
+          style={{background: a}}
+        />
         <span className="absolute right-2 bottom-2 size-7 rounded-lg" style={{background: b}} />
         <span className="absolute left-2 bottom-2 h-5 w-10 rounded-md" style={{background: a}} />
-        {recipe.forcedMode === 'dark' && <span className="absolute right-2 top-2"><Moon size={12} color="#fff" /></span>}
+        {recipe.forcedMode === 'dark' && (
+          <span className="absolute right-2 top-2">
+            <Moon size={12} color="#fff" />
+          </span>
+        )}
       </span>
       <span className="flex items-center gap-1 text-sm font-semibold">
         <span className="truncate">{recipe.name[locale]}</span>
@@ -59,7 +102,8 @@ async function restoreBackup(file: File): Promise<boolean> {
   try {
     const json = JSON.parse(await file.text())
     if (json?.app !== 'qrviet' || typeof json.data !== 'object') return false
-    for (const [k, v] of Object.entries(json.data as Record<string, unknown>)) if (k.startsWith('qrviet:')) localStorage.setItem(k, JSON.stringify(v))
+    for (const [k, v] of Object.entries(json.data as Record<string, unknown>))
+      if (k.startsWith('qrviet:')) localStorage.setItem(k, JSON.stringify(v))
     return true
   } catch {
     return false
@@ -94,12 +138,21 @@ function SettingsPage() {
   const backup = () => {
     const data: Record<string, unknown> = {}
     for (const k of listAppKeys()) data[k] = JSON.parse(localStorage.getItem(k) ?? 'null')
-    downloadText(JSON.stringify({app: 'qrviet', kind: 'backup', version: 1, createdAt: new Date().toISOString(), data}, null, 2), `qrviet-backup-${new Date().toISOString().slice(0, 10)}.json`, 'application/json')
+    downloadText(
+      JSON.stringify(
+        {app: 'qrviet', kind: 'backup', version: 1, createdAt: new Date().toISOString(), data},
+        null,
+        2,
+      ),
+      `qrviet-backup-${new Date().toISOString().slice(0, 10)}.json`,
+      'application/json',
+    )
   }
 
   const restore = async (file?: File) => {
     if (!file) return
-    if (!(await restoreBackup(file))) return showToast({body: t('acc.importFailed'), type: 'error', uniqueID: 'restore'})
+    if (!(await restoreBackup(file)))
+      return showToast({body: t('acc.importFailed'), type: 'error', uniqueID: 'restore'})
     showToast({body: t('set.restored'), uniqueID: 'restore'})
     setTimeout(() => location.reload(), 600)
   }
@@ -123,7 +176,11 @@ function SettingsPage() {
 
   return (
     <>
-      <PageHeader title={t('set.title')} subtitle={t('set.subtitle')} icon={<SettingsIcon size={22} />} />
+      <PageHeader
+        title={t('set.title')}
+        subtitle={t('set.subtitle')}
+        icon={<SettingsIcon size={22} />}
+      />
       <PageBody>
         <div className="flex flex-col gap-5">
           <Panel title={t('set.appearance')} icon={Palette} hue="pink">
@@ -132,15 +189,37 @@ function SettingsPage() {
               <div className="grid gap-4 @3xl:grid-cols-2">
                 <div className="flex flex-col gap-2">
                   <span className="text-sm font-semibold">{t('set.mode')}</span>
-                  <SegmentedControl label={t('set.mode')} value={mode} onChange={(v) => updateSettings({mode: v as ColorMode})} layout="fill">
-                    <SegmentedControlItem value="light" label={t('common.light')} icon={<Sun size={15} />} />
-                    <SegmentedControlItem value="dark" label={t('common.dark')} icon={<Moon size={15} />} />
-                    <SegmentedControlItem value="system" label={t('common.system')} icon={<Laptop size={15} />} />
+                  <SegmentedControl
+                    label={t('set.mode')}
+                    value={mode}
+                    onChange={(v) => updateSettings({mode: v as ColorMode})}
+                    layout="fill"
+                  >
+                    <SegmentedControlItem
+                      value="light"
+                      label={t('common.light')}
+                      icon={<Sun size={15} />}
+                    />
+                    <SegmentedControlItem
+                      value="dark"
+                      label={t('common.dark')}
+                      icon={<Moon size={15} />}
+                    />
+                    <SegmentedControlItem
+                      value="system"
+                      label={t('common.system')}
+                      icon={<Laptop size={15} />}
+                    />
                   </SegmentedControl>
                 </div>
                 <div className="flex flex-col gap-2">
                   <span className="text-sm font-semibold">{t('set.language')}</span>
-                  <SegmentedControl label={t('set.language')} value={locale} onChange={(v) => updateSettings({locale: v as 'vi' | 'en'})} layout="fill">
+                  <SegmentedControl
+                    label={t('set.language')}
+                    value={locale}
+                    onChange={(v) => updateSettings({locale: v as 'vi' | 'en'})}
+                    layout="fill"
+                  >
                     <SegmentedControlItem value="vi" label="Tiếng Việt" />
                     <SegmentedControlItem value="en" label="English" />
                   </SegmentedControl>
@@ -151,9 +230,18 @@ function SettingsPage() {
                 list.length ? (
                   <div key={title} className="flex flex-col gap-2">
                     <span className="text-sm font-semibold">{title}</span>
-                    <div className="grid grid-cols-3 md:grid-cols-5 xl:grid-cols-7 gap-2" role="radiogroup" aria-label={title}>
+                    <div
+                      className="grid grid-cols-3 md:grid-cols-5 xl:grid-cols-7 gap-2"
+                      role="radiogroup"
+                      aria-label={title}
+                    >
                       {list.map((r) => (
-                        <ThemeCard key={r.id} recipe={r} selected={r.id === themeId} onSelect={() => updateSettings({themeId: r.id})} />
+                        <ThemeCard
+                          key={r.id}
+                          recipe={r}
+                          selected={r.id === themeId}
+                          onSelect={() => updateSettings({themeId: r.id})}
+                        />
                       ))}
                     </div>
                   </div>
@@ -162,7 +250,11 @@ function SettingsPage() {
 
               <div className="flex flex-col gap-2">
                 <span className="text-sm font-semibold">{t('set.font')}</span>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2" role="radiogroup" aria-label={t('set.font')}>
+                <div
+                  className="grid grid-cols-2 md:grid-cols-4 gap-2"
+                  role="radiogroup"
+                  aria-label={t('set.font')}
+                >
                   {FONT_IDS.map((id) => (
                     <button
                       key={id}
@@ -174,8 +266,12 @@ function SettingsPage() {
                         updateSettings({font: id})
                       }}
                       onPointerEnter={() => void FONTS[id].load()}
-                      className="qv-tile p-3 text-left">
-                      <span className="block text-lg font-semibold truncate" style={{fontFamily: FONTS[id].stack}}>
+                      className="qv-tile p-3 text-left"
+                    >
+                      <span
+                        className="block text-lg font-semibold truncate"
+                        style={{fontFamily: FONTS[id].stack}}
+                      >
                         {FONTS[id].sample}
                       </span>
                       <span className="block text-xs text-secondary">{FONTS[id].label}</span>
@@ -187,7 +283,12 @@ function SettingsPage() {
             </div>
           </Panel>
 
-          <Panel title={t('set.builder')} description={t('set.builderBody')} icon={Paintbrush} hue="violet">
+          <Panel
+            title={t('set.builder')}
+            description={t('set.builderBody')}
+            icon={Paintbrush}
+            hue="violet"
+          >
             <ThemeBuilder />
           </Panel>
 
@@ -197,12 +298,21 @@ function SettingsPage() {
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-2">
                   <span className="text-sm font-semibold">{t('set.contentMode')}</span>
-                  <SegmentedControl label={t('set.contentMode')} value={contentMode} onChange={(v) => updateSettings({contentMode: v as 'strict' | 'relaxed'})} layout="fill">
+                  <SegmentedControl
+                    label={t('set.contentMode')}
+                    value={contentMode}
+                    onChange={(v) => updateSettings({contentMode: v as 'strict' | 'relaxed'})}
+                    layout="fill"
+                  >
                     <SegmentedControlItem value="relaxed" label={t('set.contentRelaxed')} />
                     <SegmentedControlItem value="strict" label={t('set.contentStrict')} />
                   </SegmentedControl>
                 </div>
-                <Switch label={t('his.autoSave')} value={autoSave} onChange={(autoSaveHistory) => updateSettings({autoSaveHistory})} />
+                <Switch
+                  label={t('his.autoSave')}
+                  value={autoSave}
+                  onChange={(autoSaveHistory) => updateSettings({autoSaveHistory})}
+                />
               </div>
             </Panel>
 
@@ -210,29 +320,60 @@ function SettingsPage() {
               <div className="flex flex-col gap-3">
                 <div className="flex flex-wrap gap-2">
                   {installed ? (
-                    <Badge variant="success" label={t('app.installed')} icon={<Check size={12} />} />
+                    <Badge
+                      variant="success"
+                      label={t('app.installed')}
+                      icon={<Check size={12} />}
+                    />
                   ) : canPrompt ? (
-                    <Button label={t('app.install')} variant="primary" icon={<Download size={16} />} clickAction={async () => void (await promptInstall())} />
+                    <Button
+                      label={t('app.install')}
+                      variant="primary"
+                      icon={<Download size={16} />}
+                      clickAction={async () => void (await promptInstall())}
+                    />
                   ) : null}
-                  <Badge variant={swReady ? 'success' : 'neutral'} label={swReady ? t('set.offlineReady') : t('set.offlineNotReady')} />
+                  <Badge
+                    variant={swReady ? 'success' : 'neutral'}
+                    label={swReady ? t('set.offlineReady') : t('set.offlineNotReady')}
+                  />
                   {!online && <Badge variant="warning" label={t('app.offline')} />}
                 </div>
                 {ios && !installed && (
                   <div className="flex flex-col gap-2">
-                    <Banner status="info" title={t('app.installIosTitle')} description={t('app.installIosBody')} icon={<Share size={16} />} />
+                    <Banner
+                      status="info"
+                      title={t('app.installIosTitle')}
+                      description={t('app.installIosBody')}
+                      icon={<Share size={16} />}
+                    />
                     <div>
-                      <Button label={t('app.installIosGuideAction')} icon={<Smartphone size={15} />} size="sm" variant="primary" clickAction={() => openIosInstallGuide()} />
+                      <Button
+                        label={t('app.installIosGuideAction')}
+                        icon={<Smartphone size={15} />}
+                        size="sm"
+                        variant="primary"
+                        clickAction={() => openIosInstallGuide()}
+                      />
                     </div>
                   </div>
                 )}
                 <div className="flex items-center gap-2 text-sm text-secondary">
-                  <HardDrive size={15} aria-hidden /> {storage ? t('set.storage', {used: storage}) : '—'}
+                  <HardDrive size={15} aria-hidden />{' '}
+                  {storage ? t('set.storage', {used: storage}) : '—'}
                 </div>
                 <div className="flex items-center gap-2 text-sm text-secondary">
-                  <Smartphone size={15} aria-hidden /> {t('set.version', {version: `${__APP_VERSION__} · ${__BUILD_DATE__}`})}
+                  <Smartphone size={15} aria-hidden />{' '}
+                  {t('set.version', {version: `${__APP_VERSION__} · ${__BUILD_DATE__}`})}
                 </div>
                 <div>
-                  <Button label={t('set.checkUpdate')} icon={<RefreshCw size={15} />} size="sm" clickAction={checkUpdate} isDisabled={!online} />
+                  <Button
+                    label={t('set.checkUpdate')}
+                    icon={<RefreshCw size={15} />}
+                    size="sm"
+                    clickAction={checkUpdate}
+                    isDisabled={!online}
+                  />
                 </div>
               </div>
             </Panel>
@@ -240,9 +381,24 @@ function SettingsPage() {
             <Panel title={t('set.data')} description={t('set.dataBody')} icon={Database} hue="blue">
               <div className="flex flex-wrap gap-2">
                 <Button label={t('set.backup')} icon={<Database size={16} />} onClick={backup} />
-                <Button label={t('set.restore')} icon={<Upload size={16} />} onClick={() => restoreRef.current?.click()} />
-                <input ref={restoreRef} type="file" accept="application/json,.json" hidden onChange={(e) => void restore(e.target.files?.[0])} />
-                <Button label={t('set.wipe')} icon={<Trash2 size={16} />} variant="destructive" onClick={() => setWipeOpen(true)} />
+                <Button
+                  label={t('set.restore')}
+                  icon={<Upload size={16} />}
+                  onClick={() => restoreRef.current?.click()}
+                />
+                <input
+                  ref={restoreRef}
+                  type="file"
+                  accept="application/json,.json"
+                  hidden
+                  onChange={(e) => void restore(e.target.files?.[0])}
+                />
+                <Button
+                  label={t('set.wipe')}
+                  icon={<Trash2 size={16} />}
+                  variant="destructive"
+                  onClick={() => setWipeOpen(true)}
+                />
               </div>
             </Panel>
 

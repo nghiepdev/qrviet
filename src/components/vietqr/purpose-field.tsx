@@ -14,7 +14,8 @@ interface Props {
 export function PurposeField({value, ascii, onChange, error, warning}: Props) {
   const t = useT()
   const len = ascii.length
-  const counterColor = len > PURPOSE_MAX ? 'text-error' : len > PURPOSE_SPEC_LIMIT ? 'text-warning' : 'text-secondary'
+  const counterColor =
+    len > PURPOSE_MAX ? 'text-error' : len > PURPOSE_SPEC_LIMIT ? 'text-warning' : 'text-secondary'
   const changed = ascii && ascii !== value.trim()
   return (
     <div className="flex flex-col gap-1.5">
@@ -28,7 +29,13 @@ export function PurposeField({value, ascii, onChange, error, warning}: Props) {
         hasClear
         autoComplete="off"
         enterKeyHint="done"
-        status={error ? {type: 'error', message: t(error)} : warning ? {type: 'warning', message: t(warning)} : undefined}
+        status={
+          error
+            ? {type: 'error', message: t(error)}
+            : warning
+              ? {type: 'warning', message: t(warning)}
+              : undefined
+        }
         statusVariant="detached"
       />
       <div className="flex items-center justify-between gap-2 text-xs">

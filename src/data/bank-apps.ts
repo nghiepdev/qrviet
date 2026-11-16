@@ -43,7 +43,9 @@ export interface BankAppSpec {
 
 const SPECS = raw as readonly BankAppSpec[]
 
-export const BANK_APPS_BY_CODE: ReadonlyMap<string, BankAppSpec> = new Map(SPECS.map((s) => [s.code.toUpperCase(), s]))
+export const BANK_APPS_BY_CODE: ReadonlyMap<string, BankAppSpec> = new Map(
+  SPECS.map((s) => [s.code.toUpperCase(), s]),
+)
 
 export function appStoreUrl(appId: string): string {
   return `https://apps.apple.com/vn/app/id${appId}`

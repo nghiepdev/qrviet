@@ -13,7 +13,9 @@ export function speakAmount(text: string, locale: 'vi' | 'en') {
   speechSynthesis.cancel()
   const u = new SpeechSynthesisUtterance(text)
   u.lang = locale === 'vi' ? 'vi-VN' : 'en-US'
-  const voice = speechSynthesis.getVoices().find((v) => v.lang.toLowerCase().startsWith(locale === 'vi' ? 'vi' : 'en'))
+  const voice = speechSynthesis
+    .getVoices()
+    .find((v) => v.lang.toLowerCase().startsWith(locale === 'vi' ? 'vi' : 'en'))
   if (voice) u.voice = voice
   u.rate = 0.95
   speechSynthesis.speak(u)
@@ -59,15 +61,35 @@ export function AmountField({value, onChange, label, error, showQuick = true, de
       {amount ? (
         <div className="flex items-start gap-2 rounded-md bg-accent-muted/40 px-3 py-2">
           <div className="min-w-0 flex-1">
-            <div className="text-lg font-extrabold text-accent qv-num leading-tight">{formatVnd(amount, true)}</div>
+            <div className="text-lg font-extrabold text-accent qv-num leading-tight">
+              {formatVnd(amount, true)}
+            </div>
             <div className="text-xs text-secondary italic">{words}</div>
           </div>
-          {canSpeak && <IconButton label={t('gen.speak')} icon={<Volume2 size={16} />} size="sm" variant="ghost" onClick={() => speakAmount(words, locale)} />}
-          <IconButton label={t('common.clear')} icon={<X size={16} />} size="sm" variant="ghost" onClick={() => onChange('')} />
+          {canSpeak && (
+            <IconButton
+              label={t('gen.speak')}
+              icon={<Volume2 size={16} />}
+              size="sm"
+              variant="ghost"
+              onClick={() => speakAmount(words, locale)}
+            />
+          )}
+          <IconButton
+            label={t('common.clear')}
+            icon={<X size={16} />}
+            size="sm"
+            variant="ghost"
+            onClick={() => onChange('')}
+          />
         </div>
       ) : null}
       {showQuick && (
-        <div className="flex gap-1.5 overflow-x-auto scrollbar-none -mx-1 px-1 pb-0.5" role="group" aria-label={t('gen.quickAmounts')}>
+        <div
+          className="flex gap-1.5 overflow-x-auto scrollbar-none -mx-1 px-1 pb-0.5"
+          role="group"
+          aria-label={t('gen.quickAmounts')}
+        >
           {/* Warmer as the amount grows: amber up to red. */}
           {QUICK.map((q, i) => (
             <button
@@ -76,7 +98,8 @@ export function AmountField({value, onChange, label, error, showQuick = true, de
               onClick={() => onChange(formatVnd(q))}
               aria-pressed={amount === q}
               style={heatStyle(i, QUICK.length)}
-              className="qv-tile qv-tile-hue qv-heat qv-heat-money shrink-0 px-3 py-1 rounded-full text-sm font-semibold qv-num qv-hue-text">
+              className="qv-tile qv-tile-hue qv-heat qv-heat-money shrink-0 px-3 py-1 rounded-full text-sm font-semibold qv-num qv-hue-text"
+            >
               {shortAmount(q, locale)}
             </button>
           ))}

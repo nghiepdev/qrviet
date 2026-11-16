@@ -8,9 +8,24 @@ const NESTED_NAMES: Record<string, Record<string, string>> = {
 }
 
 function nameFor(path: string, id: string): string {
-  if (!path) return EMV_TAG_NAMES[id] ?? (Number(id) >= 26 && Number(id) <= 51 ? 'Merchant Account Information' : Number(id) >= 80 ? 'Unreserved template' : '')
+  if (!path)
+    return (
+      EMV_TAG_NAMES[id] ??
+      (Number(id) >= 26 && Number(id) <= 51
+        ? 'Merchant Account Information'
+        : Number(id) >= 80
+          ? 'Unreserved template'
+          : '')
+    )
   const map = NESTED_NAMES[path] ?? (path.startsWith('62') ? ADDITIONAL_DATA_NAMES : undefined)
-  return map?.[id] ?? (path.length === 2 && Number(path) >= 26 && Number(path) <= 51 ? (id === '00' ? 'GUID' : '') : '')
+  return (
+    map?.[id] ??
+    (path.length === 2 && Number(path) >= 26 && Number(path) <= 51
+      ? id === '00'
+        ? 'GUID'
+        : ''
+      : '')
+  )
 }
 
 function Rows({fields, path, depth}: {fields: TlvField[]; path: string; depth: number}) {
@@ -19,18 +34,37 @@ function Rows({fields, path, depth}: {fields: TlvField[]; path: string; depth: n
       {fields.map((f, i) => {
         const fullPath = path ? `${path}.${f.id}` : f.id
         return (
-          <FragmentRow key={`${fullPath}-${i}`} field={f} path={path} fullPath={fullPath} depth={depth} />
+          <FragmentRow
+            key={`${fullPath}-${i}`}
+            field={f}
+            path={path}
+            fullPath={fullPath}
+            depth={depth}
+          />
         )
       })}
     </>
   )
 }
 
-function FragmentRow({field, path, fullPath, depth}: {field: TlvField; path: string; fullPath: string; depth: number}) {
+function FragmentRow({
+  field,
+  path,
+  fullPath,
+  depth,
+}: {
+  field: TlvField
+  path: string
+  fullPath: string
+  depth: number
+}) {
   return (
     <>
       <tr className="border-b border-border last:border-b-0 align-top">
-        <td className="py-1.5 pr-3 qv-mono text-xs whitespace-nowrap" style={{paddingLeft: depth * 14}}>
+        <td
+          className="py-1.5 pr-3 qv-mono text-xs whitespace-nowrap"
+          style={{paddingLeft: depth * 14}}
+        >
           {depth > 0 && <span className="text-secondary">└ </span>}
           {field.id}
           <span className="text-secondary"> · {String(field.length).padStart(2, '0')}</span>

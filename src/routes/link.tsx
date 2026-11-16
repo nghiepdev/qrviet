@@ -14,7 +14,13 @@ import {AccentPicker} from '#/components/qr/template-picker'
 import {QrStage} from '#/components/qr/qr-stage'
 import {ExportActions} from '#/components/qr/export-actions'
 import {useTextMeasure} from '#/components/qr/use-qr-scene'
-import {EMPTY_FORM, draftStore, formFromAccount, useDerivedVietQr, type VietQrForm} from '#/components/vietqr/form'
+import {
+  EMPTY_FORM,
+  draftStore,
+  formFromAccount,
+  useDerivedVietQr,
+  type VietQrForm,
+} from '#/components/vietqr/form'
 import {LogoMark} from '#/components/brand/logo'
 import {PaySheet, usePaySheet} from '#/components/pay/pay-sheet'
 import {payLinkUrl} from '#/lib/paylink'
@@ -44,9 +50,21 @@ const EXPIRY: Array<{value: string; ms: number}> = [
 /** QR that opens the payment link, with a caption — for printing or showing at the counter. */
 function linkQrScene(url: string, caption: string, accent: string, measure: Measure) {
   if (!url) return null
-  const style = {...DEFAULT_QR_STYLE, dots: 'rounded' as const, eyeFrame: 'rounded' as const, eyeBall: 'rounded' as const, ecc: 'Q' as const}
+  const style = {
+    ...DEFAULT_QR_STYLE,
+    dots: 'rounded' as const,
+    eyeFrame: 'rounded' as const,
+    eyeBall: 'rounded' as const,
+    ecc: 'Q' as const,
+  }
   const geo = layoutQr(makeQr(url, style.ecc), style, {size: 0.2, excavate: true, plate: 'none'})
-  const logo = {src: `${import.meta.env.BASE_URL}logo.svg`, size: 0.2, plate: 'none' as const, plateColor: '#fff', excavate: true}
+  const logo = {
+    src: `${import.meta.env.BASE_URL}logo.svg`,
+    size: 0.2,
+    plate: 'none' as const,
+    plateColor: '#fff',
+    excavate: true,
+  }
   return buildCaptionScene({geo, opts: {style, logo}}, caption, accent, measure)
 }
 
@@ -55,7 +73,13 @@ function LinkBuilder() {
   const copy = useCopy()
   const paySheet = usePaySheet()
   const contentMode = useSettings((s) => s.contentMode)
-  const [form, setForm] = useState<VietQrForm>(() => ({...EMPTY_FORM, bin: draftStore.state.bin, accountNumber: draftStore.state.accountNumber, accountName: draftStore.state.accountName, service: draftStore.state.service}))
+  const [form, setForm] = useState<VietQrForm>(() => ({
+    ...EMPTY_FORM,
+    bin: draftStore.state.bin,
+    accountNumber: draftStore.state.accountNumber,
+    accountName: draftStore.state.accountName,
+    service: draftStore.state.service,
+  }))
   const [note, setNote] = useState('')
   const [expiry, setExpiry] = useState('none')
   const [accent, setAccent] = useState('#d7263d')
@@ -70,17 +94,20 @@ function LinkBuilder() {
   const buildUrl = (now: number) => {
     if (!derived.payload) return ''
     const ms = EXPIRY.find((e) => e.value === expiry)?.ms ?? 0
-    return payLinkUrl({
-      bin: form.bin,
-      acc: form.accountNumber,
-      name: form.accountName || undefined,
-      amount: derived.amount ?? undefined,
-      memo: derived.purposeAscii || undefined,
-      card: form.service === 'card',
-      note: note.trim() || undefined,
-      exp: ms ? now + ms : undefined,
-      accent,
-    }, preview)
+    return payLinkUrl(
+      {
+        bin: form.bin,
+        acc: form.accountNumber,
+        name: form.accountName || undefined,
+        amount: derived.amount ?? undefined,
+        memo: derived.purposeAscii || undefined,
+        card: form.service === 'card',
+        note: note.trim() || undefined,
+        exp: ms ? now + ms : undefined,
+        accent,
+      },
+      preview,
+    )
   }
   const [stampedAt, setStampedAt] = useState(() => Date.now())
   useEffect(() => {
@@ -93,19 +120,50 @@ function LinkBuilder() {
 
   return (
     <>
-      <PageHeader title={t('pay.builderTitle')} subtitle={t('pay.builderSubtitle')} icon={<Link2 size={22} />} />
+      <PageHeader
+        title={t('pay.builderTitle')}
+        subtitle={t('pay.builderSubtitle')}
+        icon={<Link2 size={22} />}
+      />
       <PageBody>
         <div className="grid grid-cols-1 gap-5 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] items-start">
           <Panel>
             <div className="flex flex-col gap-5">
-              <SavedAccountsStrip activeKey={`${form.bin}:${form.accountNumber}`} onPick={(a) => setForm((f) => formFromAccount(a, {amountText: f.amountText, purpose: f.purpose}))} />
-              <AccountFields form={form} onChange={patch} errors={derived.errors} showErrors={Boolean(form.accountNumber)} />
+              <SavedAccountsStrip
+                activeKey={`${form.bin}:${form.accountNumber}`}
+                onPick={(a) =>
+                  setForm((f) => formFromAccount(a, {amountText: f.amountText, purpose: f.purpose}))
+                }
+              />
+              <AccountFields
+                form={form}
+                onChange={patch}
+                errors={derived.errors}
+                showErrors={Boolean(form.accountNumber)}
+              />
               <AmountField value={form.amountText} onChange={(amountText) => patch({amountText})} />
-              <PurposeField value={form.purpose} ascii={derived.purposeAscii} onChange={(purpose) => patch({purpose})} error={derived.errors.purpose} warning={derived.warnings.purpose} />
-              <TextInput label={t('pay.note')} value={note} onChange={setNote} placeholder={t('pay.notePlaceholder')} isOptional hasClear />
+              <PurposeField
+                value={form.purpose}
+                ascii={derived.purposeAscii}
+                onChange={(purpose) => patch({purpose})}
+                error={derived.errors.purpose}
+                warning={derived.warnings.purpose}
+              />
+              <TextInput
+                label={t('pay.note')}
+                value={note}
+                onChange={setNote}
+                placeholder={t('pay.notePlaceholder')}
+                isOptional
+                hasClear
+              />
               <div className="flex flex-col gap-2">
                 <span className="text-sm font-semibold">{t('pay.expiry')}</span>
-                <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={t('pay.expiry')}>
+                <div
+                  className="flex flex-wrap gap-2"
+                  role="radiogroup"
+                  aria-label={t('pay.expiry')}
+                >
                   {/* Deeper along the row, from cyan to blue: time cools where money warms. */}
                   {EXPIRY.map((e, i) => (
                     <button
@@ -118,13 +176,19 @@ function LinkBuilder() {
                         setStampedAt(Date.now())
                       }}
                       style={heatStyle(i, EXPIRY.length)}
-                      className="qv-tile qv-tile-hue qv-heat qv-heat-time px-3 py-1.5 rounded-full text-sm font-semibold qv-hue-text">
+                      className="qv-tile qv-tile-hue qv-heat qv-heat-time px-3 py-1.5 rounded-full text-sm font-semibold qv-hue-text"
+                    >
                       {t(`pay.expiry.${e.value}` as 'pay.expiry.none')}
                     </button>
                   ))}
                 </div>
               </div>
-              <Switch label={t('pay.preview')} description={t('pay.previewHint')} value={preview} onChange={setPreview} />
+              <Switch
+                label={t('pay.preview')}
+                description={t('pay.previewHint')}
+                value={preview}
+                onChange={setPreview}
+              />
               <div className="flex flex-col gap-2">
                 <span className="text-sm font-semibold">{t('gen.accent')}</span>
                 <AccentPicker value={accent} onChange={setAccent} label={t('gen.accent')} />
@@ -136,9 +200,16 @@ function LinkBuilder() {
             <Panel title={t('pay.link')} icon={Link2} hue="violet">
               {url ? (
                 <div className="flex flex-col gap-3">
-                  <div className="rounded-md bg-muted p-3 qv-mono text-xs break-all max-h-28 overflow-auto">{url}</div>
+                  <div className="rounded-md bg-muted p-3 qv-mono text-xs break-all max-h-28 overflow-auto">
+                    {url}
+                  </div>
                   <div className="flex flex-wrap gap-2">
-                    <Button label={t('common.copy')} icon={<Copy size={16} />} variant="primary" onClick={() => void copy(buildUrl(Date.now()), t('gen.linkCopied'))} />
+                    <Button
+                      label={t('common.copy')}
+                      icon={<Copy size={16} />}
+                      variant="primary"
+                      onClick={() => void copy(buildUrl(Date.now()), t('gen.linkCopied'))}
+                    />
                     <Button
                       label={t('common.share')}
                       icon={<Share2 size={16} />}
@@ -148,11 +219,21 @@ function LinkBuilder() {
                         if (r === 'unsupported') await copy(fresh, t('gen.linkCopied'))
                       }}
                     />
-                    <Button label={t('pay.open')} icon={<ExternalLink size={16} />} variant="ghost" onClick={() => paySheet.open(buildUrl(Date.now()))} />
+                    <Button
+                      label={t('pay.open')}
+                      icon={<ExternalLink size={16} />}
+                      variant="ghost"
+                      onClick={() => paySheet.open(buildUrl(Date.now()))}
+                    />
                   </div>
                 </div>
               ) : (
-                <EmptyState icon={<LogoMark size={48} />} title={t('gen.emptyTitle')} description={t('gen.emptyBody')} isCompact />
+                <EmptyState
+                  icon={<LogoMark size={48} />}
+                  title={t('gen.emptyTitle')}
+                  description={t('gen.emptyBody')}
+                  isCompact
+                />
               )}
             </Panel>
             {scene && (

@@ -72,7 +72,18 @@ export function homeHead() {
   }
 }
 
-type PageId = 'scan' | 'qr' | 'link' | 'batch' | 'tools' | 'banks' | 'accounts' | 'history' | 'settings' | 'about' | 'notFound'
+type PageId =
+  | 'scan'
+  | 'qr'
+  | 'link'
+  | 'batch'
+  | 'tools'
+  | 'banks'
+  | 'accounts'
+  | 'history'
+  | 'settings'
+  | 'about'
+  | 'notFound'
 
 /** Keep search indexing focused solely on the homepage; sub-pages still get their own tab title. */
 export function pageHead(id: PageId) {
@@ -91,7 +102,9 @@ export function pageHead(id: PageId) {
  */
 export function payHead(search: Record<string, unknown> = {}) {
   // The router has parsed the values of the query string; as strings again, they read as the edge function's.
-  const query = new URLSearchParams(Object.entries(search).map(([key, value]) => [key, String(value)]))
+  const query = new URLSearchParams(
+    Object.entries(search).map(([key, value]) => [key, String(value)]),
+  )
   const preview = payPreview(query.toString(), t, (bin) => getBankByBin(bin)?.shortName)
   const title = preview?.title ?? t('seo.pay.title')
   const description = preview?.description ?? t('seo.pay.description')

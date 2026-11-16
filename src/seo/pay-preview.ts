@@ -15,12 +15,21 @@ import {payLinkPreview} from '../lib/paylink.ts'
 type Translate = (key: MessageKey, vars?: Record<string, string>) => string
 
 /** The title and description of a link's detailed preview; null when the link has none. */
-export function payPreview(search: string, t: Translate, bankName: (bin: string) => string | undefined) {
+export function payPreview(
+  search: string,
+  t: Translate,
+  bankName: (bin: string) => string | undefined,
+) {
   const preview = payLinkPreview(search)
   if (!preview) return null
   const {name} = preview
   const amount = preview.amount ? formatVnd(preview.amount, true) : ''
-  const title = name && amount ? t('seo.pay.sendTo', {amount, name}) : name ? t('seo.pay.to', {name}) : t('seo.pay.amount', {amount})
+  const title =
+    name && amount
+      ? t('seo.pay.sendTo', {amount, name})
+      : name
+        ? t('seo.pay.to', {name})
+        : t('seo.pay.amount', {amount})
   const description = [bankName(preview.bin), t('seo.pay.description')].filter(Boolean).join(' · ')
   return {title, description}
 }

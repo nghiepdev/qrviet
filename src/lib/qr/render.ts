@@ -6,7 +6,15 @@
 import {encode} from 'uqr'
 
 export type Ecc = 'L' | 'M' | 'Q' | 'H'
-export type DotShape = 'square' | 'rounded' | 'dots' | 'fluid' | 'diamond' | 'classy' | 'bars-v' | 'bars-h'
+export type DotShape =
+  | 'square'
+  | 'rounded'
+  | 'dots'
+  | 'fluid'
+  | 'diamond'
+  | 'classy'
+  | 'bars-v'
+  | 'bars-h'
 export type EyeFrameShape = 'square' | 'rounded' | 'circle' | 'leaf' | 'cushion'
 export type EyeBallShape = 'square' | 'rounded' | 'circle' | 'diamond' | 'leaf'
 export type GradientKind = 'none' | 'linear' | 'radial'
@@ -84,7 +92,13 @@ function isFinderZone(x: number, y: number, size: number): boolean {
   return (x < 7 && y < 7) || (x >= size - 7 && y < 7) || (x < 7 && y >= size - 7)
 }
 
-function roundedRect(x: number, y: number, w: number, h: number, r: [number, number, number, number]): string {
+function roundedRect(
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: [number, number, number, number],
+): string {
   const [tl, tr, br, bl] = r.map((v) => Math.max(0, Math.min(v, w / 2, h / 2)))
   return (
     `M${f(x + tl)} ${f(y)}H${f(x + w - tr)}` +
@@ -144,7 +158,12 @@ function shapeBox(
   }
 }
 
-function dotPath(shape: DotShape, x: number, y: number, n: (dx: number, dy: number) => boolean): string {
+function dotPath(
+  shape: DotShape,
+  x: number,
+  y: number,
+  n: (dx: number, dy: number) => boolean,
+): string {
   switch (shape) {
     case 'square':
       return '' // merged into runs by the caller
@@ -181,7 +200,11 @@ function dotPath(shape: DotShape, x: number, y: number, n: (dx: number, dy: numb
   }
 }
 
-export function layoutQr(model: QrModel, style: QrStyle, logo?: Pick<QrLogo, 'size' | 'excavate' | 'plate'> | null): QrGeometry {
+export function layoutQr(
+  model: QrModel,
+  style: QrStyle,
+  logo?: Pick<QrLogo, 'size' | 'excavate' | 'plate'> | null,
+): QrGeometry {
   const {size, data} = model
   const m = Math.max(0, style.margin)
 
@@ -248,8 +271,18 @@ export function layoutQr(model: QrModel, style: QrStyle, logo?: Pick<QrLogo, 'si
         const inset = 0.12
         const r = 0.38
         dots += vertical
-          ? roundedRect(a + m + inset, b + m + inset * 0.5, 1 - inset * 2, run - inset, [r, r, r, r])
-          : roundedRect(b + m + inset * 0.5, a + m + inset, run - inset, 1 - inset * 2, [r, r, r, r])
+          ? roundedRect(a + m + inset, b + m + inset * 0.5, 1 - inset * 2, run - inset, [
+              r,
+              r,
+              r,
+              r,
+            ])
+          : roundedRect(b + m + inset * 0.5, a + m + inset, run - inset, 1 - inset * 2, [
+              r,
+              r,
+              r,
+              r,
+            ])
         b += run
       }
     }
@@ -275,7 +308,14 @@ export function layoutQr(model: QrModel, style: QrStyle, logo?: Pick<QrLogo, 'si
     const inner = INNER_CORNER[i]
     // Ring = outer 7×7 minus inner 5×5 (fill-rule evenodd).
     eyeFrames += shapeBox(style.eyeFrame, x, y, 7, inner, false)
-    eyeFrames += shapeBox(style.eyeFrame === 'cushion' ? 'rounded' : style.eyeFrame, x + 1, y + 1, 5, inner, false)
+    eyeFrames += shapeBox(
+      style.eyeFrame === 'cushion' ? 'rounded' : style.eyeFrame,
+      x + 1,
+      y + 1,
+      5,
+      inner,
+      false,
+    )
     eyeBalls += shapeBox(style.eyeBall, x + 2, y + 2, 3, inner, true)
   })
 
@@ -306,7 +346,13 @@ function gradientVector(rotation: number) {
  * SVG markup (no outer <svg>) for a QR placed at (x, y) with pixel width `px`.
  * Returns `{defs, body}` so callers can compose it into larger scenes.
  */
-export function qrToSvgParts(geo: QrGeometry, x: number, y: number, px: number, opts: PaintOptions) {
+export function qrToSvgParts(
+  geo: QrGeometry,
+  x: number,
+  y: number,
+  px: number,
+  opts: PaintOptions,
+) {
   const {logo} = opts
   const style = normalizeStyle(opts.style)
   const id = opts.idPrefix ?? 'qv'
@@ -328,7 +374,8 @@ export function qrToSvgParts(geo: QrGeometry, x: number, y: number, px: number, 
   const frameFill = style.eyeFrameColor ?? fill
   const ballFill = style.eyeBallColor ?? fill
   let body = `<g transform="translate(${f(x)} ${f(y)}) scale(${f(scale)})">`
-  if (!style.transparentBg) body += `<rect width="${geo.total}" height="${geo.total}" fill="${esc(style.bg)}"/>`
+  if (!style.transparentBg)
+    body += `<rect width="${geo.total}" height="${geo.total}" fill="${esc(style.bg)}"/>`
   body += `<path d="${geo.dots}" fill="${esc(fill)}"/>`
   body += `<path d="${geo.eyeFrames}" fill="${esc(frameFill)}" fill-rule="evenodd"/>`
   body += `<path d="${geo.eyeBalls}" fill="${esc(ballFill)}"/>`
@@ -378,7 +425,12 @@ export function paintQr(
   let fill: string | CanvasGradient = style.fg
   if (style.gradient === 'linear') {
     const v = gradientVector(style.gradientRotation)
-    const g = ctx.createLinearGradient(v.x1 * geo.total, v.y1 * geo.total, v.x2 * geo.total, v.y2 * geo.total)
+    const g = ctx.createLinearGradient(
+      v.x1 * geo.total,
+      v.y1 * geo.total,
+      v.x2 * geo.total,
+      v.y2 * geo.total,
+    )
     g.addColorStop(0, style.fg)
     g.addColorStop(1, style.fg2)
     fill = g
@@ -456,14 +508,24 @@ export function normalizeStyle(style: QrStyle): QrStyle {
 }
 
 export function esc(value: string): string {
-  return value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
 }
 
 /** WCAG relative luminance contrast between two hex colours. */
 export function contrastRatio(a: string, b: string): number {
   const lum = (hex: string) => {
     const h = hex.replace('#', '')
-    const full = h.length === 3 ? h.split('').map((c) => c + c).join('') : h.slice(0, 6)
+    const full =
+      h.length === 3
+        ? h
+            .split('')
+            .map((c) => c + c)
+            .join('')
+        : h.slice(0, 6)
     const [r, g, bl] = [0, 2, 4].map((i) => {
       const c = parseInt(full.slice(i, i + 2), 16) / 255
       return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4

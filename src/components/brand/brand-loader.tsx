@@ -73,7 +73,8 @@ export function BrandLoader({
       className={`qv-loader qv-loader-${variant}${visible ? ' is-visible' : ''}`}
       role="status"
       aria-live="polite"
-      aria-busy="true">
+      aria-busy="true"
+    >
       <div className="qv-loader-field" aria-hidden>
         {particles.map((p, i) => (
           <span

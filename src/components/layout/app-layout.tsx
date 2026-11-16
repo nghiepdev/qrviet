@@ -2,7 +2,12 @@ import {useEffect, useEffectEvent, useState, type ReactNode} from 'react'
 import {useLocation} from '@tanstack/react-router'
 import {AppShell, useAppShellMobile} from '@astryxdesign/core/AppShell'
 import {TopNav, TopNavHeading, useTopNavRenderMode} from '@astryxdesign/core/TopNav'
-import {SideNav, SideNavItem, SideNavSection, useSideNavRenderMode} from '@astryxdesign/core/SideNav'
+import {
+  SideNav,
+  SideNavItem,
+  SideNavSection,
+  useSideNavRenderMode,
+} from '@astryxdesign/core/SideNav'
 import {useHotkeys, useMediaQuery} from '@astryxdesign/core/hooks'
 import {useNavigate} from '@tanstack/react-router'
 import {LogoMark} from '#/components/brand/logo'
@@ -28,7 +33,11 @@ function NavSections({pathname}: {pathname: string}) {
   return (
     <>
       {SECTIONS.map((section, index) => (
-        <SideNavSection key={section} title={t(SECTION_LABEL[section])} isHeaderHidden={inDrawer && index === 0}>
+        <SideNavSection
+          key={section}
+          title={t(SECTION_LABEL[section])}
+          isHeaderHidden={inDrawer && index === 0}
+        >
           {NAV_ITEMS.filter((i) => i.section === section).map((item) => (
             <SideNavItem
               key={item.to}
@@ -68,7 +77,10 @@ function useRail() {
   const isRailWidth = useMediaQuery('(768px <= width < 1024px)')
   const [choice, setChoice] = useState<{isRailWidth: boolean; isCollapsed: boolean} | null>(null)
   const isCollapsed = choice?.isRailWidth === isRailWidth ? choice.isCollapsed : isRailWidth
-  return {isCollapsed, onCollapsedChange: (collapsed: boolean) => setChoice({isRailWidth, isCollapsed: collapsed})}
+  return {
+    isCollapsed,
+    onCollapsedChange: (collapsed: boolean) => setChoice({isRailWidth, isCollapsed: collapsed}),
+  }
 }
 
 function MobileExtras() {
@@ -81,7 +93,13 @@ function MobileExtras() {
  * for its own header. The drawer opens beside the bar's brand, so instead of repeating it the
  * drawer is headed by its first section's title (which NavSections then hides).
  */
-function AppTopNav({isRailCollapsed, onOpenPalette}: {isRailCollapsed: boolean; onOpenPalette: () => void}) {
+function AppTopNav({
+  isRailCollapsed,
+  onOpenPalette,
+}: {
+  isRailCollapsed: boolean
+  onOpenPalette: () => void
+}) {
   const t = useT()
   const inDrawer = useTopNavRenderMode() === 'drawer'
   return (
@@ -90,7 +108,18 @@ function AppTopNav({isRailCollapsed, onOpenPalette}: {isRailCollapsed: boolean; 
       // From md the sidebar's icons start 16px from the edge, centred at 24px. The mark lines up with
       // their left edge (and the section titles) beside the full sidebar, and centres over them
       // (-6px) above the icon rail.
-      heading={inDrawer ? t(SECTION_LABEL[SECTIONS[0]]) : <TopNavHeading heading="QRViet" headingHref="/" logo={<LogoMark size={28} />} className={isRailCollapsed ? 'md:-ml-1.5' : undefined} />}
+      heading={
+        inDrawer ? (
+          t(SECTION_LABEL[SECTIONS[0]])
+        ) : (
+          <TopNavHeading
+            heading="QRViet"
+            headingHref="/"
+            logo={<LogoMark size={28} />}
+            className={isRailCollapsed ? 'md:-ml-1.5' : undefined}
+          />
+        )
+      }
       endContent={<HeaderActions onOpenPalette={onOpenPalette} />}
     />
   )
@@ -129,12 +158,18 @@ export function AppLayout({children}: {children: ReactNode}) {
         contentPadding={0}
         // No hamburger in the top bar: on phones the bottom tab bar's Menu tab opens the drawer.
         mobileNav={{breakpoint: 'md', hasToggle: false}}
-        topNav={<AppTopNav isRailCollapsed={rail.isCollapsed} onOpenPalette={() => setPaletteOpen(true)} />}
+        topNav={
+          <AppTopNav
+            isRailCollapsed={rail.isCollapsed}
+            onOpenPalette={() => setPaletteOpen(true)}
+          />
+        }
         sideNav={
           <SideNav footer={<SideNavFooter />} collapsible={rail}>
             <NavSections pathname={pathname} />
           </SideNav>
-        }>
+        }
+      >
         <CloseDrawerOnNavigate pathname={pathname} />
         {/*
           Safe-area insets: status bar, home indicator and, in landscape, the notch side (installed iOS

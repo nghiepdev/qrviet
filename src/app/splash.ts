@@ -64,10 +64,12 @@ export interface SplashVariant {
 export function splashVariants(): SplashVariant[] {
   const out: SplashVariant[] = []
   for (const screen of SPLASH_SCREENS) {
-    const orientations: SplashOrientation[] = screen.width >= 700 ? ['portrait', 'landscape'] : ['portrait']
+    const orientations: SplashOrientation[] =
+      screen.width >= 700 ? ['portrait', 'landscape'] : ['portrait']
     for (const orientation of orientations) {
       for (const scheme of ['light', 'dark'] as const) {
-        const [cssWidth, cssHeight] = orientation === 'portrait' ? [screen.width, screen.height] : [screen.height, screen.width]
+        const [cssWidth, cssHeight] =
+          orientation === 'portrait' ? [screen.width, screen.height] : [screen.height, screen.width]
         out.push({
           screen,
           orientation,

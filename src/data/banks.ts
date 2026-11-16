@@ -83,7 +83,10 @@ export const POPULAR_BINS = [
 export const DEEPLINK_BANKS: Bank[] = BANKS.filter((b) => hasBankDeeplink(b))
 
 const searchIndex = new Map(
-  BANKS.map((b) => [b.bin, foldForSearch(`${b.shortName} ${b.code} ${b.name} ${b.bin} ${b.swift ?? ''}`)]),
+  BANKS.map((b) => [
+    b.bin,
+    foldForSearch(`${b.shortName} ${b.code} ${b.name} ${b.bin} ${b.swift ?? ''}`),
+  ]),
 )
 
 export function searchBanks(query: string, list: Bank[] = BANKS): Bank[] {

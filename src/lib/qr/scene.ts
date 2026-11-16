@@ -2,14 +2,32 @@
  * Tiny vector "scene" used for card templates. One layout, two painters:
  * SVG (live preview + .svg export) and Canvas (PNG/JPEG/WebP export).
  */
-import {esc, paintQr, qrToSvgParts, drawContain, type PaintOptions, type QrGeometry} from './render.ts'
+import {
+  esc,
+  paintQr,
+  qrToSvgParts,
+  drawContain,
+  type PaintOptions,
+  type QrGeometry,
+} from './render.ts'
 
 export type Paint =
   | string
   | {type: 'linear'; x1: number; y1: number; x2: number; y2: number; stops: Array<[number, string]>}
 
 export type SceneNode =
-  | {t: 'rect'; x: number; y: number; w: number; h: number; r?: number; fill?: Paint; stroke?: string; strokeWidth?: number; dash?: number[]}
+  | {
+      t: 'rect'
+      x: number
+      y: number
+      w: number
+      h: number
+      r?: number
+      fill?: Paint
+      stroke?: string
+      strokeWidth?: number
+      dash?: number[]
+    }
   | {
       t: 'text'
       x: number
@@ -24,7 +42,16 @@ export type SceneNode =
     }
   | {t: 'image'; x: number; y: number; w: number; h: number; src: string}
   | {t: 'qr'; x: number; y: number; size: number; geo: QrGeometry; opts: PaintOptions}
-  | {t: 'line'; x1: number; y1: number; x2: number; y2: number; color: string; width: number; dash?: number[]}
+  | {
+      t: 'line'
+      x1: number
+      y1: number
+      x2: number
+      y2: number
+      color: string
+      width: number
+      dash?: number[]
+    }
   | {t: 'path'; d: string; fill: Paint; opacity?: number}
 
 export interface Scene {
@@ -39,7 +66,10 @@ export interface Scene {
 
 export type Measure = (text: string, size: number, weight?: number, mono?: boolean) => number
 
-const segmenter = typeof Intl !== 'undefined' && 'Segmenter' in Intl ? new Intl.Segmenter(undefined, {granularity: 'grapheme'}) : null
+const segmenter =
+  typeof Intl !== 'undefined' && 'Segmenter' in Intl
+    ? new Intl.Segmenter(undefined, {granularity: 'grapheme'})
+    : null
 
 function graphemes(text: string): string[] {
   return segmenter ? Array.from(segmenter.segment(text), (s) => s.segment) : Array.from(text)
@@ -47,7 +77,10 @@ function graphemes(text: string): string[] {
 
 /** Replace lone surrogates so encodeURIComponent / XML never choke on user text. */
 export function wellFormed(text: string): string {
-  return text.replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g, '\uFFFD')
+  return text.replace(
+    /[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g,
+    '\uFFFD',
+  )
 }
 
 // ---------------------------------------------------------------------------
@@ -74,7 +107,14 @@ export function fitText(
 }
 
 /** Greedy word wrap with a max line count (last line ellipsized). */
-export function wrapText(measure: Measure, text: string, maxWidth: number, size: number, weight = 400, maxLines = 2): string[] {
+export function wrapText(
+  measure: Measure,
+  text: string,
+  maxWidth: number,
+  size: number,
+  weight = 400,
+  maxLines = 2,
+): string[] {
   const words = text.split(/\s+/).filter(Boolean)
   const lines: string[] = []
   let line = ''
@@ -88,9 +128,17 @@ export function wrapText(measure: Measure, text: string, maxWidth: number, size:
     }
   }
   if (line) lines.push(line)
-  if (lines.length <= maxLines) return lines.map((l) => fitText(measure, l, maxWidth, size, weight, size).text)
+  if (lines.length <= maxLines)
+    return lines.map((l) => fitText(measure, l, maxWidth, size, weight, size).text)
   const kept = lines.slice(0, maxLines)
-  kept[maxLines - 1] = fitText(measure, `${kept[maxLines - 1]} ${lines.slice(maxLines).join(' ')}`, maxWidth, size, weight, size).text
+  kept[maxLines - 1] = fitText(
+    measure,
+    `${kept[maxLines - 1]} ${lines.slice(maxLines).join(' ')}`,
+    maxWidth,
+    size,
+    weight,
+    size,
+  ).text
   return kept
 }
 
@@ -108,14 +156,19 @@ function svgPaint(paint: Paint | undefined, defs: string[], id: string): string 
   return `url(#${id})`
 }
 
-export function sceneToSvg(scene: Scene, opts: {idPrefix?: string; embedFontFace?: string} = {}): string {
+export function sceneToSvg(
+  scene: Scene,
+  opts: {idPrefix?: string; embedFontFace?: string} = {},
+): string {
   const prefix = opts.idPrefix ?? 'qvs'
   const defs: string[] = []
   const body: string[] = []
   let n = 0
   const clipId = `${prefix}-clip`
   if (scene.radius) {
-    defs.push(`<clipPath id="${clipId}"><rect width="${scene.width}" height="${scene.height}" rx="${scene.radius}"/></clipPath>`)
+    defs.push(
+      `<clipPath id="${clipId}"><rect width="${scene.width}" height="${scene.height}" rx="${scene.radius}"/></clipPath>`,
+    )
   }
   if (scene.background) {
     body.push(
@@ -143,7 +196,10 @@ export function sceneToSvg(scene: Scene, opts: {idPrefix?: string; embedFontFace
         )
         break
       case 'qr': {
-        const parts = qrToSvgParts(node.geo, node.x, node.y, node.size, {...node.opts, idPrefix: `${prefix}-q${n}`})
+        const parts = qrToSvgParts(node.geo, node.x, node.y, node.size, {
+          ...node.opts,
+          idPrefix: `${prefix}-q${n}`,
+        })
         if (parts.defs) defs.push(parts.defs)
         body.push(parts.body)
         break
@@ -154,7 +210,9 @@ export function sceneToSvg(scene: Scene, opts: {idPrefix?: string; embedFontFace
         )
         break
       case 'path':
-        body.push(`<path d="${node.d}" fill="${svgPaint(node.fill, defs, `${prefix}-p${n}`)}"${node.opacity !== undefined ? ` opacity="${node.opacity}"` : ''}/>`)
+        body.push(
+          `<path d="${node.d}" fill="${svgPaint(node.fill, defs, `${prefix}-p${n}`)}"${node.opacity !== undefined ? ` opacity="${node.opacity}"` : ''}/>`,
+        )
         break
     }
   }
@@ -233,10 +291,12 @@ export function paintScene(
         ctx.textAlign = node.align === 'middle' ? 'center' : node.align === 'end' ? 'right' : 'left'
         ctx.textBaseline = 'alphabetic'
         if (node.letterSpacing && 'letterSpacing' in ctx) {
-          ;(ctx as CanvasRenderingContext2D & {letterSpacing: string}).letterSpacing = `${node.letterSpacing}px`
+          ;(ctx as CanvasRenderingContext2D & {letterSpacing: string}).letterSpacing =
+            `${node.letterSpacing}px`
         }
         ctx.fillText(node.text, node.x, node.y)
-        if ('letterSpacing' in ctx) (ctx as CanvasRenderingContext2D & {letterSpacing: string}).letterSpacing = '0px'
+        if ('letterSpacing' in ctx)
+          (ctx as CanvasRenderingContext2D & {letterSpacing: string}).letterSpacing = '0px'
         break
       }
       case 'image': {

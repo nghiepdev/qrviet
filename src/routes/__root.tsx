@@ -1,5 +1,14 @@
 import type {ReactNode} from 'react'
-import {ClientOnly, HeadContent, Outlet, ScriptOnce, Scripts, createRootRoute, useRouter, type ErrorComponentProps} from '@tanstack/react-router'
+import {
+  ClientOnly,
+  HeadContent,
+  Outlet,
+  ScriptOnce,
+  Scripts,
+  createRootRoute,
+  useRouter,
+  type ErrorComponentProps,
+} from '@tanstack/react-router'
 import {Button} from '@astryxdesign/core/Button'
 import {EmptyState} from '@astryxdesign/core/EmptyState'
 import {TriangleAlert} from 'lucide-react'
@@ -57,19 +66,33 @@ function RootShell({children}: {children: ReactNode}) {
         <link rel="apple-touch-icon" href={`${BASE}apple-touch-icon-180x180.png`} />
         {/* iOS launch screens, one per device size and colour scheme (src/app/splash.ts). */}
         {splashVariants().map((v) => (
-          <link key={v.file} rel="apple-touch-startup-image" href={`${BASE}${v.file}`} media={v.media} />
+          <link
+            key={v.file}
+            rel="apple-touch-startup-image"
+            href={`${BASE}${v.file}`}
+            media={v.media}
+          />
         ))}
         <HeadContent />
         {/* After <HeadContent />, so they still follow the stylesheet it adds. */}
         <link rel="stylesheet" href={appCss} precedence="default" />
-        <style href="qrviet-boot" precedence="default" dangerouslySetInnerHTML={{__html: BOOT_CSS}} />
+        <style
+          href="qrviet-boot"
+          precedence="default"
+          dangerouslySetInnerHTML={{__html: BOOT_CSS}}
+        />
         <ScriptOnce>{PREPAINT_SCRIPT}</ScriptOnce>
       </head>
       <body>
         {/* Raw HTML, so AppLayout can fade it out and remove it without React's involvement. */}
         <div dangerouslySetInnerHTML={{__html: BOOT_HTML}} />
         {/* Without JavaScript the splash would never go away. */}
-        <noscript dangerouslySetInnerHTML={{__html: '<style>#boot{display:none}</style><p style="padding:24px;text-align:center">Bật JavaScript để dùng QRViet. / Enable JavaScript to use QRViet.</p>'}} />
+        <noscript
+          dangerouslySetInnerHTML={{
+            __html:
+              '<style>#boot{display:none}</style><p style="padding:24px;text-align:center">Bật JavaScript để dùng QRViet. / Enable JavaScript to use QRViet.</p>',
+          }}
+        />
         {children}
         <Scripts />
       </body>

@@ -12,16 +12,31 @@ import {buildTheme, findRecipe, loadBase, useLoadedBase, type ThemeRecipe} from 
 import {FONTS} from '#/theme/fonts'
 import {neutralTheme} from '@astryxdesign/theme-neutral/built'
 
-type AnchorProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {href?: string; ref?: React.Ref<HTMLAnchorElement>}
+type AnchorProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
+  href?: string
+  ref?: React.Ref<HTMLAnchorElement>
+}
 
 /** Bridges Astryx links (href) to TanStack Router (to/search/hash) for SPA navigation. */
-function AppLink({href = '', ...rest}: AnchorProps) {
-  const external = /^([a-z][a-z0-9+.-]*:|\/\/)/i.test(href) || rest.target === '_blank' || rest.download !== undefined
-  if (external || href.startsWith('#')) return <a href={href} {...rest} />
+function AppLink({href = '', children, ...rest}: AnchorProps) {
+  const external =
+    /^([a-z][a-z0-9+.-]*:|\/\/)/i.test(href) ||
+    rest.target === '_blank' ||
+    rest.download !== undefined
+  if (external || href.startsWith('#'))
+    return (
+      <a href={href} {...rest}>
+        {children}
+      </a>
+    )
   const [pathAndSearch, hash] = href.split('#')
   const [path, query] = pathAndSearch.split('?')
   const search = query ? Object.fromEntries(new URLSearchParams(query)) : undefined
-  return <RouterLink to={path as never} search={search as never} hash={hash} {...(rest as object)} />
+  return (
+    <RouterLink to={path as never} search={search as never} hash={hash} {...(rest as object)}>
+      {children}
+    </RouterLink>
+  )
 }
 
 /** The selected theme recipe (preset or custom). */
@@ -56,7 +71,9 @@ function AppTheme({children}: {children: ReactNode}) {
   useEffect(() => {
     const id = requestAnimationFrame(() => {
       const bg = getComputedStyle(document.body).backgroundColor
-      document.querySelectorAll('meta[name="theme-color"]').forEach((m) => m.setAttribute('content', bg))
+      document
+        .querySelectorAll('meta[name="theme-color"]')
+        .forEach((m) => m.setAttribute('content', bg))
     })
     return () => cancelAnimationFrame(id)
   }, [current, effectiveMode])
@@ -82,9 +99,21 @@ export function AppProviders({children}: {children: ReactNode}) {
   }, [locale, router])
   return (
     <AppTheme>
-      <InternationalizationProvider locale={locale === 'vi' ? 'vi-VN' : 'en'} messages={{'vi-VN': viVN}}>
+      <InternationalizationProvider
+        locale={locale === 'vi' ? 'vi-VN' : 'en'}
+        messages={{'vi-VN': viVN}}
+      >
         {/* Keep toasts and anchored layers clear of the bottom tab bar (and its raised scan button) on phones. */}
-        <LayerProvider inset={hasTabBar ? {blockEnd: 'calc(92px + env(safe-area-inset-bottom) + var(--qv-toolbar-overlap, 0px))'} : undefined}>
+        <LayerProvider
+          inset={
+            hasTabBar
+              ? {
+                  blockEnd:
+                    'calc(92px + env(safe-area-inset-bottom) + var(--qv-toolbar-overlap, 0px))',
+                }
+              : undefined
+          }
+        >
           <LinkProvider component={AppLink}>{children}</LinkProvider>
         </LayerProvider>
       </InternationalizationProvider>

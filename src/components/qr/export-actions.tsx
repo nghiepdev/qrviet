@@ -2,10 +2,24 @@ import {type ReactNode} from 'react'
 import {ChevronDown, Copy, Download, Printer, Share2} from 'lucide-react'
 import {Button} from '@astryxdesign/core/Button'
 import {ButtonGroup} from '@astryxdesign/core/ButtonGroup'
-import {DropdownMenu, type DropdownMenuItemData, type DropdownMenuOption} from '@astryxdesign/core/DropdownMenu'
+import {
+  DropdownMenu,
+  type DropdownMenuItemData,
+  type DropdownMenuOption,
+} from '@astryxdesign/core/DropdownMenu'
 import {useToast} from '@astryxdesign/core/Toast'
 import type {Scene} from '#/lib/qr/scene'
-import {canCopyImage, canShareFiles, canvasToBlob, copyImage, downloadBlob, printSvgs, renderSceneToCanvas, sceneToStandaloneSvg, shareFile} from '#/lib/qr/export'
+import {
+  canCopyImage,
+  canShareFiles,
+  canvasToBlob,
+  copyImage,
+  downloadBlob,
+  printSvgs,
+  renderSceneToCanvas,
+  sceneToStandaloneSvg,
+  shareFile,
+} from '#/lib/qr/export'
 import {sheetUnlessAnchored} from '#/app/anchoring'
 import {useT} from '#/i18n'
 
@@ -76,14 +90,34 @@ export function ExportActions({scene, filename, shareText, onExported, side, men
 
   const print = async () => {
     if (!scene) return
-    await printSvgs([await sceneToStandaloneSvg(scene)], {page: 'A5', marginMm: 12, itemWidthMm: scene.width > scene.height ? 120 : 100})
+    await printSvgs([await sceneToStandaloneSvg(scene)], {
+      page: 'A5',
+      marginMm: 12,
+      itemWidthMm: scene.width > scene.height ? 120 : 100,
+    })
     onExported?.('print')
   }
 
   const more: DropdownMenuOption[] = [
-    ...(canCopyImage() ? [{id: 'copy', label: t('gen.copyImage'), icon: <Copy size={16} />, onClick: copy}] : []),
-    ...(canShareFiles() ? [{id: 'share', label: t('common.share'), icon: <Share2 size={16} />, onClick: () => void share()}] : []),
-    {id: 'print', label: t('common.print'), icon: <Printer size={16} />, onClick: () => void print()},
+    ...(canCopyImage()
+      ? [{id: 'copy', label: t('gen.copyImage'), icon: <Copy size={16} />, onClick: copy}]
+      : []),
+    ...(canShareFiles()
+      ? [
+          {
+            id: 'share',
+            label: t('common.share'),
+            icon: <Share2 size={16} />,
+            onClick: () => void share(),
+          },
+        ]
+      : []),
+    {
+      id: 'print',
+      label: t('common.print'),
+      icon: <Printer size={16} />,
+      onClick: () => void print(),
+    },
     ...(menuItems?.length ? [{type: 'divider' as const}, ...menuItems] : []),
   ]
 
@@ -92,9 +126,19 @@ export function ExportActions({scene, filename, shareText, onExported, side, men
     <div className="@container">
       <div className="flex items-center justify-center gap-2">
         <ButtonGroup label={t('gen.export')} isDisabled={!scene}>
-          <Button label={`${t('common.download')} PNG`} variant="primary" icon={<Download size={16} />} clickAction={download} />
+          <Button
+            label={`${t('common.download')} PNG`}
+            variant="primary"
+            icon={<Download size={16} />}
+            clickAction={download}
+          />
           <DropdownMenu
-            button={{label: t('gen.moreExport'), variant: 'primary', isIconOnly: true, icon: <ChevronDown size={16} />}}
+            button={{
+              label: t('gen.moreExport'),
+              variant: 'primary',
+              isIconOnly: true,
+              icon: <ChevronDown size={16} />,
+            }}
             alignment="end"
             // An action sheet on a phone, and wherever the menu cannot be anchored (src/app/anchoring.ts).
             presentation={sheetUnlessAnchored('adaptive')}
@@ -103,8 +147,22 @@ export function ExportActions({scene, filename, shareText, onExported, side, men
         </ButtonGroup>
         {side && (
           <>
-            <Button label={side.label} icon={side.icon} isDisabled={side.isDisabled} onClick={side.onClick} className="@max-[22.5rem]:hidden" />
-            <Button label={side.label} icon={side.icon} isIconOnly tooltip={side.label} isDisabled={side.isDisabled} onClick={side.onClick} className="@min-[22.5rem]:hidden" />
+            <Button
+              label={side.label}
+              icon={side.icon}
+              isDisabled={side.isDisabled}
+              onClick={side.onClick}
+              className="@max-[22.5rem]:hidden"
+            />
+            <Button
+              label={side.label}
+              icon={side.icon}
+              isIconOnly
+              tooltip={side.label}
+              isDisabled={side.isDisabled}
+              onClick={side.onClick}
+              className="@min-[22.5rem]:hidden"
+            />
           </>
         )}
       </div>

@@ -33,9 +33,14 @@ export function BottomTabs() {
                 className={`qv-tab${tab.fab ? ' qv-tab-fab' : ''}`}
                 aria-current={active ? 'page' : undefined}
                 // The centre action is icon-only, like most mobile apps; keep its accessible name.
-                aria-label={tab.fab ? t(tab.label) : undefined}>
+                aria-label={tab.fab ? t(tab.label) : undefined}
+              >
                 <span className="qv-tab-icon">
-                  <Icon size={tab.fab ? 24 : 20} strokeWidth={active || tab.fab ? 2.4 : 2} aria-hidden />
+                  <Icon
+                    size={tab.fab ? 24 : 20}
+                    strokeWidth={active || tab.fab ? 2.4 : 2}
+                    aria-hidden
+                  />
                 </span>
                 {!tab.fab && <span>{t(tab.label)}</span>}
               </Link>
@@ -43,7 +48,13 @@ export function BottomTabs() {
           )
         })}
         <li>
-          <button type="button" className="qv-tab w-full" onClick={openMobileNav} aria-expanded={isMobileNavOpen} data-current={menuCurrent || undefined}>
+          <button
+            type="button"
+            className="qv-tab w-full"
+            onClick={openMobileNav}
+            aria-expanded={isMobileNavOpen}
+            data-current={menuCurrent || undefined}
+          >
             <span className="qv-tab-icon">
               <Menu size={20} strokeWidth={menuCurrent ? 2.4 : 2} aria-hidden />
             </span>

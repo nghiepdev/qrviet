@@ -141,13 +141,56 @@ export const PRESETS: ThemeRecipe[] = [
     radius: 1.5,
     swatches: ['#4F46E5', '#C4B5FD', '#F3F2FF'],
   },
-  {id: 'neutral', name: {vi: 'Neutral', en: 'Neutral'}, group: 'astryx', base: 'neutral', swatches: ['#1B1B1B', '#D4D4D4', '#F1F1F1']},
-  {id: 'butter', name: {vi: 'Butter', en: 'Butter'}, group: 'astryx', base: 'butter', swatches: ['#F6C944', '#3B82F6', '#FFF8DC']},
-  {id: 'chocolate', name: {vi: 'Chocolate', en: 'Chocolate'}, group: 'astryx', base: 'chocolate', swatches: ['#6B4226', '#D9B99B', '#F7EFE6']},
-  {id: 'matcha', name: {vi: 'Matcha', en: 'Matcha'}, group: 'astryx', base: 'matcha', swatches: ['#4D7C3A', '#B5CFA0', '#F1F6EC']},
-  {id: 'stone', name: {vi: 'Stone', en: 'Stone'}, group: 'astryx', base: 'stone', swatches: ['#57534E', '#A8A29E', '#F5F5F4']},
-  {id: 'gothic', name: {vi: 'Gothic', en: 'Gothic'}, group: 'astryx', base: 'gothic', forcedMode: 'dark', swatches: ['#1E2533', '#8FA3BF', '#0B0F17']},
-  {id: 'y2k', name: {vi: 'Y2K', en: 'Y2K'}, group: 'astryx', base: 'y2k', swatches: ['#8B9CFF', '#FF9DE2', '#EEF0FF']},
+  {
+    id: 'neutral',
+    name: {vi: 'Neutral', en: 'Neutral'},
+    group: 'astryx',
+    base: 'neutral',
+    swatches: ['#1B1B1B', '#D4D4D4', '#F1F1F1'],
+  },
+  {
+    id: 'butter',
+    name: {vi: 'Butter', en: 'Butter'},
+    group: 'astryx',
+    base: 'butter',
+    swatches: ['#F6C944', '#3B82F6', '#FFF8DC'],
+  },
+  {
+    id: 'chocolate',
+    name: {vi: 'Chocolate', en: 'Chocolate'},
+    group: 'astryx',
+    base: 'chocolate',
+    swatches: ['#6B4226', '#D9B99B', '#F7EFE6'],
+  },
+  {
+    id: 'matcha',
+    name: {vi: 'Matcha', en: 'Matcha'},
+    group: 'astryx',
+    base: 'matcha',
+    swatches: ['#4D7C3A', '#B5CFA0', '#F1F6EC'],
+  },
+  {
+    id: 'stone',
+    name: {vi: 'Stone', en: 'Stone'},
+    group: 'astryx',
+    base: 'stone',
+    swatches: ['#57534E', '#A8A29E', '#F5F5F4'],
+  },
+  {
+    id: 'gothic',
+    name: {vi: 'Gothic', en: 'Gothic'},
+    group: 'astryx',
+    base: 'gothic',
+    forcedMode: 'dark',
+    swatches: ['#1E2533', '#8FA3BF', '#0B0F17'],
+  },
+  {
+    id: 'y2k',
+    name: {vi: 'Y2K', en: 'Y2K'},
+    group: 'astryx',
+    base: 'y2k',
+    swatches: ['#8B9CFF', '#FF9DE2', '#EEF0FF'],
+  },
 ]
 
 export const DEFAULT_THEME_ID = 'son'
@@ -168,7 +211,11 @@ function hash(input: string): string {
 
 const themeCache = new Map<string, DefinedTheme>()
 
-export function buildTheme(recipe: ThemeRecipe, base: DefinedTheme, globalFont: FontId): DefinedTheme {
+export function buildTheme(
+  recipe: ThemeRecipe,
+  base: DefinedTheme,
+  globalFont: FontId,
+): DefinedTheme {
   const font = FONTS[recipe.font ?? globalFont] ?? FONTS['be-vietnam']
   // The base is part of the identity: a temporary Neutral fallback (while a lazy base
   // loads) must never be cached under the final theme's name.
@@ -189,7 +236,13 @@ export function buildTheme(recipe: ThemeRecipe, base: DefinedTheme, globalFont: 
     name,
     extends: base,
     ...(recipe.accent
-      ? {color: {accent: recipe.accent, neutralStyle: recipe.neutral ?? 'neutral', contrast: recipe.contrast ?? 'standard'}}
+      ? {
+          color: {
+            accent: recipe.accent,
+            neutralStyle: recipe.neutral ?? 'neutral',
+            contrast: recipe.contrast ?? 'standard',
+          },
+        }
       : {}),
     ...(recipe.radius !== undefined ? {radius: {base: 4, multiplier: recipe.radius}} : {}),
     ...(recipe.textSize ? {typography: {scale: {base: recipe.textSize, ratio: 1.2}}} : {}),
@@ -217,7 +270,15 @@ export const ACCENT_CHOICES: Array<[string, string]> = [
 /** Derive a lighter dark-mode partner for a custom accent. */
 export function darkPartner(hex: string): string {
   const h = hex.replace('#', '')
-  const n = parseInt(h.length === 3 ? h.split('').map((c) => c + c).join('') : h.slice(0, 6), 16)
+  const n = parseInt(
+    h.length === 3
+      ? h
+          .split('')
+          .map((c) => c + c)
+          .join('')
+      : h.slice(0, 6),
+    16,
+  )
   const mix = (c: number) => Math.round(c + (255 - c) * 0.38)
   const r = mix((n >> 16) & 255)
   const g = mix((n >> 8) & 255)

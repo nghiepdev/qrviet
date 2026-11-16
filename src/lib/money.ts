@@ -31,7 +31,8 @@ const UNITS: Array<[RegExp, number]> = [
 /** Currency markers that carry no value: "đ", "₫", "VND", "VNĐ", "đồng". */
 const CURRENCY = /(₫|vnđ|vnd|đồng|dong)/g
 const LETTER = '[a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]'
-const TOKEN = /\d+(?:[.,]\d+)*|[a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]+|[^\s\d]/g
+const TOKEN =
+  /\d+(?:[.,]\d+)*|[a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]+|[^\s\d]/g
 
 interface NumberToken {
   value: number
@@ -162,10 +163,39 @@ export function amountToVietnameseWords(amount: number, currency = 'đồng'): s
 // ---------------------------------------------------------------------------
 
 const EN_ONES = [
-  'zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
-  'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen',
+  'zero',
+  'one',
+  'two',
+  'three',
+  'four',
+  'five',
+  'six',
+  'seven',
+  'eight',
+  'nine',
+  'ten',
+  'eleven',
+  'twelve',
+  'thirteen',
+  'fourteen',
+  'fifteen',
+  'sixteen',
+  'seventeen',
+  'eighteen',
+  'nineteen',
 ]
-const EN_TENS = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety']
+const EN_TENS = [
+  '',
+  '',
+  'twenty',
+  'thirty',
+  'forty',
+  'fifty',
+  'sixty',
+  'seventy',
+  'eighty',
+  'ninety',
+]
 const EN_SCALES = ['', 'thousand', 'million', 'billion', 'trillion']
 
 function enTriple(n: number): string {
@@ -203,8 +233,10 @@ export function amountToWords(amount: number, locale: 'vi' | 'en'): string {
 
 /** Compact label for chips: 50000 → "50k", 1500000 → "1,5tr". */
 export function shortAmount(amount: number, locale: 'vi' | 'en' = 'vi'): string {
-  const fmt = (v: number) => (Number.isInteger(v) ? String(v) : v.toFixed(1).replace('.', locale === 'vi' ? ',' : '.'))
-  if (amount >= 1_000_000_000) return `${fmt(amount / 1_000_000_000)}${locale === 'vi' ? ' tỷ' : 'B'}`
+  const fmt = (v: number) =>
+    Number.isInteger(v) ? String(v) : v.toFixed(1).replace('.', locale === 'vi' ? ',' : '.')
+  if (amount >= 1_000_000_000)
+    return `${fmt(amount / 1_000_000_000)}${locale === 'vi' ? ' tỷ' : 'B'}`
   if (amount >= 1_000_000) return `${fmt(amount / 1_000_000)}${locale === 'vi' ? 'tr' : 'M'}`
   if (amount >= 1_000) return `${fmt(amount / 1_000)}k`
   return String(amount)

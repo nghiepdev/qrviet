@@ -8,10 +8,22 @@ export function BankDeeplinkBadge({bank, compact = false}: {bank: Bank; compact?
   const tier = getBankDeeplinkTier(bank)
   if (tier === 'none') return null
   if (tier === 'autofill') {
-    return <Badge variant="blue" label={compact ? t('bank.tagAutofillShort') : t('bank.tagAutofill')} icon={<Zap size={11} />} />
+    return (
+      <Badge
+        variant="blue"
+        label={compact ? t('bank.tagAutofillShort') : t('bank.tagAutofill')}
+        icon={<Zap size={11} />}
+      />
+    )
   }
   if (tier === 'qrpay') {
-    return <Badge variant="teal" label={compact ? t('bank.tagQrPayShort') : t('bank.tagQrPay')} icon={<Smartphone size={11} />} />
+    return (
+      <Badge
+        variant="teal"
+        label={compact ? t('bank.tagQrPayShort') : t('bank.tagQrPay')}
+        icon={<Smartphone size={11} />}
+      />
+    )
   }
   return <Badge variant="purple" label={t('bank.tagOpenApp')} icon={<ExternalLink size={11} />} />
 }

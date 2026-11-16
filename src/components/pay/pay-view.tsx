@@ -1,5 +1,14 @@
 import {useEffect, useState} from 'react'
-import {Clock, Download, Link2, ListChecks, Share2, ShieldCheck, Smartphone, Volume2} from 'lucide-react'
+import {
+  Clock,
+  Download,
+  Link2,
+  ListChecks,
+  Share2,
+  ShieldCheck,
+  Smartphone,
+  Volume2,
+} from 'lucide-react'
 import {Button} from '@astryxdesign/core/Button'
 import {EmptyState} from '@astryxdesign/core/EmptyState'
 import {IconButton} from '@astryxdesign/core/IconButton'
@@ -39,13 +48,23 @@ function useCountdown(exp?: number) {
   const m = Math.floor((left % 3_600_000) / 60_000)
   const s = Math.floor((left % 60_000) / 1000)
   const pad = (n: number) => String(n).padStart(2, '0')
-  return {expired: left === 0, text: h > 48 ? `${Math.floor(h / 24)}d ${h % 24}h` : `${h > 0 ? `${h}:` : ''}${pad(m)}:${pad(s)}`}
+  return {
+    expired: left === 0,
+    text:
+      h > 48 ? `${Math.floor(h / 24)}d ${h % 24}h` : `${h > 0 ? `${h}:` : ''}${pad(m)}:${pad(s)}`,
+  }
 }
 
 /** The VietQR payload a payment link stands for, or null when its data does not make a valid code. */
 function payPayload(data: PayLinkData, bank: Bank): string | null {
   try {
-    return buildVietQr({bin: bank.bin, accountNumber: data.acc, amount: data.amount, purpose: toQrAscii(data.memo ?? ''), service: data.card ? 'card' : 'account'})
+    return buildVietQr({
+      bin: bank.bin,
+      accountNumber: data.acc,
+      amount: data.amount,
+      purpose: toQrAscii(data.memo ?? ''),
+      service: data.card ? 'card' : 'account',
+    })
   } catch {
     return null
   }
@@ -66,7 +85,19 @@ export function PayView({data, bank, shareUrl, onMakeOwn}: PayViewProps) {
   const copy = useCopy()
   const payload = data && bank ? payPayload(data, bank) : null
   const design = {...DEFAULT_DESIGN, accent: data?.accent ?? DEFAULT_DESIGN.accent, showBrand: true}
-  const info = payload && data ? buildTemplateInfo({bank, accountName: data.name, accountNumber: data.acc, amount: data.amount, purpose: data.memo, design, locale, t}) : null
+  const info =
+    payload && data
+      ? buildTemplateInfo({
+          bank,
+          accountName: data.name,
+          accountNumber: data.acc,
+          amount: data.amount,
+          purpose: data.memo,
+          design,
+          locale,
+          t,
+        })
+      : null
   // Consumers of the derived values come after them, so the once-a-second countdown
   // re-render does not rebuild the QR.
   const {scene} = useQrScene(payload, 'compact', info, PAY_QR_STYLE, resolveLogo(design, bank))
@@ -101,24 +132,39 @@ export function PayView({data, bank, shareUrl, onMakeOwn}: PayViewProps) {
 
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] items-start">
-      <section className={`${HUES.red} qv-tint rounded-2xl border border-border shadow-md overflow-hidden animate-qv-rise`}>
+      <section
+        className={`${HUES.red} qv-tint rounded-2xl border border-border shadow-md overflow-hidden animate-qv-rise`}
+      >
         <div
           className="px-5 py-5 text-white"
-          style={{background: `linear-gradient(135deg, ${design.accent}, color-mix(in srgb, ${design.accent} 55%, #000))`}}>
+          style={{
+            background: `linear-gradient(135deg, ${design.accent}, color-mix(in srgb, ${design.accent} 55%, #000))`,
+          }}
+        >
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0">
               {/* text-inherit: the Astryx reset colours headings with the page text colour, which is dark on this banner. */}
               <h1 className="text-sm/5 font-normal text-inherit opacity-90">{t('pay.title')}</h1>
-              <div className="text-3xl font-extrabold qv-num tracking-tight">{data.amount ? formatVnd(data.amount, true) : '—'}</div>
+              <div className="text-3xl font-extrabold qv-num tracking-tight">
+                {data.amount ? formatVnd(data.amount, true) : '—'}
+              </div>
               {words && <div className="text-xs opacity-90 italic mt-0.5">{words}</div>}
             </div>
             {data.amount && typeof speechSynthesis !== 'undefined' ? (
-              <IconButton label={t('gen.speak')} icon={<Volume2 size={18} />} variant="secondary" onClick={() => speakAmount(words, locale)} />
+              <IconButton
+                label={t('gen.speak')}
+                icon={<Volume2 size={18} />}
+                variant="secondary"
+                onClick={() => speakAmount(words, locale)}
+              />
             ) : null}
           </div>
           {countdown && (
-            <div className={`mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${expired ? 'bg-black/30' : 'bg-white/20'}`}>
-              <Clock size={13} aria-hidden /> {expired ? t('pay.expired') : t('pay.expiresIn', {time: countdown.text})}
+            <div
+              className={`mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${expired ? 'bg-black/30' : 'bg-white/20'}`}
+            >
+              <Clock size={13} aria-hidden />{' '}
+              {expired ? t('pay.expired') : t('pay.expiresIn', {time: countdown.text})}
             </div>
           )}
         </div>
@@ -128,7 +174,9 @@ export function PayView({data, bank, shareUrl, onMakeOwn}: PayViewProps) {
           ) : (
             <QrStage scene={scene} label={`VietQR ${bank.shortName} ${data.acc}`} maxWidth={360} />
           )}
-          {data.note && <p className="mt-4 rounded-lg bg-muted px-4 py-3 text-sm italic">“{data.note}”</p>}
+          {data.note && (
+            <p className="mt-4 rounded-lg bg-muted px-4 py-3 text-sm italic">“{data.note}”</p>
+          )}
         </div>
       </section>
 
@@ -143,7 +191,14 @@ export function PayView({data, bank, shareUrl, onMakeOwn}: PayViewProps) {
           </div>
           <CopyField label={t('pay.to')} value={data.name ?? ''} />
           <CopyField label={data.card ? t('gen.card') : t('gen.account')} value={data.acc} mono />
-          {data.amount ? <CopyField label={t('pay.amount')} value={String(data.amount)} display={formatVnd(data.amount, true)} emphasize /> : null}
+          {data.amount ? (
+            <CopyField
+              label={t('pay.amount')}
+              value={String(data.amount)}
+              display={formatVnd(data.amount, true)}
+              emphasize
+            />
+          ) : null}
           {data.memo && <CopyField label={t('pay.purpose')} value={data.memo} />}
           <p className="mt-3 text-xs text-secondary">{t('pay.copyHint')}</p>
         </section>
@@ -172,13 +227,21 @@ export function PayView({data, bank, shareUrl, onMakeOwn}: PayViewProps) {
           <ol className="mt-4 flex flex-col gap-3">
             {(['pay.step1', 'pay.step2', 'pay.step3'] as const).map((k, i) => (
               <li key={k} className="flex items-start gap-3">
-                <span className="grid place-items-center size-7 shrink-0 rounded-full bg-accent text-on-accent text-sm font-bold">{i + 1}</span>
+                <span className="grid place-items-center size-7 shrink-0 rounded-full bg-accent text-on-accent text-sm font-bold">
+                  {i + 1}
+                </span>
                 <span className="pt-0.5">{t(k)}</span>
               </li>
             ))}
           </ol>
           <div className="mt-5 flex flex-wrap gap-2">
-            <Button label={t('pay.saveImage')} icon={<Download size={16} />} variant="primary" isDisabled={!scene || expired} clickAction={saveImage} />
+            <Button
+              label={t('pay.saveImage')}
+              icon={<Download size={16} />}
+              variant="primary"
+              isDisabled={!scene || expired}
+              clickAction={saveImage}
+            />
             <Button
               label={t('common.share')}
               icon={<Share2 size={16} />}
@@ -199,9 +262,21 @@ export function PayView({data, bank, shareUrl, onMakeOwn}: PayViewProps) {
               <span>{t('pay.secure')}</span>
             </p>
             {onMakeOwn ? (
-              <Button label={t('pay.makeOwn')} size="sm" variant="secondary" icon={<Smartphone size={15} />} onClick={onMakeOwn} />
+              <Button
+                label={t('pay.makeOwn')}
+                size="sm"
+                variant="secondary"
+                icon={<Smartphone size={15} />}
+                onClick={onMakeOwn}
+              />
             ) : (
-              <Button label={t('pay.makeOwn')} size="sm" variant="secondary" icon={<Smartphone size={15} />} href="/link" />
+              <Button
+                label={t('pay.makeOwn')}
+                size="sm"
+                variant="secondary"
+                icon={<Smartphone size={15} />}
+                href="/link"
+              />
             )}
           </div>
         </div>

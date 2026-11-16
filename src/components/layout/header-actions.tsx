@@ -24,13 +24,19 @@ export function HeaderActions({onOpenPalette}: {onOpenPalette: () => void}) {
         type="button"
         onClick={onOpenPalette}
         className="hidden md:inline-flex items-center gap-2 h-9 pl-3 pr-2 rounded-md border border-border bg-surface text-secondary text-sm hover:border-strong transition-colors min-w-52"
-        aria-label={t('app.search')}>
+        aria-label={t('app.search')}
+      >
         <Search size={15} aria-hidden />
         <span className="flex-1 text-left">{t('app.search')}</span>
         <Kbd keys="mod+k" />
       </button>
       <span className="md:hidden">
-        <IconButton label={t('app.search')} icon={<Search size={18} />} variant="ghost" onClick={onOpenPalette} />
+        <IconButton
+          label={t('app.search')}
+          icon={<Search size={18} />}
+          variant="ghost"
+          onClick={onOpenPalette}
+        />
       </span>
       <Button
         label={locale === 'vi' ? 'EN' : 'VI'}

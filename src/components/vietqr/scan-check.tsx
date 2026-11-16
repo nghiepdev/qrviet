@@ -45,7 +45,10 @@ export function ScanCheckBadge({status}: {status: Status}) {
   const t = useT()
   if (status !== 'bad') return null
   return (
-    <span role="status" className="inline-flex items-center gap-1.5 self-start rounded-full bg-warning-muted px-2.5 py-1 text-xs font-semibold text-on-warning-muted">
+    <span
+      role="status"
+      className="inline-flex items-center gap-1.5 self-start rounded-full bg-warning-muted px-2.5 py-1 text-xs font-semibold text-on-warning-muted"
+    >
       <TriangleAlert size={14} aria-hidden />
       {t('gen.scanCheckBad')}
     </span>

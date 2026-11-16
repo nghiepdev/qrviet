@@ -27,7 +27,8 @@ const ICONS: Record<TemplateId, typeof QrCode> = {
 function horizontalScroller(el: HTMLElement): HTMLElement | null {
   for (let node = el.parentElement; node; node = node.parentElement) {
     const {overflowX} = getComputedStyle(node)
-    if ((overflowX === 'auto' || overflowX === 'scroll') && node.scrollWidth > node.clientWidth) return node
+    if ((overflowX === 'auto' || overflowX === 'scroll') && node.scrollWidth > node.clientWidth)
+      return node
   }
   return null
 }
@@ -55,7 +56,13 @@ function centerTile(tile: HTMLElement, smooth: boolean) {
  * The buttons are anchored to the row, so browsers without anchor positioning (Safari before 26)
  * would draw them in the top-left corner of the screen; there they are left out.
  */
-export function TemplatePicker({value, onChange}: {value: TemplateId; onChange: (v: TemplateId) => void}) {
+export function TemplatePicker({
+  value,
+  onChange,
+}: {
+  value: TemplateId
+  onChange: (v: TemplateId) => void
+}) {
   const t = useT()
   const tilesRef = useRef(new Map<TemplateId, HTMLButtonElement>())
   const hasCenteredRef = useRef(false)
@@ -75,7 +82,14 @@ export function TemplatePicker({value, onChange}: {value: TemplateId; onChange: 
   }, [value])
 
   return (
-    <Carousel aria-label={t('gen.templates')} gap={2} padding={0.5} className="-mx-0.5" style={{maxWidth: 'none'}} hasButtons={canAnchor}>
+    <Carousel
+      aria-label={t('gen.templates')}
+      gap={2}
+      padding={0.5}
+      className="-mx-0.5"
+      style={{maxWidth: 'none'}}
+      hasButtons={canAnchor}
+    >
       {TEMPLATE_IDS.map((id) => {
         const Icon = ICONS[id]
         return (
@@ -89,7 +103,8 @@ export function TemplatePicker({value, onChange}: {value: TemplateId; onChange: 
             aria-pressed={id === value}
             onClick={() => onChange(id)}
             // Room for the 2px selection ring, which the carousel's scroll box would otherwise clip.
-            className={`${HUES[TILE_HUES[id]]} qv-tile qv-tile-hue my-0.5 flex min-w-[6.125rem] flex-col items-center justify-center gap-1 px-2 py-2 text-xs font-semibold whitespace-nowrap text-secondary pointer-coarse:min-w-[7.0625rem]`}>
+            className={`${HUES[TILE_HUES[id]]} qv-tile qv-tile-hue my-0.5 flex min-w-[6.125rem] flex-col items-center justify-center gap-1 px-2 py-2 text-xs font-semibold whitespace-nowrap text-secondary pointer-coarse:min-w-[7.0625rem]`}
+          >
             <Icon size={20} aria-hidden />
             <span>{t(`tpl.${id}` as MessageKey)}</span>
           </button>
@@ -99,7 +114,15 @@ export function TemplatePicker({value, onChange}: {value: TemplateId; onChange: 
   )
 }
 
-export function AccentPicker({value, onChange, label}: {value: string; onChange: (v: string) => void; label: string}) {
+export function AccentPicker({
+  value,
+  onChange,
+  label,
+}: {
+  value: string
+  onChange: (v: string) => void
+  label: string
+}) {
   return (
     <div className="flex flex-wrap items-center gap-2" role="radiogroup" aria-label={label}>
       {TEMPLATE_ACCENTS.map((c) => (
@@ -110,13 +133,26 @@ export function AccentPicker({value, onChange, label}: {value: string; onChange:
           aria-checked={c.toLowerCase() === value.toLowerCase()}
           aria-label={c}
           onClick={() => onChange(c)}
-          className="qv-tile size-9 rounded-full p-1">
+          className="qv-tile size-9 rounded-full p-1"
+        >
           <span className="block size-full rounded-full" style={{background: c}} />
         </button>
       ))}
-      <label className="qv-tile size-9 rounded-full p-1 cursor-pointer relative overflow-hidden" title={label}>
-        <span className="block size-full rounded-full" style={{background: 'conic-gradient(red, yellow, lime, cyan, blue, magenta, red)'}} />
-        <input type="color" value={value} onChange={(e) => onChange(e.target.value)} className="absolute inset-0 opacity-0 cursor-pointer" aria-label={label} />
+      <label
+        className="qv-tile size-9 rounded-full p-1 cursor-pointer relative overflow-hidden"
+        title={label}
+      >
+        <span
+          className="block size-full rounded-full"
+          style={{background: 'conic-gradient(red, yellow, lime, cyan, blue, magenta, red)'}}
+        />
+        <input
+          type="color"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="absolute inset-0 opacity-0 cursor-pointer"
+          aria-label={label}
+        />
       </label>
     </div>
   )

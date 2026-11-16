@@ -29,7 +29,12 @@ const CHROME_CANDIDATES = [
 
 /** The boot splash as a standalone page, animations frozen at rest. */
 function bootSplashPage(): string {
-  const font = pathToFileURL(join(root, 'node_modules/@fontsource/be-vietnam-pro/files/be-vietnam-pro-latin-700-normal.woff2')).href
+  const font = pathToFileURL(
+    join(
+      root,
+      'node_modules/@fontsource/be-vietnam-pro/files/be-vietnam-pro-latin-700-normal.woff2',
+    ),
+  ).href
   return `<!doctype html><html><head><meta charset="utf-8"><style>
 @font-face { font-family: 'Be Vietnam Pro'; font-weight: 700; src: url('${font}') format('woff2'); }
 ${BOOT_CSS}
@@ -47,7 +52,16 @@ async function openPage(userDataDir: string) {
   if (!chrome) throw new Error('Chrome/Chromium not found — set CHROME_PATH')
   const proc = spawn(
     chrome,
-    ['--headless=new', '--remote-debugging-port=0', `--user-data-dir=${userDataDir}`, '--no-first-run', '--no-default-browser-check', '--hide-scrollbars', '--force-color-profile=srgb', 'about:blank'],
+    [
+      '--headless=new',
+      '--remote-debugging-port=0',
+      `--user-data-dir=${userDataDir}`,
+      '--no-first-run',
+      '--no-default-browser-check',
+      '--hide-scrollbars',
+      '--force-color-profile=srgb',
+      'about:blank',
+    ],
     {stdio: ['ignore', 'ignore', 'pipe']},
   )
   const browserWs = await new Promise<string>((resolveWs, reject) => {
@@ -60,11 +74,17 @@ async function openPage(userDataDir: string) {
     proc.on('exit', () => reject(new Error(`Chrome exited early:\n${log}`)))
   })
   const port = new URL(browserWs).port
-  const targets = (await (await fetch(`http://127.0.0.1:${port}/json/list`)).json()) as Array<{type: string; webSocketDebuggerUrl: string}>
+  const targets = (await (await fetch(`http://127.0.0.1:${port}/json/list`)).json()) as Array<{
+    type: string
+    webSocketDebuggerUrl: string
+  }>
   const ws = new WebSocket(targets.find((t) => t.type === 'page')!.webSocketDebuggerUrl)
   await new Promise((r) => ws.addEventListener('open', r, {once: true}))
   let nextId = 0
-  const pending = new Map<number, {resolve: (v: Record<string, unknown>) => void; reject: (e: Error) => void}>()
+  const pending = new Map<
+    number,
+    {resolve: (v: Record<string, unknown>) => void; reject: (e: Error) => void}
+  >()
   ws.addEventListener('message', (event) => {
     const msg = JSON.parse(String(event.data))
     const entry = msg.id ? pending.get(msg.id) : undefined
@@ -97,9 +117,21 @@ const hasFfmpeg = spawnSync('ffmpeg', ['-version'], {stdio: 'ignore'}).status ==
 /** 8-bit palette PNG (with dithering for the logo's gradient and shadow), in place. */
 function quantize(file: string) {
   const tmp = `${file}.tmp.png`
-  const filter = 'split[a][b];[a]palettegen=max_colors=256:stats_mode=full[p];[b][p]paletteuse=dither=sierra2_4a'
-  const run = spawnSync('ffmpeg', ['-loglevel', 'error', '-y', '-i', file, '-vf', filter, '-pix_fmt', 'pal8', tmp])
-  if (run.status !== 0) throw new Error(`ffmpeg failed for ${file}: ${run.stderr}`)
+  const filter =
+    'split[a][b];[a]palettegen=max_colors=256:stats_mode=full[p];[b][p]paletteuse=dither=sierra2_4a'
+  const run = spawnSync('ffmpeg', [
+    '-loglevel',
+    'error',
+    '-y',
+    '-i',
+    file,
+    '-vf',
+    filter,
+    '-pix_fmt',
+    'pal8',
+    tmp,
+  ])
+  if (run.status !== 0) throw new Error(`ffmpeg failed for ${file}: ${run.stderr.toString()}`)
   rmSync(file)
   writeFileSync(file, readFileSync(tmp))
   rmSync(tmp)
@@ -113,15 +145,25 @@ async function main() {
   try {
     await send('Page.enable')
     await send('Page.navigate', {url: pathToFileURL(pagePath).href})
-    await send('Runtime.evaluate', {expression: `new Promise((r) => document.readyState === 'complete' ? r() : addEventListener('load', r))`, awaitPromise: true})
+    await send('Runtime.evaluate', {
+      expression: `new Promise((r) => document.readyState === 'complete' ? r() : addEventListener('load', r))`,
+      awaitPromise: true,
+    })
 
     rmSync(outDir, {recursive: true, force: true})
     mkdirSync(outDir, {recursive: true})
     let bytes = 0
     const variants = splashVariants()
     for (const v of variants) {
-      await send('Emulation.setDeviceMetricsOverride', {width: v.cssWidth, height: v.cssHeight, deviceScaleFactor: v.screen.ratio, mobile: true})
-      await send('Emulation.setEmulatedMedia', {features: [{name: 'prefers-color-scheme', value: v.scheme}]})
+      await send('Emulation.setDeviceMetricsOverride', {
+        width: v.cssWidth,
+        height: v.cssHeight,
+        deviceScaleFactor: v.screen.ratio,
+        mobile: true,
+      })
+      await send('Emulation.setEmulatedMedia', {
+        features: [{name: 'prefers-color-scheme', value: v.scheme}],
+      })
       await send('Runtime.evaluate', {
         expression: `document.fonts.load('700 22px "Be Vietnam Pro"').then(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))))`,
         awaitPromise: true,
@@ -130,7 +172,9 @@ async function main() {
       const png = Buffer.from(data, 'base64')
       const [w, h] = pngSize(png)
       if (w !== v.cssWidth * v.screen.ratio || h !== v.cssHeight * v.screen.ratio) {
-        throw new Error(`${v.file}: rendered ${w}×${h}, expected ${v.cssWidth * v.screen.ratio}×${v.cssHeight * v.screen.ratio}`)
+        throw new Error(
+          `${v.file}: rendered ${w}×${h}, expected ${v.cssWidth * v.screen.ratio}×${v.cssHeight * v.screen.ratio}`,
+        )
       }
       const file = join(root, 'public', v.file)
       writeFileSync(file, png)

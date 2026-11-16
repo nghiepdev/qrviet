@@ -8,7 +8,7 @@
 
 ## Checklist
 
-- [ ] `pnpm build` passes.
+- [ ] `pnpm check` and `pnpm build` pass.
 - [ ] New or changed interface text is in both `src/i18n/vi.ts` and `src/i18n/en.ts`.
 - [ ] Interface changes were checked on a phone-sized screen and on desktop, in light and dark mode.
 - [ ] Documentation and comments are updated where behaviour changed.

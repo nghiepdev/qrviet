@@ -60,7 +60,10 @@ function detectSeparator(text: string): RegExp {
 }
 
 function parseRows(text: string, form: VietQrForm, contentMode: 'strict' | 'relaxed'): Row[] {
-  const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean)
+  const lines = text
+    .split(/\r?\n/)
+    .map((l) => l.trim())
+    .filter(Boolean)
   if (!lines.length) return []
   const sep = detectSeparator(text)
   const rows: Row[] = []
@@ -74,13 +77,32 @@ function parseRows(text: string, form: VietQrForm, contentMode: 'strict' | 'rela
     let error: string | null = null
     if (amountText && amount === null) error = 'amount'
     else {
-      const issues = validateVietQr({bin: form.bin, accountNumber: form.accountNumber, amount: amount ?? undefined, purpose}).filter((x) => x.severity === 'error')
+      const issues = validateVietQr({
+        bin: form.bin,
+        accountNumber: form.accountNumber,
+        amount: amount ?? undefined,
+        purpose,
+      }).filter((x) => x.severity === 'error')
       if (issues.length) error = issues[0].code
       else {
-        payload = buildVietQr({bin: form.bin, accountNumber: form.accountNumber, service: form.service, amount: amount ?? undefined, purpose})
+        payload = buildVietQr({
+          bin: form.bin,
+          accountNumber: form.accountNumber,
+          service: form.service,
+          amount: amount ?? undefined,
+          purpose,
+        })
       }
     }
-    rows.push({n: rows.length + 1, amountText, amount, purpose, label: label || purposeRaw || (amount ? formatVnd(amount, true) : ''), payload, error})
+    rows.push({
+      n: rows.length + 1,
+      amountText,
+      amount,
+      purpose,
+      label: label || purposeRaw || (amount ? formatVnd(amount, true) : ''),
+      payload,
+      error,
+    })
   })
   return rows.slice(0, MAX_ROWS)
 }
@@ -101,9 +123,25 @@ function buildBatchScenes(
   return rows
     .filter((r) => r.payload)
     .map((r) => {
-      const info = buildTemplateInfo({...account, bank, amount: r.amount, purpose: r.purpose, design: {...design, title: r.label}, locale, t})
+      const info = buildTemplateInfo({
+        ...account,
+        bank,
+        amount: r.amount,
+        purpose: r.purpose,
+        design: {...design, title: r.label},
+        locale,
+        t,
+      })
       const geo = layoutQr(makeQr(r.payload!, style.ecc), style, logo)
-      return {row: r, scene: buildTemplateScene(template, {...info, title: r.label || info.title}, {geo, opts: {style, logo}}, measure)}
+      return {
+        row: r,
+        scene: buildTemplateScene(
+          template,
+          {...info, title: r.label || info.title},
+          {geo, opts: {style, logo}},
+          measure,
+        ),
+      }
     })
 }
 
@@ -114,7 +152,13 @@ function BatchPage() {
   const design = useSettings((s) => s.design)
   const contentMode = useSettings((s) => s.contentMode)
   const measure = useTextMeasure()
-  const [form, setForm] = useState<VietQrForm>(() => ({...EMPTY_FORM, bin: draftStore.state.bin, accountNumber: draftStore.state.accountNumber, accountName: draftStore.state.accountName, service: draftStore.state.service}))
+  const [form, setForm] = useState<VietQrForm>(() => ({
+    ...EMPTY_FORM,
+    bin: draftStore.state.bin,
+    accountNumber: draftStore.state.accountNumber,
+    accountName: draftStore.state.accountName,
+    service: draftStore.state.service,
+  }))
   const [mode, setMode] = useState<'paste' | 'sequence'>('paste')
   const [text, setText] = useState('')
   const [seq, setSeq] = useState({prefix: 'Phong ', from: 101, to: 110, amount: '150.000'})
@@ -122,18 +166,30 @@ function BatchPage() {
   const [layout, setLayout] = useState<(typeof LAYOUTS)[number]['id']>('3x4')
   const [progress, setProgress] = useState<{done: number; total: number} | null>(null)
 
-  const accountOk = validateVietQr({bin: form.bin, accountNumber: form.accountNumber}).every((i) => i.severity !== 'error')
+  const accountOk = validateVietQr({bin: form.bin, accountNumber: form.accountNumber}).every(
+    (i) => i.severity !== 'error',
+  )
   const rows = accountOk ? parseRows(text, form, contentMode) : []
   const valid = rows.filter((r) => r.payload)
   const bank = getBankByBin(form.bin)
 
-  const scenes = buildBatchScenes(rows, template, design, bank, {accountName: form.accountName, accountNumber: form.accountNumber}, locale, t, measure)
+  const scenes = buildBatchScenes(
+    rows,
+    template,
+    design,
+    bank,
+    {accountName: form.accountName, accountNumber: form.accountNumber},
+    locale,
+    t,
+    measure,
+  )
 
   const generateSequence = () => {
     const lines: string[] = []
     const from = Math.min(seq.from, seq.to)
     const to = Math.min(Math.max(seq.from, seq.to), from + MAX_ROWS - 1)
-    for (let n = from; n <= to; n++) lines.push(`${seq.amount}\t${seq.prefix}${n}\t${seq.prefix}${n}`)
+    for (let n = from; n <= to; n++)
+      lines.push(`${seq.amount}\t${seq.prefix}${n}\t${seq.prefix}${n}`)
     setText(lines.join('\n'))
     setMode('paste')
   }
@@ -143,10 +199,20 @@ function BatchPage() {
     const entries: Array<{name: string; data: Blob}> = []
     for (let i = 0; i < scenes.length; i++) {
       const {row, scene} = scenes[i]
-      entries.push({name: `${String(row.n).padStart(3, '0')}-${slugify(row.label || row.purpose || String(row.amount ?? ''))}.png`, data: await exportPng(scene)})
+      entries.push({
+        name: `${String(row.n).padStart(3, '0')}-${slugify(row.label || row.purpose || String(row.amount ?? ''))}.png`,
+        data: await exportPng(scene),
+      })
       setProgress({done: i + 1, total: scenes.length})
     }
-    const csv = ['#,amount,purpose,label,payload', ...valid.map((r) => [r.n, r.amount ?? '', r.purpose, r.label, r.payload].map((c) => `"${String(c).replace(/"/g, '""')}"`).join(','))].join('\n')
+    const csv = [
+      '#,amount,purpose,label,payload',
+      ...valid.map((r) =>
+        [r.n, r.amount ?? '', r.purpose, r.label, r.payload]
+          .map((c) => `"${String(c).replace(/"/g, '""')}"`)
+          .join(','),
+      ),
+    ].join('\n')
     const zip = await createZip([...entries, {name: 'qrviet-batch.csv', data: `﻿${csv}`}])
     downloadBlob(zip, `qrviet-batch-${bank?.code.toLowerCase() ?? 'vietqr'}-${scenes.length}.zip`)
     setProgress(null)
@@ -155,46 +221,108 @@ function BatchPage() {
 
   const print = async () => {
     const cols = LAYOUTS.find((l) => l.id === layout)?.cols ?? 3
-    await printSvgs(
-      await Promise.all(scenes.map(({scene}) => sceneToStandaloneSvg(scene))),
-      {page: 'A4', columns: cols, gapMm: 5, marginMm: 8, title: 'QRViet labels'},
-    )
+    await printSvgs(await Promise.all(scenes.map(({scene}) => sceneToStandaloneSvg(scene))), {
+      page: 'A4',
+      columns: cols,
+      gapMm: 5,
+      marginMm: 8,
+      title: 'QRViet labels',
+    })
   }
 
   return (
     <>
-      <PageHeader title={t('batch.title')} subtitle={t('batch.subtitle')} icon={<Layers size={22} />} />
+      <PageHeader
+        title={t('batch.title')}
+        subtitle={t('batch.subtitle')}
+        icon={<Layers size={22} />}
+      />
       <PageBody>
         <div className="grid grid-cols-1 gap-5 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] items-start">
           <div className="flex flex-col gap-5 min-w-0">
             <Panel title={t('batch.account')} icon={Landmark}>
               <div className="flex flex-col gap-4">
-                <SavedAccountsStrip activeKey={`${form.bin}:${form.accountNumber}`} onPick={(a) => setForm(formFromAccount(a))} />
-                <AccountFields form={form} onChange={(p) => setForm((f) => ({...f, ...p}))} showErrors={Boolean(form.accountNumber)} errors={{}} />
+                <SavedAccountsStrip
+                  activeKey={`${form.bin}:${form.accountNumber}`}
+                  onPick={(a) => setForm(formFromAccount(a))}
+                />
+                <AccountFields
+                  form={form}
+                  onChange={(p) => setForm((f) => ({...f, ...p}))}
+                  showErrors={Boolean(form.accountNumber)}
+                  errors={{}}
+                />
               </div>
             </Panel>
             <Panel hue="amber">
               <div className="flex flex-col gap-4">
-                <SegmentedControl label={t('batch.input')} value={mode} onChange={(v) => setMode(v as typeof mode)} layout="fill">
-                  <SegmentedControlItem value="paste" label={t('batch.input').split('(')[0].trim()} />
+                <SegmentedControl
+                  label={t('batch.input')}
+                  value={mode}
+                  onChange={(v) => setMode(v as typeof mode)}
+                  layout="fill"
+                >
+                  <SegmentedControlItem
+                    value="paste"
+                    label={t('batch.input').split('(')[0].trim()}
+                  />
                   <SegmentedControlItem value="sequence" label={t('batch.sequence')} />
                 </SegmentedControl>
                 {mode === 'paste' ? (
                   <>
-                    <TextArea label={t('batch.input')} value={text} onChange={setText} rows={8} description={t('batch.inputHint')} hasSpellCheck={false} placeholder={'150000\tPhong 101\tPhòng 101'} />
+                    <TextArea
+                      label={t('batch.input')}
+                      value={text}
+                      onChange={setText}
+                      rows={8}
+                      description={t('batch.inputHint')}
+                      hasSpellCheck={false}
+                      placeholder={'150000\tPhong 101\tPhòng 101'}
+                    />
                     <div className="flex flex-wrap items-center gap-2">
-                      <Button label={t('batch.sample')} size="sm" variant="ghost" icon={<Wand2 size={15} />} onClick={() => setText(SAMPLE)} />
-                      <span className="text-xs text-secondary">{t('batch.limit', {max: MAX_ROWS})}</span>
+                      <Button
+                        label={t('batch.sample')}
+                        size="sm"
+                        variant="ghost"
+                        icon={<Wand2 size={15} />}
+                        onClick={() => setText(SAMPLE)}
+                      />
+                      <span className="text-xs text-secondary">
+                        {t('batch.limit', {max: MAX_ROWS})}
+                      </span>
                     </div>
                   </>
                 ) : (
                   <div className="grid sm:grid-cols-2 gap-3">
-                    <TextInput label={t('batch.seqPrefix')} value={seq.prefix} onChange={(prefix) => setSeq((s) => ({...s, prefix}))} />
-                    <TextInput label={t('batch.seqAmount')} value={seq.amount} onChange={(amount) => setSeq((s) => ({...s, amount}))} />
-                    <NumberInput label={t('batch.seqFrom')} value={seq.from} onChange={(from) => setSeq((s) => ({...s, from}))} isIntegerOnly />
-                    <NumberInput label={t('batch.seqTo')} value={seq.to} onChange={(to) => setSeq((s) => ({...s, to}))} isIntegerOnly />
+                    <TextInput
+                      label={t('batch.seqPrefix')}
+                      value={seq.prefix}
+                      onChange={(prefix) => setSeq((s) => ({...s, prefix}))}
+                    />
+                    <TextInput
+                      label={t('batch.seqAmount')}
+                      value={seq.amount}
+                      onChange={(amount) => setSeq((s) => ({...s, amount}))}
+                    />
+                    <NumberInput
+                      label={t('batch.seqFrom')}
+                      value={seq.from}
+                      onChange={(from) => setSeq((s) => ({...s, from}))}
+                      isIntegerOnly
+                    />
+                    <NumberInput
+                      label={t('batch.seqTo')}
+                      value={seq.to}
+                      onChange={(to) => setSeq((s) => ({...s, to}))}
+                      isIntegerOnly
+                    />
                     <div className="sm:col-span-2">
-                      <Button label={t('batch.generate')} variant="primary" icon={<Wand2 size={16} />} onClick={generateSequence} />
+                      <Button
+                        label={t('batch.generate')}
+                        variant="primary"
+                        icon={<Wand2 size={16} />}
+                        onClick={generateSequence}
+                      />
                     </div>
                   </div>
                 )}
@@ -213,20 +341,42 @@ function BatchPage() {
                   </span>
                   {rows.length - valid.length > 0 && (
                     <span className="inline-flex items-center gap-1 text-error font-semibold">
-                      <CircleAlert size={15} aria-hidden /> {t('batch.invalid', {count: rows.length - valid.length})}
+                      <CircleAlert size={15} aria-hidden />{' '}
+                      {t('batch.invalid', {count: rows.length - valid.length})}
                     </span>
                   )}
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <Button label={t('batch.downloadZip', {count: scenes.length})} variant="primary" icon={<FileArchive size={16} />} isDisabled={!scenes.length || Boolean(progress)} clickAction={downloadZip} />
-                  <SegmentedControl label={t('batch.layout')} value={layout} onChange={(v) => setLayout(v as typeof layout)}>
+                  <Button
+                    label={t('batch.downloadZip', {count: scenes.length})}
+                    variant="primary"
+                    icon={<FileArchive size={16} />}
+                    isDisabled={!scenes.length || Boolean(progress)}
+                    clickAction={downloadZip}
+                  />
+                  <SegmentedControl
+                    label={t('batch.layout')}
+                    value={layout}
+                    onChange={(v) => setLayout(v as typeof layout)}
+                  >
                     {LAYOUTS.map((l) => (
                       <SegmentedControlItem key={l.id} value={l.id} label={l.label} />
                     ))}
                   </SegmentedControl>
-                  <Button label={t('batch.printLabels')} icon={<Printer size={16} />} isDisabled={!scenes.length} clickAction={print} />
+                  <Button
+                    label={t('batch.printLabels')}
+                    icon={<Printer size={16} />}
+                    isDisabled={!scenes.length}
+                    clickAction={print}
+                  />
                 </div>
-                {progress && <ProgressBar label={t('batch.zipping', {done: progress.done, total: progress.total})} value={progress.done} max={progress.total} />}
+                {progress && (
+                  <ProgressBar
+                    label={t('batch.zipping', {done: progress.done, total: progress.total})}
+                    value={progress.done}
+                    max={progress.total}
+                  />
+                )}
               </div>
             </Panel>
             {rows.length > 0 && (
@@ -235,11 +385,24 @@ function BatchPage() {
                   {rows.map((r) => {
                     const sc = scenes.find((s) => s.row.n === r.n)
                     return (
-                      <li key={r.n} className={`rounded-lg border p-2 ${r.error ? 'border-error bg-error-muted/30' : 'border-border'}`}>
-                        {sc ? <SceneThumb scene={sc.scene} /> : <div className="aspect-square grid place-items-center text-xs text-error p-2 text-center">{t('gen.invalid.amount')}</div>}
+                      <li
+                        key={r.n}
+                        className={`rounded-lg border p-2 ${r.error ? 'border-error bg-error-muted/30' : 'border-border'}`}
+                      >
+                        {sc ? (
+                          <SceneThumb scene={sc.scene} />
+                        ) : (
+                          <div className="aspect-square grid place-items-center text-xs text-error p-2 text-center">
+                            {t('gen.invalid.amount')}
+                          </div>
+                        )}
                         <div className="mt-1.5 text-xs">
-                          <div className="font-semibold truncate">{r.label || t('batch.row', {n: r.n})}</div>
-                          <div className="text-secondary truncate">{r.amount ? formatVnd(r.amount, true) : '—'}</div>
+                          <div className="font-semibold truncate">
+                            {r.label || t('batch.row', {n: r.n})}
+                          </div>
+                          <div className="text-secondary truncate">
+                            {r.amount ? formatVnd(r.amount, true) : '—'}
+                          </div>
                         </div>
                       </li>
                     )
@@ -258,5 +421,11 @@ function SceneThumb({scene}: {scene: Scene}) {
   // Each thumbnail needs its own SVG id prefix (gradients, clip paths); useId keeps it stable and pure.
   const idPrefix = `t${useId().replace(/[^a-zA-Z0-9]/g, '')}`
   const svg = sceneToSvg(scene, {idPrefix})
-  return <div className="qv-preview [&_svg]:!filter-none" aria-hidden dangerouslySetInnerHTML={{__html: svg}} />
+  return (
+    <div
+      className="qv-preview [&_svg]:!filter-none"
+      aria-hidden
+      dangerouslySetInnerHTML={{__html: svg}}
+    />
+  )
 }

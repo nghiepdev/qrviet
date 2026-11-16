@@ -21,7 +21,8 @@ const bankName = (bin: string) => banks.find((bank) => bank.bin === bin)?.shortN
 const escapeHtml = (text: string) => text.replace(/[&<>"']/g, (char) => `&#${char.charCodeAt(0)};`)
 
 /** Puts `value` in the content of the meta tag that `opening` starts, as React writes it. */
-const setContent = (html: string, opening: string, value: string) => html.replace(new RegExp(`(${opening} content=")[^"]*`), (_, start: string) => start + value)
+const setContent = (html: string, opening: string, value: string) =>
+  html.replace(new RegExp(`(${opening} content=")[^"]*`), (_, start: string) => start + value)
 
 export default async (request: Request, context: {next: () => Promise<Response>}) => {
   const preview = payPreview(new URL(request.url).search, t, bankName)

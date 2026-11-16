@@ -27,11 +27,28 @@ interface Props {
  * Dialog on desktop, bottom sheet on phones/tablets with touch. Keep it mounted and toggle `isOpen`
  * (do not render it conditionally): closing then plays the exit animation and returns focus.
  */
-export function AdaptiveSheet({isOpen, onOpenChange, title, subtitle, children, footer, purpose = 'info', width = 520, sheetHeight = 'tall'}: Props) {
+export function AdaptiveSheet({
+  isOpen,
+  onOpenChange,
+  title,
+  subtitle,
+  children,
+  footer,
+  purpose = 'info',
+  width = 520,
+  sheetHeight = 'tall',
+}: Props) {
   const touch = useIsTouchSheet()
   if (touch) {
     return (
-      <BottomSheet isOpen={isOpen} onOpenChange={onOpenChange} label={title} purpose={purpose} height={sheetHeight} padding={4}>
+      <BottomSheet
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        label={title}
+        purpose={purpose}
+        height={sheetHeight}
+        padding={4}
+      >
         {/* Fills the sheet, so the footer (.qv-sheet-footer) rests on its bottom edge. */}
         <div className="flex min-h-full flex-col gap-4">
           <Heading level={3}>{title}</Heading>
@@ -42,7 +59,13 @@ export function AdaptiveSheet({isOpen, onOpenChange, title, subtitle, children, 
     )
   }
   return (
-    <Dialog isOpen={isOpen} onOpenChange={onOpenChange} purpose={purpose} width={width} maxHeight="85dvh">
+    <Dialog
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
+      purpose={purpose}
+      width={width}
+      maxHeight="85dvh"
+    >
       <Layout
         header={<DialogHeader title={title} subtitle={subtitle} onOpenChange={onOpenChange} />}
         content={<LayoutContent>{children}</LayoutContent>}

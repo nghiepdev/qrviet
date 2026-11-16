@@ -1,6 +1,15 @@
 import {persistedStore} from '#/lib/persist'
 import {DEFAULT_QR_STYLE, type QrStyle, type LogoPlate} from '#/lib/qr/render'
-import type {EmailData, EventData, GeoData, QrKind, SmsData, SocialData, VCardData, WifiData} from '#/lib/payloads'
+import type {
+  EmailData,
+  EventData,
+  GeoData,
+  QrKind,
+  SmsData,
+  SocialData,
+  VCardData,
+  WifiData,
+} from '#/lib/payloads'
 import type {LogoMode} from './settings'
 
 export interface StudioState {
@@ -29,7 +38,18 @@ export const STUDIO_DEFAULT: StudioState = {
   url: '',
   text: '',
   wifi: {ssid: '', password: '', security: 'WPA', hidden: false},
-  vcard: {firstName: '', lastName: '', org: '', title: '', phone: '', mobile: '', email: '', website: '', address: '', note: ''},
+  vcard: {
+    firstName: '',
+    lastName: '',
+    org: '',
+    title: '',
+    phone: '',
+    mobile: '',
+    email: '',
+    website: '',
+    address: '',
+    note: '',
+  },
   email: {to: '', subject: '', body: ''},
   sms: {phone: '', message: ''},
   phone: '',

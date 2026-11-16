@@ -1,5 +1,14 @@
 import {useEffect, useRef, useState} from 'react'
-import {CheckCircle2, ChevronDown, Copy, Download, ExternalLink, RotateCcw, Smartphone, Store} from 'lucide-react'
+import {
+  CheckCircle2,
+  ChevronDown,
+  Copy,
+  Download,
+  ExternalLink,
+  RotateCcw,
+  Smartphone,
+  Store,
+} from 'lucide-react'
 import {Banner} from '@astryxdesign/core/Banner'
 import {Button} from '@astryxdesign/core/Button'
 import {Heading} from '@astryxdesign/core/Heading'
@@ -45,7 +54,11 @@ const IAB_NAMES: Record<InAppBrowserKind, string> = {
   webview: 'In-App Browser',
 }
 
-function quickPickApps(selectedBin: string, preferredBin: string | null, recipientBin: string): Bank[] {
+function quickPickApps(
+  selectedBin: string,
+  preferredBin: string | null,
+  recipientBin: string,
+): Bank[] {
   const ordered = [selectedBin, preferredBin, recipientBin, ...QUICK_APP_BINS]
   const seen = new Set<string>()
   const result: Bank[] = []
@@ -119,7 +132,10 @@ export function BankAppLauncher({payment, disabled = false, onSaveQr, framed = t
     if (plan.autofillMode !== 'confirmed' && payment.accountNumber) {
       // Write synchronously without blocking window.location.href so Safari keeps the user gesture.
       navigator.clipboard?.writeText(payment.accountNumber).catch(() => {})
-      showToast({body: t('pay.copiedAccOpening', {bank: selectedBank.shortName}), uniqueID: 'deeplink-copy'})
+      showToast({
+        body: t('pay.copiedAccOpening', {bank: selectedBank.shortName}),
+        uniqueID: 'deeplink-copy',
+      })
     }
     setStatus('opening')
     cleanupRef.current = launchNativeApp(plan.launchUrl, (next) => setStatus(next))
@@ -182,7 +198,8 @@ export function BankAppLauncher({payment, disabled = false, onSaveQr, framed = t
               type="button"
               aria-pressed={active}
               onClick={() => selectApp(b.bin)}
-              className="qv-tile inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold">
+              className="qv-tile inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold"
+            >
               <BankLogo bank={b} size={18} />
               <span>{b.shortName}</span>
             </button>
@@ -191,7 +208,8 @@ export function BankAppLauncher({payment, disabled = false, onSaveQr, framed = t
         <button
           type="button"
           onClick={openPicker}
-          className="qv-tile inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-secondary hover:text-primary">
+          className="qv-tile inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-secondary hover:text-primary"
+        >
           <span>{t('pay.otherApp')}</span>
           <ChevronDown size={14} aria-hidden />
         </button>
@@ -237,7 +255,11 @@ export function BankAppLauncher({payment, disabled = false, onSaveQr, framed = t
         ) : (
           <div className="flex flex-col gap-2.5">
             <Button
-              label={status === 'opening' ? t('pay.opening', {bank: selectedBank.shortName}) : t('pay.openButton', {bank: selectedBank.shortName})}
+              label={
+                status === 'opening'
+                  ? t('pay.opening', {bank: selectedBank.shortName})
+                  : t('pay.openButton', {bank: selectedBank.shortName})
+              }
               icon={<ExternalLink size={16} />}
               variant="primary"
               isDisabled={disabled}
@@ -252,7 +274,13 @@ export function BankAppLauncher({payment, disabled = false, onSaveQr, framed = t
                 </div>
                 <p className="text-secondary">{openedMessage}</p>
                 <div className="flex flex-wrap gap-2">
-                  <Button label={t('pay.retryOpen')} size="sm" variant="secondary" icon={<RotateCcw size={14} />} onClick={launch} />
+                  <Button
+                    label={t('pay.retryOpen')}
+                    size="sm"
+                    variant="secondary"
+                    icon={<RotateCcw size={14} />}
+                    onClick={launch}
+                  />
                   {plan.storeUrl && (
                     <Button
                       label={t('pay.openStore', {store: storeLabel})}
@@ -270,7 +298,9 @@ export function BankAppLauncher({payment, disabled = false, onSaveQr, framed = t
 
             {status === 'fallback' && (
               <div className="rounded-lg border border-border bg-muted p-3 text-xs flex flex-col gap-2">
-                <div className="font-semibold">{t('pay.fallbackTitle', {bank: selectedBank.shortName})}</div>
+                <div className="font-semibold">
+                  {t('pay.fallbackTitle', {bank: selectedBank.shortName})}
+                </div>
                 <p className="text-secondary">{t('pay.fallbackBody')}</p>
                 <div className="flex flex-wrap gap-2">
                   {plan.storeUrl && (
@@ -284,9 +314,21 @@ export function BankAppLauncher({payment, disabled = false, onSaveQr, framed = t
                       rel="noopener noreferrer"
                     />
                   )}
-                  <Button label={t('pay.retryOpen')} size="sm" variant="secondary" icon={<RotateCcw size={14} />} onClick={launch} />
+                  <Button
+                    label={t('pay.retryOpen')}
+                    size="sm"
+                    variant="secondary"
+                    icon={<RotateCcw size={14} />}
+                    onClick={launch}
+                  />
                   {onSaveQr && (
-                    <Button label={t('pay.saveImage')} size="sm" variant="ghost" icon={<Download size={14} />} onClick={onSaveQr} />
+                    <Button
+                      label={t('pay.saveImage')}
+                      size="sm"
+                      variant="ghost"
+                      icon={<Download size={14} />}
+                      onClick={onSaveQr}
+                    />
                   )}
                 </div>
               </div>
@@ -314,5 +356,9 @@ export function BankAppLauncher({payment, disabled = false, onSaveQr, framed = t
 
   if (!framed) return content
 
-  return <section className={`${HUES.indigo} qv-tint rounded-2xl border border-border p-5 shadow-sm`}>{content}</section>
+  return (
+    <section className={`${HUES.indigo} qv-tint rounded-2xl border border-border p-5 shadow-sm`}>
+      {content}
+    </section>
+  )
 }

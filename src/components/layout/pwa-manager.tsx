@@ -18,13 +18,17 @@ export function PwaManager() {
   const online = useOnline()
   const prevOnline = useRef(online)
 
-  const announceOfflineReady = useEffectEvent(() => showToast({body: t('app.offlineReady'), uniqueID: 'sw-ready'}))
+  const announceOfflineReady = useEffectEvent(() =>
+    showToast({body: t('app.offlineReady'), uniqueID: 'sw-ready'}),
+  )
   const offerUpdate = useEffectEvent((apply: () => void) =>
     showToast({
       body: t('app.updateReady'),
       isAutoHide: false,
       uniqueID: 'sw-update',
-      endContent: <Button label={t('app.updateAction')} size="sm" variant="primary" onClick={apply} />,
+      endContent: (
+        <Button label={t('app.updateAction')} size="sm" variant="primary" onClick={apply} />
+      ),
     }),
   )
 

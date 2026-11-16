@@ -23,7 +23,10 @@ function openDb(): Promise<IDBDatabase> {
   return opening
 }
 
-async function request<T>(mode: IDBTransactionMode, op: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
+async function request<T>(
+  mode: IDBTransactionMode,
+  op: (store: IDBObjectStore) => IDBRequest<T>,
+): Promise<T> {
   const db = await openDb()
   return new Promise((resolve, reject) => {
     const req = op(db.transaction(STORE, mode).objectStore(STORE))
@@ -59,7 +62,7 @@ export async function pruneThumbs(keepIds: Iterable<string>): Promise<void> {
   try {
     const keep = new Set(keepIds)
     const keys = await request('readonly', (store) => store.getAllKeys())
-    const stale = keys.filter((key) => !keep.has(String(key)))
+    const stale = keys.filter((key) => typeof key !== 'string' || !keep.has(key))
     await Promise.all(stale.map((key) => request('readwrite', (store) => store.delete(key))))
   } catch {
     // Nothing to tidy, or no IndexedDB.

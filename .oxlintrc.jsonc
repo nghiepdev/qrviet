@@ -1,0 +1,28 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "oxc", "react", "jsx-a11y"],
+  "categories": {
+    "correctness": "error",
+  },
+  "rules": {
+    "react/rules-of-hooks": "error",
+    // Custom radio tiles, canvas images and live status regions use explicit ARIA roles.
+    "jsx-a11y/prefer-tag-over-role": "off",
+    // Browser/camera synchronization and local input resets intentionally update state in effects.
+    "react/set-state-in-effect": "off",
+  },
+  "options": {
+    "typeAware": true,
+    "maxWarnings": 0,
+  },
+  "overrides": [
+    {
+      "files": ["src/components/scan/camera-scanner.tsx"],
+      "rules": {
+        // The experimental compiler rule flags Date.now inside the async scan loop as render code.
+        "react/purity": "off",
+      },
+    },
+  ],
+  "ignorePatterns": ["src/routeTree.gen.ts"],
+}

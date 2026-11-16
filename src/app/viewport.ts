@@ -23,7 +23,8 @@ export function trackToolbarOverlap(): void {
   const update = () => {
     // Mid-bounce past the top (a negative scroll) the sizes are transient.
     if (window.scrollY < 0) return
-    const overlap = window.scrollY === 0 ? Math.max(0, Math.round(window.innerHeight - root.clientHeight)) : 0
+    const overlap =
+      window.scrollY === 0 ? Math.max(0, Math.round(window.innerHeight - root.clientHeight)) : 0
     if (overlap === current) return
     current = overlap
     root.style.setProperty('--qv-toolbar-overlap', `${overlap}px`)

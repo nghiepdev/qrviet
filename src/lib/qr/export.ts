@@ -18,7 +18,9 @@ let fontsReady: Promise<unknown> | null = null
 export function ensureExportFonts(): Promise<unknown> {
   if (typeof document === 'undefined' || !('fonts' in document)) return Promise.resolve()
   fontsReady ??= Promise.all(
-    [400, 500, 600, 700, 800].map((w) => document.fonts.load(`${w} 16px "Be Vietnam Pro"`, 'Việt Nam ₫ 0123')),
+    [400, 500, 600, 700, 800].map((w) =>
+      document.fonts.load(`${w} 16px "Be Vietnam Pro"`, 'Việt Nam ₫ 0123'),
+    ),
   ).catch(() => undefined)
   return fontsReady
 }
@@ -68,7 +70,11 @@ export async function renderSceneToCanvas(scene: Scene, scale = 2): Promise<HTML
 
 export type RasterType = 'image/png' | 'image/jpeg' | 'image/webp'
 
-export function canvasToBlob(canvas: HTMLCanvasElement, type: RasterType = 'image/png', quality = 0.95): Promise<Blob> {
+export function canvasToBlob(
+  canvas: HTMLCanvasElement,
+  type: RasterType = 'image/png',
+  quality = 0.95,
+): Promise<Blob> {
   return new Promise((resolve, reject) => {
     if (type === 'image/jpeg') {
       // JPEG has no alpha: flatten onto white first.
@@ -96,7 +102,10 @@ function toDataUrl(src: string): Promise<string> {
         (blob) =>
           new Promise<string>((resolve, reject) => {
             const reader = new FileReader()
-            reader.onload = () => resolve(String(reader.result))
+            reader.onload = () =>
+              typeof reader.result === 'string'
+                ? resolve(reader.result)
+                : reject(new Error('Image encoding failed'))
             reader.onerror = () => reject(reader.error)
             reader.readAsDataURL(blob)
           }),
@@ -112,17 +121,28 @@ function toDataUrl(src: string): Promise<string> {
  * inside <img> data URLs (print, HTML embeds), which cannot load external files.
  */
 export async function sceneToStandaloneSvg(scene: Scene): Promise<string> {
-  const inlined: Scene = {...scene, nodes: await Promise.all(scene.nodes.map(async (node) => {
-    try {
-      if (node.t === 'image') return {...node, src: await toDataUrl(node.src)}
-      if (node.t === 'qr' && node.opts.logo?.src) {
-        return {...node, opts: {...node.opts, logo: {...node.opts.logo, src: await toDataUrl(node.opts.logo.src)}}}
-      }
-    } catch {
-      /* keep original reference */
-    }
-    return node
-  }))}
+  const inlined: Scene = {
+    ...scene,
+    nodes: await Promise.all(
+      scene.nodes.map(async (node) => {
+        try {
+          if (node.t === 'image') return {...node, src: await toDataUrl(node.src)}
+          if (node.t === 'qr' && node.opts.logo?.src) {
+            return {
+              ...node,
+              opts: {
+                ...node.opts,
+                logo: {...node.opts.logo, src: await toDataUrl(node.opts.logo.src)},
+              },
+            }
+          }
+        } catch {
+          /* keep original reference */
+        }
+        return node
+      }),
+    ),
+  }
   return `<?xml version="1.0" encoding="UTF-8"?>\n${sceneToSvg(inlined, {idPrefix: 'qrviet'})}`
 }
 
@@ -175,7 +195,11 @@ export function canShareFiles(): boolean {
   }
 }
 
-export async function shareFile(file: File, text?: string, title?: string): Promise<'shared' | 'cancelled'> {
+export async function shareFile(
+  file: File,
+  text?: string,
+  title?: string,
+): Promise<'shared' | 'cancelled'> {
   try {
     await navigator.share({files: [file], text, title})
     return 'shared'
@@ -185,7 +209,11 @@ export async function shareFile(file: File, text?: string, title?: string): Prom
   }
 }
 
-export async function shareLink(url: string, text?: string, title?: string): Promise<'shared' | 'cancelled' | 'unsupported'> {
+export async function shareLink(
+  url: string,
+  text?: string,
+  title?: string,
+): Promise<'shared' | 'cancelled' | 'unsupported'> {
   if (typeof navigator.share !== 'function') return 'unsupported'
   try {
     await navigator.share({url, text, title})
@@ -210,14 +238,18 @@ export interface PrintOptions {
 /** Print SVG markup through a hidden iframe (works inside installed PWAs). */
 export function printSvgs(svgs: string[], opts: PrintOptions = {}): Promise<void> {
   const {page = 'A4', columns = 1, gapMm = 6, marginMm = 10, itemWidthMm, title = 'QRViet'} = opts
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const iframe = document.createElement('iframe')
     iframe.setAttribute('aria-hidden', 'true')
-    iframe.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden'
+    iframe.style.cssText =
+      'position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden'
     document.body.appendChild(iframe)
     const doc = iframe.contentDocument!
     const items = svgs
-      .map((svg) => `<div class="item"><img src="data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}" alt=""/></div>`)
+      .map(
+        (svg) =>
+          `<div class="item"><img src="data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}" alt=""/></div>`,
+      )
       .join('')
     doc.open()
     doc.write(`<!doctype html><html><head><meta charset="utf-8"><title>${title}</title><style>
@@ -229,7 +261,11 @@ export function printSvgs(svgs: string[], opts: PrintOptions = {}): Promise<void
     </style></head><body><div class="grid">${items}</div></body></html>`)
     doc.close()
     const images = Array.from(doc.images)
-    Promise.all(images.map((img) => (img.complete ? Promise.resolve() : new Promise((r) => (img.onload = img.onerror = r)))))
+    Promise.all(
+      images.map((img) =>
+        img.complete ? Promise.resolve() : new Promise((r) => (img.onload = img.onerror = r)),
+      ),
+    )
       .then(() => ensureExportFonts())
       .then(() => {
         const win = iframe.contentWindow!
@@ -242,6 +278,10 @@ export function printSvgs(svgs: string[], opts: PrintOptions = {}): Promise<void
         win.print()
         // Some browsers don't fire afterprint on the iframe.
         setTimeout(cleanup, 60_000)
+      })
+      .catch((error: unknown) => {
+        iframe.remove()
+        reject(error)
       })
   })
 }

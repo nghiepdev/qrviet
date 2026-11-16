@@ -46,4 +46,5 @@ export const FONTS: Record<FontId, FontOption> = {
 }
 
 export const FONT_IDS = Object.keys(FONTS) as FontId[]
-export const MONO_STACK = 'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace'
+export const MONO_STACK =
+  'ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace'

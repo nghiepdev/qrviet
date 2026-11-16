@@ -10,10 +10,20 @@ import {cycleMode, updateSettings, settingsStore} from '#/stores/settings'
 import {useAccounts, type SavedAccount} from '#/stores/accounts'
 import {foldForSearch} from '#/lib/text'
 
-type Cmd = SearchableItem<{group: string; hint?: string; icon?: React.ReactNode; keywords: string; run: () => void}>
+type Cmd = SearchableItem<{
+  group: string
+  hint?: string
+  icon?: React.ReactNode
+  keywords: string
+  run: () => void
+}>
 
 /** Pages, quick actions, saved accounts and banks, as palette items. */
-function commandItems(t: TFunction, navigate: ReturnType<typeof useNavigate>, accounts: SavedAccount[]): Cmd[] {
+function commandItems(
+  t: TFunction,
+  navigate: ReturnType<typeof useNavigate>,
+  accounts: SavedAccount[],
+): Cmd[] {
   const pages: Cmd[] = NAV_ITEMS.map((item) => {
     const Icon = item.icon
     return {
@@ -31,7 +41,13 @@ function commandItems(t: TFunction, navigate: ReturnType<typeof useNavigate>, ac
     {
       id: 'action:mode',
       label: t('cmd.toggleMode'),
-      auxiliaryData: {group: t('cmd.actions'), icon: <Moon size={16} aria-hidden />, hint: 'Shift+D', keywords: 'dark light toi sang mode', run: () => cycleMode()},
+      auxiliaryData: {
+        group: t('cmd.actions'),
+        icon: <Moon size={16} aria-hidden />,
+        hint: 'Shift+D',
+        keywords: 'dark light toi sang mode',
+        run: () => cycleMode(),
+      },
     },
     {
       id: 'action:lang',
@@ -66,7 +82,11 @@ function commandItems(t: TFunction, navigate: ReturnType<typeof useNavigate>, ac
       auxiliaryData: {
         group: t('cmd.banks'),
         hint: `${b.bin} · ${b.code}`,
-        icon: logo ? <img src={logo} alt="" className="h-4 w-10 object-contain" /> : <Landmark size={16} aria-hidden />,
+        icon: logo ? (
+          <img src={logo} alt="" className="h-4 w-10 object-contain" />
+        ) : (
+          <Landmark size={16} aria-hidden />
+        ),
         keywords: `${b.shortName} ${b.name} ${b.code} ${b.bin}`,
         run: () => void navigate({to: '/', search: {bank: b.bin}}),
       },
@@ -77,19 +97,30 @@ function commandItems(t: TFunction, navigate: ReturnType<typeof useNavigate>, ac
 
 /** Accent-insensitive token search; banks only appear once the user types. */
 function searchSourceFor(items: Cmd[]): SearchSource<Cmd> {
-  const index = items.map((i) => [i, foldForSearch(`${i.label} ${i.auxiliaryData?.keywords ?? ''}`)] as const)
+  const index = items.map(
+    (i) => [i, foldForSearch(`${i.label} ${i.auxiliaryData?.keywords ?? ''}`)] as const,
+  )
   return {
     bootstrap: () => items.filter((i) => !i.id.startsWith('bank:')),
     search: (query) => {
       const q = foldForSearch(query)
       if (!q) return items.filter((i) => !i.id.startsWith('bank:'))
       const tokens = q.split(' ')
-      return index.filter(([, hay]) => tokens.every((tok) => hay.includes(tok))).map(([i]) => i).slice(0, 40)
+      return index
+        .filter(([, hay]) => tokens.every((tok) => hay.includes(tok)))
+        .map(([i]) => i)
+        .slice(0, 40)
     },
   }
 }
 
-export function CommandMenu({isOpen, onOpenChange}: {isOpen: boolean; onOpenChange: (open: boolean) => void}) {
+export function CommandMenu({
+  isOpen,
+  onOpenChange,
+}: {
+  isOpen: boolean
+  onOpenChange: (open: boolean) => void
+}) {
   const t = useT()
   const navigate = useNavigate()
   const accounts = useAccounts()
@@ -111,12 +142,16 @@ export function CommandMenu({isOpen, onOpenChange}: {isOpen: boolean; onOpenChan
       }}
       renderItem={(item: Cmd) => (
         <span className="flex items-center gap-3 w-full min-w-0">
-          <span className="text-secondary shrink-0 grid place-items-center w-10">{item.auxiliaryData?.icon}</span>
+          <span className="text-secondary shrink-0 grid place-items-center w-10">
+            {item.auxiliaryData?.icon}
+          </span>
           <Text type="body" maxLines={1}>
             {item.label}
           </Text>
           {item.auxiliaryData?.hint && (
-            <span className="ml-auto text-xs text-secondary qv-mono truncate">{item.auxiliaryData.hint}</span>
+            <span className="ml-auto text-xs text-secondary qv-mono truncate">
+              {item.auxiliaryData.hint}
+            </span>
           )}
         </span>
       )}

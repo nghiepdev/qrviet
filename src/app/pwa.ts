@@ -13,7 +13,11 @@ interface PwaState {
   iosGuideOpen: boolean
 }
 
-export const pwaStore = createStore<PwaState>({installEvent: null, installed: false, iosGuideOpen: false})
+export const pwaStore = createStore<PwaState>({
+  installEvent: null,
+  installed: false,
+  iosGuideOpen: false,
+})
 
 export function isStandalone(): boolean {
   if (typeof window === 'undefined') return false
@@ -26,7 +30,10 @@ export function isStandalone(): boolean {
 
 export function isIos(): boolean {
   if (typeof navigator === 'undefined') return false
-  return /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+  return (
+    /iphone|ipad|ipod/i.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+  )
 }
 
 /** Call once at startup, before React renders, so the event is never missed. */
@@ -63,7 +70,8 @@ export function preloadIosInstallGuideVideo(): Promise<void> {
     video.playsInline = true
     video.preload = 'auto'
     video.setAttribute('aria-hidden', 'true')
-    video.style.cssText = 'position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;left:-9999px;top:0'
+    video.style.cssText =
+      'position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;left:-9999px;top:0'
 
     let settled = false
     const finish = (loaded: boolean) => {

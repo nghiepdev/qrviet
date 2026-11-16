@@ -79,7 +79,15 @@ function CrcBadge({valid, present}: {valid: boolean; present: boolean}) {
   )
 }
 
-export function VietQrResult({parsed, onRemove, compact}: {parsed: ParsedVietQr; onRemove?: () => void; compact?: boolean}) {
+export function VietQrResult({
+  parsed,
+  onRemove,
+  compact,
+}: {
+  parsed: ParsedVietQr
+  onRemove?: () => void
+  compact?: boolean
+}) {
   const t = useT()
   const locale = useLocale()
   const navigate = useNavigate()
@@ -109,7 +117,13 @@ export function VietQrResult({parsed, onRemove, compact}: {parsed: ParsedVietQr;
       showToast({body: t('acc.duplicate'), uniqueID: 'scan-save'})
       return
     }
-    saveAccount({bin: parsed.bin, accountNumber: parsed.accountNumber, accountName: parsed.merchantName, nickname: '', service: parsed.service === 'card' ? 'card' : 'account'})
+    saveAccount({
+      bin: parsed.bin,
+      accountNumber: parsed.accountNumber,
+      accountName: parsed.merchantName,
+      nickname: '',
+      service: parsed.service === 'card' ? 'card' : 'account',
+    })
     showToast({body: t('gen.accountSaved'), uniqueID: 'scan-save'})
   }
 
@@ -125,27 +139,76 @@ export function VietQrResult({parsed, onRemove, compact}: {parsed: ParsedVietQr;
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-1.5">
             <span className="font-bold">{t('scan.vietqr')}</span>
-            <Badge variant={parsed.initiation === 'dynamic' ? 'blue' : 'neutral'} label={parsed.initiation === 'dynamic' ? t('scan.dynamic') : t('scan.static')} />
+            <Badge
+              variant={parsed.initiation === 'dynamic' ? 'blue' : 'neutral'}
+              label={parsed.initiation === 'dynamic' ? t('scan.dynamic') : t('scan.static')}
+            />
             <CrcBadge valid={parsed.crc.valid} present={parsed.crc.present} />
           </div>
-          <div className="text-sm text-secondary truncate">{bank ? `${bank.shortName} · ${bank.name}` : t('scan.unknownBank', {bin: parsed.bin})}</div>
+          <div className="text-sm text-secondary truncate">
+            {bank ? `${bank.shortName} · ${bank.name}` : t('scan.unknownBank', {bin: parsed.bin})}
+          </div>
         </div>
-        {onRemove && <IconButton label={t('common.delete')} icon={<Trash2 size={16} />} variant="ghost" size="sm" onClick={onRemove} />}
+        {onRemove && (
+          <IconButton
+            label={t('common.delete')}
+            icon={<Trash2 size={16} />}
+            variant="ghost"
+            size="sm"
+            onClick={onRemove}
+          />
+        )}
       </div>
       <div>
-        <CopyField label={parsed.service === 'card' ? t('gen.card') : t('gen.account')} value={parsed.accountNumber} mono />
-        {parsed.merchantName && <CopyField label={t('gen.accountName')} value={parsed.merchantName} />}
-        {amount > 0 && <CopyField label={`${t('gen.amount')} · ${amountToWords(amount, locale)}`} value={parsed.amount} display={formatVnd(amount, true)} emphasize />}
+        <CopyField
+          label={parsed.service === 'card' ? t('gen.card') : t('gen.account')}
+          value={parsed.accountNumber}
+          mono
+        />
+        {parsed.merchantName && (
+          <CopyField label={t('gen.accountName')} value={parsed.merchantName} />
+        )}
+        {amount > 0 && (
+          <CopyField
+            label={`${t('gen.amount')} · ${amountToWords(amount, locale)}`}
+            value={parsed.amount}
+            display={formatVnd(amount, true)}
+            emphasize
+          />
+        )}
         {parsed.purpose && <CopyField label={t('gen.purpose')} value={parsed.purpose} />}
         {parsed.billNumber && <CopyField label={t('gen.billNumber')} value={parsed.billNumber} />}
-        {parsed.referenceLabel && <CopyField label={t('gen.reference')} value={parsed.referenceLabel} />}
+        {parsed.referenceLabel && (
+          <CopyField label={t('gen.reference')} value={parsed.referenceLabel} />
+        )}
       </div>
       {!compact && (
         <div className="flex flex-wrap gap-2">
-          <Button label={t('scan.openBankApp')} icon={<Smartphone size={16} />} variant="primary" size="sm" onClick={openLauncher} />
-          <Button label={t('scan.reissue')} icon={<PencilLine size={16} />} size="sm" onClick={reissue} />
-          <Button label={t('scan.saveAccount')} icon={<BookmarkPlus size={16} />} size="sm" onClick={save} />
-          <Button label={t('gen.copyPayload')} size="sm" variant="ghost" onClick={() => void copy(parsed.raw)} />
+          <Button
+            label={t('scan.openBankApp')}
+            icon={<Smartphone size={16} />}
+            variant="primary"
+            size="sm"
+            onClick={openLauncher}
+          />
+          <Button
+            label={t('scan.reissue')}
+            icon={<PencilLine size={16} />}
+            size="sm"
+            onClick={reissue}
+          />
+          <Button
+            label={t('scan.saveAccount')}
+            icon={<BookmarkPlus size={16} />}
+            size="sm"
+            onClick={save}
+          />
+          <Button
+            label={t('gen.copyPayload')}
+            size="sm"
+            variant="ghost"
+            onClick={() => void copy(parsed.raw)}
+          />
         </div>
       )}
       <Collapsible trigger={<span className="text-sm font-semibold">{t('scan.rawFields')}</span>}>
@@ -160,7 +223,8 @@ export function VietQrResult({parsed, onRemove, compact}: {parsed: ParsedVietQr;
           onOpenChange={setLauncherOpen}
           title={t('pay.openAppTitle')}
           subtitle={t('pay.openAppSubtitle')}
-          width={520}>
+          width={520}
+        >
           <BankAppLauncher
             framed={false}
             payment={{
@@ -179,25 +243,51 @@ export function VietQrResult({parsed, onRemove, compact}: {parsed: ParsedVietQr;
   )
 }
 
-function GenericResult({classified, raw, onRemove}: {classified: Classified; raw: string; onRemove?: () => void}) {
+function GenericResult({
+  classified,
+  raw,
+  onRemove,
+}: {
+  classified: Classified
+  raw: string
+  onRemove?: () => void
+}) {
   const t = useT()
   const copy = useCopy()
-  const type = classified.type === 'emv' || classified.type === 'emv-invalid' ? 'text' : classified.type
+  const type =
+    classified.type === 'emv' || classified.type === 'emv-invalid' ? 'text' : classified.type
   const Icon = TYPE_ICON[type] ?? FileText
   const title: string =
-    classified.type === 'emv' ? t('scan.emv') : classified.type === 'emv-invalid' ? t('scan.emvInvalid') : t(`scan.type.${classified.type}` as MessageKey)
+    classified.type === 'emv'
+      ? t('scan.emv')
+      : classified.type === 'emv-invalid'
+        ? t('scan.emvInvalid')
+        : t(`scan.type.${classified.type}` as MessageKey)
 
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center gap-3">
-        <span className="grid place-items-center size-10 rounded-lg bg-accent-muted text-accent shrink-0" aria-hidden>
+        <span
+          className="grid place-items-center size-10 rounded-lg bg-accent-muted text-accent shrink-0"
+          aria-hidden
+        >
           <Icon size={20} />
         </span>
         <div className="min-w-0 flex-1">
           <div className="font-bold">{title}</div>
-          {classified.type === 'emv' && <CrcBadge valid={classified.emv.crc.valid} present={classified.emv.crc.present} />}
+          {classified.type === 'emv' && (
+            <CrcBadge valid={classified.emv.crc.valid} present={classified.emv.crc.present} />
+          )}
         </div>
-        {onRemove && <IconButton label={t('common.delete')} icon={<Trash2 size={16} />} variant="ghost" size="sm" onClick={onRemove} />}
+        {onRemove && (
+          <IconButton
+            label={t('common.delete')}
+            icon={<Trash2 size={16} />}
+            variant="ghost"
+            size="sm"
+            onClick={onRemove}
+          />
+        )}
       </div>
 
       {classified.type === 'url' && (
@@ -207,7 +297,15 @@ function GenericResult({classified, raw, onRemove}: {classified: Classified; raw
             <ShieldAlert size={13} aria-hidden /> {t('scan.unsafeLink')}
           </p>
           <div>
-            <Button label={t('scan.openLink')} icon={<ExternalLink size={16} />} variant="primary" size="sm" href={classified.url} target="_blank" rel="noopener noreferrer" />
+            <Button
+              label={t('scan.openLink')}
+              icon={<ExternalLink size={16} />}
+              variant="primary"
+              size="sm"
+              href={classified.url}
+              target="_blank"
+              rel="noopener noreferrer"
+            />
           </div>
         </>
       )}
@@ -215,7 +313,12 @@ function GenericResult({classified, raw, onRemove}: {classified: Classified; raw
         <div>
           <CopyField label={t('scan.network')} value={classified.wifi.ssid} />
           <CopyField label={t('scan.password')} value={classified.wifi.password} mono />
-          <CopyField label={t('scan.security')} value={classified.wifi.security === 'nopass' ? t('qr.wifi.none') : classified.wifi.security} />
+          <CopyField
+            label={t('scan.security')}
+            value={
+              classified.wifi.security === 'nopass' ? t('qr.wifi.none') : classified.wifi.security
+            }
+          />
           {classified.wifi.hidden && <Badge variant="neutral" label={t('scan.hidden')} />}
         </div>
       )}
@@ -223,7 +326,13 @@ function GenericResult({classified, raw, onRemove}: {classified: Classified; raw
         <>
           <div>
             {classified.fields.map(([k, v], i) => (
-              <CopyField key={`${k}-${i}`} label={t(`qr.vcard.${k === 'name' ? 'firstName' : k === 'phone' ? 'mobile' : k}` as MessageKey)} value={v} />
+              <CopyField
+                key={`${k}-${i}`}
+                label={t(
+                  `qr.vcard.${k === 'name' ? 'firstName' : k === 'phone' ? 'mobile' : k}` as MessageKey,
+                )}
+                value={v}
+              />
             ))}
           </div>
           <div>
@@ -234,7 +343,9 @@ function GenericResult({classified, raw, onRemove}: {classified: Classified; raw
               variant="primary"
               onClick={() =>
                 downloadText(
-                  /^BEGIN:VCARD/i.test(raw.trim()) ? raw : contactToVCard(classified.fields, classified.name),
+                  /^BEGIN:VCARD/i.test(raw.trim())
+                    ? raw
+                    : contactToVCard(classified.fields, classified.name),
                   `${classified.name || 'contact'}.vcf`,
                   'text/vcard;charset=utf-8',
                 )
@@ -249,7 +360,13 @@ function GenericResult({classified, raw, onRemove}: {classified: Classified; raw
           <CopyField label={t('qr.email.subject')} value={classified.subject} />
           <CopyField label={t('qr.email.body')} value={classified.body} />
           <div>
-            <Button label={t('scan.sendEmail')} icon={<Mail size={16} />} size="sm" variant="primary" href={`mailto:${classified.to}?subject=${encodeURIComponent(classified.subject)}&body=${encodeURIComponent(classified.body)}`} />
+            <Button
+              label={t('scan.sendEmail')}
+              icon={<Mail size={16} />}
+              size="sm"
+              variant="primary"
+              href={`mailto:${classified.to}?subject=${encodeURIComponent(classified.subject)}&body=${encodeURIComponent(classified.body)}`}
+            />
           </div>
         </>
       )}
@@ -257,7 +374,13 @@ function GenericResult({classified, raw, onRemove}: {classified: Classified; raw
         <>
           <CopyField label={t('qr.phone')} value={classified.phone} mono />
           <div>
-            <Button label={t('scan.call')} icon={<Phone size={16} />} size="sm" variant="primary" href={`tel:${classified.phone}`} />
+            <Button
+              label={t('scan.call')}
+              icon={<Phone size={16} />}
+              size="sm"
+              variant="primary"
+              href={`tel:${classified.phone}`}
+            />
           </div>
         </>
       )}
@@ -266,13 +389,23 @@ function GenericResult({classified, raw, onRemove}: {classified: Classified; raw
           <CopyField label={t('qr.sms.phone')} value={classified.phone} mono />
           <CopyField label={t('qr.sms.message')} value={classified.message} />
           <div>
-            <Button label={t('scan.sendSms')} icon={<MessageSquare size={16} />} size="sm" variant="primary" href={`sms:${classified.phone}?body=${encodeURIComponent(classified.message)}`} />
+            <Button
+              label={t('scan.sendSms')}
+              icon={<MessageSquare size={16} />}
+              size="sm"
+              variant="primary"
+              href={`sms:${classified.phone}?body=${encodeURIComponent(classified.message)}`}
+            />
           </div>
         </>
       )}
       {classified.type === 'geo' && (
         <>
-          <CopyField label={`${t('qr.geo.lat')}, ${t('qr.geo.lng')}`} value={`${classified.lat},${classified.lng}`} mono />
+          <CopyField
+            label={`${t('qr.geo.lat')}, ${t('qr.geo.lng')}`}
+            value={`${classified.lat},${classified.lng}`}
+            mono
+          />
           {classified.query && <CopyField label={t('qr.geo.label')} value={classified.query} />}
           <div>
             <Button
@@ -291,7 +424,19 @@ function GenericResult({classified, raw, onRemove}: {classified: Classified; raw
         <div>
           {classified.title && <CopyField label={t('qr.event.title')} value={classified.title} />}
           {classified.fields.map(([k, v], i) => (
-            <CopyField key={`${k}-${i}`} label={t(k === 'start' ? 'qr.event.start' : k === 'end' ? 'qr.event.end' : k === 'location' ? 'qr.event.location' : 'qr.event.description')} value={v} />
+            <CopyField
+              key={`${k}-${i}`}
+              label={t(
+                k === 'start'
+                  ? 'qr.event.start'
+                  : k === 'end'
+                    ? 'qr.event.end'
+                    : k === 'location'
+                      ? 'qr.event.location'
+                      : 'qr.event.description',
+              )}
+              value={v}
+            />
           ))}
         </div>
       )}
@@ -308,9 +453,13 @@ function GenericResult({classified, raw, onRemove}: {classified: Classified; raw
         </>
       )}
       {(classified.type === 'text' || classified.type === 'emv-invalid') && (
-        <div className="rounded-md bg-muted p-3 text-sm whitespace-pre-wrap wrap-break-word max-h-64 overflow-auto">{raw}</div>
+        <div className="rounded-md bg-muted p-3 text-sm whitespace-pre-wrap wrap-break-word max-h-64 overflow-auto">
+          {raw}
+        </div>
       )}
-      {classified.type === 'emv-invalid' && <p className="text-xs text-error">{classified.error}</p>}
+      {classified.type === 'emv-invalid' && (
+        <p className="text-xs text-error">{classified.error}</p>
+      )}
       <div>
         <Button label={t('common.copy')} size="sm" variant="ghost" onClick={() => void copy(raw)} />
       </div>

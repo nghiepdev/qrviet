@@ -46,7 +46,12 @@ export async function preferredEngine(): Promise<ScanEngine> {
 
 const work = typeof document !== 'undefined' ? document.createElement('canvas') : null
 
-function toImageData(source: CanvasImageSource, width: number, height: number, maxSide = 1280): ImageData | null {
+function toImageData(
+  source: CanvasImageSource,
+  width: number,
+  height: number,
+  maxSide = 1280,
+): ImageData | null {
   if (!work) return null
   const scale = Math.min(1, maxSide / Math.max(width, height))
   work.width = Math.max(1, Math.round(width * scale))
@@ -80,7 +85,9 @@ export async function decodeSource(
   for (const max of sizes) {
     const data = toImageData(source, width, height, max)
     if (!data) return []
-    const res = jsQR(data.data, data.width, data.height, {inversionAttempts: opts.thorough ? 'attemptBoth' : 'dontInvert'})
+    const res = jsQR(data.data, data.width, data.height, {
+      inversionAttempts: opts.thorough ? 'attemptBoth' : 'dontInvert',
+    })
     if (res?.data) return [res.data]
   }
   return []

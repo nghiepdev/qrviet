@@ -2,7 +2,8 @@
 export const vi = {
   // App / brand
   'app.name': 'QRViet',
-  'app.tagline': 'Tiện ích VietQR miễn phí — tạo, quét, link thanh toán & Deeplink mở app ngân hàng. Chạy cả offline.',
+  'app.tagline':
+    'Tiện ích VietQR miễn phí — tạo, quét, link thanh toán & Deeplink mở app ngân hàng. Chạy cả offline.',
   'app.loading': 'Đang chuẩn bị…',
   'app.offline': 'Ngoại tuyến',
   'app.offlineHint': 'Bạn đang offline — mọi tính năng vẫn hoạt động.',
@@ -120,7 +121,8 @@ export const vi = {
   'bank.createWith': 'Tạo QR với ngân hàng này',
   'bank.count': '{count} ngân hàng & ví',
   'bank.directoryTitle': 'Danh bạ ngân hàng',
-  'bank.directorySubtitle': 'Mã BIN, mã ngân hàng, SWIFT và hỗ trợ Deeplink mở app của {count} ngân hàng & ví hỗ trợ VietQR.',
+  'bank.directorySubtitle':
+    'Mã BIN, mã ngân hàng, SWIFT và hỗ trợ Deeplink mở app của {count} ngân hàng & ví hỗ trợ VietQR.',
   'bank.filterNapas': 'Chỉ Napas 247',
   'bank.filterAll': 'Tất cả',
   'bank.filterDeeplink': 'Deeplink',
@@ -130,13 +132,15 @@ export const vi = {
   'bank.tagQrPay': 'Deeplink · QR Pay',
   'bank.tagQrPayShort': 'Deeplink · QR',
   'bank.tagOpenApp': 'Deeplink',
-  'bank.tagLegend': 'Deeplink · Tự điền: mở app & điền sẵn STK, số tiền, nội dung • Deeplink · QR Pay: mở app kèm mã QR (tuỳ app hỗ trợ) • Deeplink: chỉ mở nhanh app & sao chép STK',
+  'bank.tagLegend':
+    'Deeplink · Tự điền: mở app & điền sẵn STK, số tiền, nội dung • Deeplink · QR Pay: mở app kèm mã QR (tuỳ app hỗ trợ) • Deeplink: chỉ mở nhanh app & sao chép STK',
   'bank.copyBin': 'Sao chép BIN',
 
   // Generator
   'gen.title': 'Tạo mã VietQR',
   'gen.formTitle': 'Thông tin nhận tiền',
-  'gen.subtitle': 'Mã chuyển khoản chuẩn NAPAS 247 — quét bằng mọi app ngân hàng & ví, hỗ trợ link thanh toán kèm Deeplink mở app.',
+  'gen.subtitle':
+    'Mã chuyển khoản chuẩn NAPAS 247 — quét bằng mọi app ngân hàng & ví, hỗ trợ link thanh toán kèm Deeplink mở app.',
   'gen.account': 'Số tài khoản',
   'gen.card': 'Số thẻ',
   'gen.accountPlaceholder': 'VD: 0123456789',
@@ -160,7 +164,8 @@ export const vi = {
   'gen.merchantCity': 'Thành phố (thẻ 60)',
   'gen.initiation': 'Loại mã',
   'gen.initiationAuto': 'Tự động',
-  'gen.initiationAutoHint': 'Có số tiền, mã hoá đơn hoặc mã tham chiếu thì tạo mã động, không thì mã tĩnh.',
+  'gen.initiationAutoHint':
+    'Có số tiền, mã hoá đơn hoặc mã tham chiếu thì tạo mã động, không thì mã tĩnh.',
   'gen.initiationStatic': 'Mã tĩnh',
   'gen.initiationStaticHint': 'Dùng lại được nhiều lần, người chuyển tự nhập số tiền.',
   'gen.initiationDynamic': 'Mã động',
@@ -264,7 +269,8 @@ export const vi = {
 
   // Scanner
   'scan.title': 'Quét & giải mã QR',
-  'scan.subtitle': 'Quét bằng camera, tải ảnh, dán ảnh (Ctrl/⌘+V) hoặc kéo-thả. Hỗ trợ Deeplink mở app ngân hàng; mọi xử lý diễn ra trên máy bạn.',
+  'scan.subtitle':
+    'Quét bằng camera, tải ảnh, dán ảnh (Ctrl/⌘+V) hoặc kéo-thả. Hỗ trợ Deeplink mở app ngân hàng; mọi xử lý diễn ra trên máy bạn.',
   'scan.camera': 'Camera',
   'scan.image': 'Ảnh',
   'scan.text': 'Dán chuỗi',
@@ -275,7 +281,8 @@ export const vi = {
   'scan.uploadImage': 'Tải ảnh lên',
   'scan.paste': 'Dán',
   'scan.pasteEmpty': 'Khay nhớ tạm không có ảnh hoặc nội dung',
-  'scan.pastePermission': 'Không đọc được khay nhớ tạm. Hãy cho phép quyền dán hoặc dùng tab Dán chuỗi.',
+  'scan.pastePermission':
+    'Không đọc được khay nhớ tạm. Hãy cho phép quyền dán hoặc dùng tab Dán chuỗi.',
   'scan.continuous': 'Quét liên tục',
   'scan.pick': 'Chọn ảnh có mã QR',
   'scan.drop': 'Thả ảnh vào đây',
@@ -399,7 +406,8 @@ export const vi = {
   'pay.invalidBody': 'Link thiếu thông tin ngân hàng hoặc số tài khoản.',
   'pay.makeOwn': 'Tạo link của bạn',
   'pay.builderTitle': 'Tạo link thanh toán',
-  'pay.builderSubtitle': 'Chia sẻ một đường link — người nhận mở ra là có mã QR, nút Deeplink mở app ngân hàng và sao chép nhanh. Dữ liệu nằm trong link (#), không qua máy chủ.',
+  'pay.builderSubtitle':
+    'Chia sẻ một đường link — người nhận mở ra là có mã QR, nút Deeplink mở app ngân hàng và sao chép nhanh. Dữ liệu nằm trong link (#), không qua máy chủ.',
   'pay.expires': 'Hết hạn',
   'pay.expired': 'Link đã hết hạn',
   'pay.expiresIn': 'Còn {time}',
@@ -416,10 +424,12 @@ export const vi = {
   'pay.open': 'Mở trang thanh toán',
   'pay.done': 'Xong',
   'pay.preview': 'Hiện tên và số tiền trong ô xem trước',
-  'pay.previewHint': 'Zalo, Facebook… sẽ hiện ngân hàng, tên và số tiền khi bạn gửi link. Ba thông tin này đi kèm link tới máy chủ của trang; số tài khoản và nội dung thì không.',
+  'pay.previewHint':
+    'Zalo, Facebook… sẽ hiện ngân hàng, tên và số tiền khi bạn gửi link. Ba thông tin này đi kèm link tới máy chủ của trang; số tài khoản và nội dung thì không.',
   'pay.secure': 'Trang này không lưu và không gửi dữ liệu của bạn đi đâu.',
   'pay.openAppTitle': 'Deeplink mở app ngân hàng',
-  'pay.openAppSubtitle': 'Mở app ngân hàng qua Deeplink để chuyển khoản — chạy 100% offline trên máy, không qua trung gian.',
+  'pay.openAppSubtitle':
+    'Mở app ngân hàng qua Deeplink để chuyển khoản — chạy 100% offline trên máy, không qua trung gian.',
   'pay.selectApp': 'Chọn app của bạn',
   'pay.otherApp': 'Ngân hàng khác',
   'pay.openButton': 'Mở {bank}',
@@ -434,9 +444,11 @@ export const vi = {
   'pay.openStore': 'Mở {store}',
   'pay.storeIos': 'App Store',
   'pay.storeAndroid': 'Google Play',
-  'pay.desktopHint': 'Deeplink mở trực tiếp app ngân hàng chỉ hoạt động trên điện thoại (iOS/Android). Trên máy tính, hãy quét mã QR bằng điện thoại.',
+  'pay.desktopHint':
+    'Deeplink mở trực tiếp app ngân hàng chỉ hoạt động trên điện thoại (iOS/Android). Trên máy tính, hãy quét mã QR bằng điện thoại.',
   'pay.iabTitle': 'Đang mở trong {app}',
-  'pay.iabBody': 'Trình duyệt tích hợp thường chặn Deeplink mở app ngân hàng. Hãy chọn “Mở bằng Safari / Chrome” hoặc sao chép link bên dưới.',
+  'pay.iabBody':
+    'Trình duyệt tích hợp thường chặn Deeplink mở app ngân hàng. Hãy chọn “Mở bằng Safari / Chrome” hoặc sao chép link bên dưới.',
   'pay.iabCopyLink': 'Sao chép link',
   'pay.modeConfirmed': 'Mở app và tự điền sẵn STK, số tiền, nội dung chuyển khoản (iOS & Android).',
   'pay.modeQrPay': 'Mở app kèm mã VietQR (tuỳ app hỗ trợ nhận QR) & tự sao chép STK.',
@@ -445,10 +457,12 @@ export const vi = {
 
   // Batch
   'batch.title': 'Tạo hàng loạt',
-  'batch.subtitle': 'Dán danh sách từ Excel/CSV để tạo nhiều mã cùng lúc — tải ZIP hoặc in tem nhãn A4.',
+  'batch.subtitle':
+    'Dán danh sách từ Excel/CSV để tạo nhiều mã cùng lúc — tải ZIP hoặc in tem nhãn A4.',
   'batch.account': 'Tài khoản nhận',
   'batch.input': 'Danh sách (mỗi dòng: số tiền, nội dung, nhãn)',
-  'batch.inputHint': 'Tự nhận dấu phân cách tab, chấm phẩy hoặc phẩy. Dòng đầu là tiêu đề sẽ được bỏ qua.',
+  'batch.inputHint':
+    'Tự nhận dấu phân cách tab, chấm phẩy hoặc phẩy. Dòng đầu là tiêu đề sẽ được bỏ qua.',
   'batch.sample': 'Dùng dữ liệu mẫu',
   'batch.sequence': 'Sinh tự động',
   'batch.seqPrefix': 'Tiền tố nội dung',
@@ -469,7 +483,8 @@ export const vi = {
 
   // Accounts
   'acc.title': 'Sổ tài khoản',
-  'acc.subtitle': 'Lưu các tài khoản hay dùng để tạo mã chỉ với một chạm. Dữ liệu chỉ nằm trên thiết bị này.',
+  'acc.subtitle':
+    'Lưu các tài khoản hay dùng để tạo mã chỉ với một chạm. Dữ liệu chỉ nằm trên thiết bị này.',
   'acc.add': 'Thêm tài khoản',
   'acc.edit': 'Sửa tài khoản',
   'acc.nickname': 'Tên gợi nhớ',
@@ -569,7 +584,8 @@ export const vi = {
   'set.contentRelaxed': 'Giữ dấu . , - _ /',
   'set.contentStrict': 'Chỉ chữ & số',
   'set.data': 'Dữ liệu',
-  'set.dataBody': 'Mọi dữ liệu nằm trong trình duyệt của bạn. Hãy sao lưu trước khi xoá dữ liệu trình duyệt.',
+  'set.dataBody':
+    'Mọi dữ liệu nằm trong trình duyệt của bạn. Hãy sao lưu trước khi xoá dữ liệu trình duyệt.',
   'set.backup': 'Sao lưu (.json)',
   'set.restore': 'Khôi phục',
   'set.restored': 'Đã khôi phục dữ liệu',
@@ -591,7 +607,8 @@ export const vi = {
   // About
   'about.title': 'Về QRViet',
   // *…* marks the phrases the About page draws attention to (MarkedText).
-  'about.lead': 'QRViet là bộ tiện ích VietQR *mã nguồn mở*, chạy hoàn toàn trên trình duyệt của bạn: *không máy chủ, không theo dõi, không quảng cáo*.',
+  'about.lead':
+    'QRViet là bộ tiện ích VietQR *mã nguồn mở*, chạy hoàn toàn trên trình duyệt của bạn: *không máy chủ, không theo dõi, không quảng cáo*.',
   'about.ctaLink': 'Link & Deeplink',
   'about.features': 'Tính năng nổi bật',
   'about.f1': 'Mã VietQR chuẩn NAPAS 247 cho 70+ ngân hàng & ví',
@@ -619,11 +636,14 @@ export const vi = {
   'about.specCurrency': 'Tiền tệ',
   'about.specChecksum': 'Mã kiểm tra',
   'about.privacy': 'Quyền riêng tư',
-  'about.privacyBody': 'Số tài khoản, lịch sử và cài đặt chỉ được lưu trong trình duyệt (localStorage). QRViet không gửi dữ liệu của bạn tới bất kỳ máy chủ nào.',
-  'about.disclaimer': 'QRViet là dự án độc lập, không liên kết với NAPAS, VietQR hay bất kỳ ngân hàng nào. Tên và logo ngân hàng thuộc về chủ sở hữu tương ứng.',
+  'about.privacyBody':
+    'Số tài khoản, lịch sử và cài đặt chỉ được lưu trong trình duyệt (localStorage). QRViet không gửi dữ liệu của bạn tới bất kỳ máy chủ nào.',
+  'about.disclaimer':
+    'QRViet là dự án độc lập, không liên kết với NAPAS, VietQR hay bất kỳ ngân hàng nào. Tên và logo ngân hàng thuộc về chủ sở hữu tương ứng.',
   'about.credits': 'Xây dựng với',
   'about.standard': 'Chuẩn mã',
-  'about.standardBody': 'EMVCo Merchant-Presented QR + đặc tả VietQR của NAPAS: GUID A000000727, dịch vụ QRIBFTTA/QRIBFTTC, tiền tệ 704, CRC16-CCITT.',
+  'about.standardBody':
+    'EMVCo Merchant-Presented QR + đặc tả VietQR của NAPAS: GUID A000000727, dịch vụ QRIBFTTA/QRIBFTTC, tiền tệ 704, CRC16-CCITT.',
 
   // About → Support
   'support.title': 'Buy me a coffee',
@@ -650,23 +670,30 @@ export const vi = {
   // About → FAQ
   'faq.title': 'Câu hỏi thường gặp',
   'faq.q1': 'VietQR là gì?',
-  'faq.a1': 'VietQR là chuẩn mã QR chuyển khoản liên ngân hàng tại Việt Nam do NAPAS triển khai, dựa trên chuẩn EMVCo. Hầu hết ứng dụng ngân hàng và nhiều ví điện tử đều quét được, tiền được chuyển nhanh 24/7 qua Napas 247.',
+  'faq.a1':
+    'VietQR là chuẩn mã QR chuyển khoản liên ngân hàng tại Việt Nam do NAPAS triển khai, dựa trên chuẩn EMVCo. Hầu hết ứng dụng ngân hàng và nhiều ví điện tử đều quét được, tiền được chuyển nhanh 24/7 qua Napas 247.',
   'faq.q2': 'QRViet có mất phí không?',
   'faq.a2': 'Không. QRViet miễn phí hoàn toàn, không cần đăng ký tài khoản và không có quảng cáo.',
   'faq.q3': 'Thông tin tài khoản của tôi có an toàn không?',
-  'faq.a3': 'Mọi xử lý diễn ra ngay trên trình duyệt của bạn. Sổ tài khoản, lịch sử và cài đặt chỉ lưu trên thiết bị; QRViet không có máy chủ nhận dữ liệu và không theo dõi người dùng.',
+  'faq.a3':
+    'Mọi xử lý diễn ra ngay trên trình duyệt của bạn. Sổ tài khoản, lịch sử và cài đặt chỉ lưu trên thiết bị; QRViet không có máy chủ nhận dữ liệu và không theo dõi người dùng.',
   'faq.q4': 'Có dùng được khi không có mạng không?',
-  'faq.a4': 'Có. Sau lần mở đầu tiên, QRViet lưu sẵn mọi thứ cần thiết — kể cả logo ngân hàng — để tạo và quét mã khi offline. Bạn có thể cài QRViet như một ứng dụng trên điện thoại hoặc máy tính.',
+  'faq.a4':
+    'Có. Sau lần mở đầu tiên, QRViet lưu sẵn mọi thứ cần thiết — kể cả logo ngân hàng — để tạo và quét mã khi offline. Bạn có thể cài QRViet như một ứng dụng trên điện thoại hoặc máy tính.',
   'faq.q5': 'Mã QR tĩnh và mã QR động khác nhau thế nào?',
-  'faq.a5': 'Mã tĩnh chỉ chứa thông tin tài khoản, người chuyển tự nhập số tiền và dùng được lâu dài. Mã động kèm sẵn số tiền và nội dung, phù hợp cho hoá đơn, đơn hàng hoặc thu tiền theo từng lần.',
+  'faq.a5':
+    'Mã tĩnh chỉ chứa thông tin tài khoản, người chuyển tự nhập số tiền và dùng được lâu dài. Mã động kèm sẵn số tiền và nội dung, phù hợp cho hoá đơn, đơn hàng hoặc thu tiền theo từng lần.',
   'faq.q6': 'Vì sao nội dung chuyển khoản bị bỏ dấu?',
-  'faq.a6': 'Mã VietQR chỉ hỗ trợ ký tự không dấu, nên QRViet tự chuyển nội dung sang dạng không dấu. NAPAS khuyến nghị nội dung tối đa 25 ký tự; một số ngân hàng chấp nhận dài hơn.',
+  'faq.a6':
+    'Mã VietQR chỉ hỗ trợ ký tự không dấu, nên QRViet tự chuyển nội dung sang dạng không dấu. NAPAS khuyến nghị nội dung tối đa 25 ký tự; một số ngân hàng chấp nhận dài hơn.',
   'faq.q7': 'Deeplink mở app ngân hàng hoạt động thế nào?',
-  'faq.a7': 'Khi mở link thanh toán hoặc quét mã VietQR trên điện thoại, QRViet dùng Deeplink để mở trực tiếp hơn 40 app ngân hàng/ví ngay trên máy mà không qua máy chủ trung gian. Các app/ví như MoMo, ZaloPay, MBBank, BIDV, TPBank, OCB và CAKE hỗ trợ tự điền sẵn STK, số tiền và nội dung trên cả iOS & Android; nhóm QR Pay gửi kèm mã VietQR; các app còn lại sẽ mở nhanh kèm tự động sao chép số tài khoản.',
+  'faq.a7':
+    'Khi mở link thanh toán hoặc quét mã VietQR trên điện thoại, QRViet dùng Deeplink để mở trực tiếp hơn 40 app ngân hàng/ví ngay trên máy mà không qua máy chủ trung gian. Các app/ví như MoMo, ZaloPay, MBBank, BIDV, TPBank, OCB và CAKE hỗ trợ tự điền sẵn STK, số tiền và nội dung trên cả iOS & Android; nhóm QR Pay gửi kèm mã VietQR; các app còn lại sẽ mở nhanh kèm tự động sao chép số tài khoản.',
 
   // Page titles, and the link previews of the site and of /pay (keep titles ≲ 60 and descriptions ≲ 160 characters)
   'seo.home.title': 'QRViet — Tạo mã VietQR & Deeplink ngân hàng miễn phí',
-  'seo.home.description': 'Tạo mã QR chuyển khoản VietQR cho mọi ngân hàng: mẫu ảnh đẹp, link thanh toán & Deeplink mở app ngân hàng trực tiếp. Quét mã, chạy 100% offline.',
+  'seo.home.description':
+    'Tạo mã QR chuyển khoản VietQR cho mọi ngân hàng: mẫu ảnh đẹp, link thanh toán & Deeplink mở app ngân hàng trực tiếp. Quét mã, chạy 100% offline.',
   'seo.scan.title': 'Quét mã QR, kiểm tra VietQR & Deeplink mở app | QRViet',
   'seo.qr.title': 'Tạo mã QR WiFi, danh thiếp, link có logo | QRViet',
   'seo.link.title': 'Tạo link thanh toán VietQR & Deeplink mở app | QRViet',
@@ -678,7 +705,8 @@ export const vi = {
   'seo.settings.title': 'Cài đặt giao diện, ngôn ngữ | QRViet',
   'seo.about.title': 'Giới thiệu & câu hỏi thường gặp về VietQR | QRViet',
   'seo.pay.title': 'Thanh toán VietQR & Deeplink mở app ngân hàng | QRViet',
-  'seo.pay.description': 'Quét mã VietQR, dùng Deeplink mở trực tiếp app ngân hàng hoặc sao chép số tài khoản, số tiền và nội dung để chuyển khoản.',
+  'seo.pay.description':
+    'Quét mã VietQR, dùng Deeplink mở trực tiếp app ngân hàng hoặc sao chép số tài khoản, số tiền và nội dung để chuyển khoản.',
   'seo.pay.sendTo': 'Chuyển {amount} cho {name} | QRViet',
   'seo.pay.to': 'Chuyển khoản cho {name} | QRViet',
   'seo.pay.amount': 'Chuyển khoản {amount} | QRViet',

@@ -2,7 +2,19 @@ import {useId, type ReactNode} from 'react'
 import {sceneToSvg, type Scene} from '#/lib/qr/scene'
 
 /** Live SVG preview of a scene on a soft stage. */
-export function QrStage({scene, label, empty, checker, maxWidth = 420}: {scene: Scene | null; label: string; empty?: ReactNode; checker?: boolean; maxWidth?: number}) {
+export function QrStage({
+  scene,
+  label,
+  empty,
+  checker,
+  maxWidth = 420,
+}: {
+  scene: Scene | null
+  label: string
+  empty?: ReactNode
+  checker?: boolean
+  maxWidth?: number
+}) {
   const rawId = useId()
   const prefix = `qv${rawId.replace(/[^a-zA-Z0-9]/g, '')}`
   const svg = scene ? sceneToSvg(scene, {idPrefix: prefix}) : ''

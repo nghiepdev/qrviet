@@ -11,7 +11,14 @@
  *   asks this worker to skip waiting (Serwist handles that message itself
  *   when `skipWaiting` is false).
  */
-import {CacheableResponsePlugin, ExpirationPlugin, Serwist, StaleWhileRevalidate, type PrecacheEntry, type SerwistGlobalConfig} from 'serwist'
+import {
+  CacheableResponsePlugin,
+  ExpirationPlugin,
+  Serwist,
+  StaleWhileRevalidate,
+  type PrecacheEntry,
+  type SerwistGlobalConfig,
+} from 'serwist'
 
 declare global {
   interface WorkerGlobalScope extends SerwistGlobalConfig {
@@ -39,7 +46,10 @@ const serwist = new Serwist({
       matcher: ({request, sameOrigin}) => !sameOrigin && request.destination === 'image',
       handler: new StaleWhileRevalidate({
         cacheName: 'qrviet-remote-images',
-        plugins: [new ExpirationPlugin({maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 30}), new CacheableResponsePlugin({statuses: [0, 200]})],
+        plugins: [
+          new ExpirationPlugin({maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 30}),
+          new CacheableResponsePlugin({statuses: [0, 200]}),
+        ],
       }),
     },
   ],

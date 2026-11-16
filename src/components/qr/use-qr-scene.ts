@@ -31,8 +31,16 @@ export function useTextMeasure(): Measure {
   return measureForFonts(fontsVersion)
 }
 
-export function resolveLogo(design: Pick<QrDesign, 'logoMode' | 'customLogo' | 'logoSize' | 'logoPlate'>, bank?: Bank | null): QrLogo | null {
-  const base = {size: design.logoSize, plate: design.logoPlate, plateColor: '#ffffff', excavate: true}
+export function resolveLogo(
+  design: Pick<QrDesign, 'logoMode' | 'customLogo' | 'logoSize' | 'logoPlate'>,
+  bank?: Bank | null,
+): QrLogo | null {
+  const base = {
+    size: design.logoSize,
+    plate: design.logoPlate,
+    plateColor: '#ffffff',
+    excavate: true,
+  }
   switch (design.logoMode) {
     case 'bank': {
       const src = bankIconUrl(bank)
@@ -72,7 +80,14 @@ export interface QrSceneResult {
 
 const NO_SCENE: QrSceneResult = {scene: null, qrScene: null, version: 0, error: null}
 
-function buildQrScenes(payload: string | null, template: TemplateId, info: TemplateInfo | null, style: QrStyle, logo: QrLogo | null, measure: Measure): QrSceneResult {
+function buildQrScenes(
+  payload: string | null,
+  template: TemplateId,
+  info: TemplateInfo | null,
+  style: QrStyle,
+  logo: QrLogo | null,
+  measure: Measure,
+): QrSceneResult {
   if (!payload || !info) return NO_SCENE
   try {
     const s = effectiveStyle(style, logo)
@@ -87,7 +102,13 @@ function buildQrScenes(payload: string | null, template: TemplateId, info: Templ
   }
 }
 
-export function useQrScene(payload: string | null, template: TemplateId, info: TemplateInfo | null, style: QrStyle, logo: QrLogo | null): QrSceneResult {
+export function useQrScene(
+  payload: string | null,
+  template: TemplateId,
+  info: TemplateInfo | null,
+  style: QrStyle,
+  logo: QrLogo | null,
+): QrSceneResult {
   const measure = useTextMeasure()
   return buildQrScenes(payload, template, info, style, logo, measure)
 }

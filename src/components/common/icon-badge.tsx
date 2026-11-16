@@ -27,11 +27,20 @@ export function heatStyle(i: number, count: number): CSSProperties {
 export type Hue = keyof typeof HUES
 
 /** An icon on a soft square of its hue, for headings and cards. */
-export function IconBadge({hue, children, className = ''}: {hue: Hue; children: ReactNode; className?: string}) {
+export function IconBadge({
+  hue,
+  children,
+  className = '',
+}: {
+  hue: Hue
+  children: ReactNode
+  className?: string
+}) {
   return (
     <span
       aria-hidden
-      className={`${HUES[hue]} grid size-10 shrink-0 place-items-center rounded-lg bg-[color-mix(in_srgb,var(--qv-hue)_14%,transparent)] text-[var(--qv-hue)] ${className}`}>
+      className={`${HUES[hue]} grid size-10 shrink-0 place-items-center rounded-lg bg-[color-mix(in_srgb,var(--qv-hue)_14%,transparent)] text-[var(--qv-hue)] ${className}`}
+    >
       {children}
     </span>
   )

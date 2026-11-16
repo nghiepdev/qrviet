@@ -14,8 +14,8 @@ if (typeof window !== 'undefined') {
 
   // Once the app has settled, drop the stored images of history entries that are gone (src/lib/thumbs.ts).
   setTimeout(() => {
-    void Promise.all([import('#/lib/thumbs'), import('#/stores/history')]).then(([{pruneThumbs}, {historyStore}]) =>
-      pruneThumbs(historyStore.state.map((h) => h.id)),
+    void Promise.all([import('#/lib/thumbs'), import('#/stores/history')]).then(
+      ([{pruneThumbs}, {historyStore}]) => pruneThumbs(historyStore.state.map((h) => h.id)),
     )
   }, 5000)
 }
@@ -29,7 +29,8 @@ export function getRouter() {
     defaultPreload: 'intent',
     // Query values stay plain strings: the default parser JSON-parses and coerces
     // ("1" → 1, long account numbers → lossy floats); routes validate their own params.
-    parseSearch: (search) => Object.fromEntries(new URLSearchParams(search.startsWith('?') ? search.slice(1) : search)),
+    parseSearch: (search) =>
+      Object.fromEntries(new URLSearchParams(search.startsWith('?') ? search.slice(1) : search)),
     stringifySearch: (search) => {
       const params = new URLSearchParams()
       for (const [key, value] of Object.entries(search)) {

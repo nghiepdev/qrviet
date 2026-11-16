@@ -12,7 +12,8 @@ const TEXT_INPUT_TYPES = new Set(['text', 'search', 'url', 'email', 'tel', 'numb
 
 function isTextEntry(el: Element | null): boolean {
   if (el instanceof HTMLTextAreaElement) return !el.readOnly && !el.disabled
-  if (el instanceof HTMLInputElement) return TEXT_INPUT_TYPES.has(el.type) && !el.readOnly && !el.disabled
+  if (el instanceof HTMLInputElement)
+    return TEXT_INPUT_TYPES.has(el.type) && !el.readOnly && !el.disabled
   return el instanceof HTMLElement && el.isContentEditable
 }
 
