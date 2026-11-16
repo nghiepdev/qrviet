@@ -8,7 +8,7 @@ body:
       value: |
         Thanks for taking the time to report a problem! Please search the existing issues first.
 
-        **Privacy:** do not post real account numbers, names, QR codes or screenshots with personal data. Use made-up values or blur them. Security problems belong in a private report: see the security policy (SECURITY.md).
+        **Privacy:** do not post real account numbers, names, QR codes or screenshots with personal data. Use made-up values or blur them.
 
   - type: textarea
     id: description

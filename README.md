@@ -30,7 +30,6 @@ QRViet is a static single-page app: there is no server, it installs as a PWA, it
 - [SEO](#seo)
 - [Privacy](#privacy)
 - [Contributing](#contributing)
-- [Security](#security)
 - [Acknowledgements](#acknowledgements)
 - [License](#license)
 - [Disclaimer](#disclaimer)
@@ -202,10 +201,6 @@ All data stays in the browser: the account book, history and settings in `localS
 ## Contributing
 
 Contributions are welcome, from bug reports and translations to new features. The [contributing guide](CONTRIBUTING.md) explains how to set up the project, the conventions it follows and how to open a pull request. Everyone taking part is expected to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
-
-## Security
-
-Please do not report security problems in public issues. The [security policy](SECURITY.md) explains how to report them privately.
 
 ## Acknowledgements
 

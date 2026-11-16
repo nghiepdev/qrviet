@@ -25,8 +25,6 @@ By taking part in this project you agree to follow its [Code of Conduct](CODE_OF
 > [!IMPORTANT]
 > Never post real account numbers, names, QR codes or screenshots with personal data in issues or pull requests. Use made-up values or blur them.
 
-Do not report security vulnerabilities in public issues; follow the [security policy](SECURITY.md) instead.
-
 ## Development setup
 
 1. Install [Node.js](https://nodejs.org/) 26 and [pnpm](https://pnpm.io/installation) 12. Installing with other versions or other package managers stops with an error.
