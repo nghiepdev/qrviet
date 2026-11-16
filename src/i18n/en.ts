@@ -127,7 +127,7 @@ export const en: Record<MessageKey, string> = {
   'bank.tagQrPay': 'Deeplink · QR Pay',
   'bank.tagQrPayShort': 'Deeplink · QR',
   'bank.tagOpenApp': 'Deeplink',
-  'bank.tagLegend': 'Deeplink · Auto-fill (iOS): pre-fills transfer • Deeplink · QR Pay (iOS): passes VietQR • Deeplink: quick app launch',
+  'bank.tagLegend': 'Deeplink · Auto-fill: opens app & pre-fills account, amount, note • Deeplink · QR Pay: passes VietQR payload (depends on app) • Deeplink: quick launch & copy account',
   'bank.copyBin': 'Copy BIN',
 
   'gen.title': 'Create a VietQR code',
@@ -429,8 +429,8 @@ export const en: Record<MessageKey, string> = {
   'pay.iabTitle': 'Opened inside {app}',
   'pay.iabBody': 'In-app browsers often block banking app Deeplinks. Choose “Open in Safari / Chrome” or copy the link below.',
   'pay.iabCopyLink': 'Copy link',
-  'pay.modeConfirmed': 'Supports pre-filled transfer details on iOS.',
-  'pay.modeQrPay': 'Passes VietQR on iOS (depends on app version); Android opens the app & copies the account.',
+  'pay.modeConfirmed': 'Opens app & pre-fills account, amount and description (iOS & Android).',
+  'pay.modeQrPay': 'Opens app with VietQR payload (depends on app support) & copies account number.',
   'pay.modeLaunch': 'Opens the app & copies the account number so you can paste or scan the QR image.',
   'pay.copiedAccOpening': 'Account copied • Opening {bank}…',
 
@@ -646,7 +646,7 @@ export const en: Record<MessageKey, string> = {
   'faq.q6': 'Why are accents removed from the transfer message?',
   'faq.a6': 'VietQR codes only support unaccented characters, so QRViet converts the message automatically. NAPAS recommends at most 25 characters; some banks accept longer messages.',
   'faq.q7': 'How does banking app Deeplink work?',
-  'faq.a7': 'When opening a payment link or scanning a VietQR code on mobile, QRViet uses Deeplinks to launch 40+ banking and e-wallet apps directly on your device with zero intermediary servers. On iOS, supported apps can pre-fill transfer details (e.g. MBBank, MoMo) or receive the VietQR via QR Pay; other apps launch immediately with the account number copied to your clipboard.',
+  'faq.a7': 'When opening a payment link or scanning a VietQR code on mobile, QRViet uses Deeplinks to launch 40+ banking and e-wallet apps directly on your device with zero intermediary servers. MoMo, ZaloPay, MBBank, BIDV, TPBank, OCB and CAKE support pre-filling account, amount and description on both iOS and Android; QR Pay apps pass the VietQR payload; other apps launch immediately with the account number copied to your clipboard.',
 
   // SEO
   'seo.home.title': 'QRViet — Free VietQR & Banking App Deeplink Toolkit',

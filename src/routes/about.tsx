@@ -46,7 +46,7 @@ const CREDITS = [
   ['Lucide', 'https://lucide.dev', 'Icons'],
   ['Be Vietnam Pro', 'https://fonts.google.com/specimen/Be+Vietnam+Pro', 'Typeface (OFL)'],
   ['VietQR API & Deeplink', 'https://api.vietqr.io/v2/banks', 'Bank directory & deeplinks'],
-  ['vietqr-core', 'https://github.com/Ngochiendev/vietqr-core', 'Deeplink catalog & reference (Ngochiendev)'],
+  ['vietqr-core', 'https://raw.githubusercontent.com/Ngochiendev/vietqr-core/main/vietqr-discovery.json', 'vietqr-discovery.json (Ngochiendev)'],
 ] as const
 
 /** The lead's selling points: an underline for open source, a marker over the privacy promise. */

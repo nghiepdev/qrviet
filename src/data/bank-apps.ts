@@ -1,19 +1,20 @@
 /**
  * Offline bank & e-wallet app deeplink registry for QRViet.
  *
- * Zero network calls at runtime: iOS URL schemes, App Store IDs, Play Store
- * package names and offline handoff formats ship directly in `bank-apps.json`
- * (refreshed by `pnpm sync:banks`).
+ * Zero network calls at runtime: iOS/Android URL schemes, App Store IDs, Play
+ * Store package names and offline handoff formats ship directly in
+ * `bank-apps.json` (refreshed by `pnpm sync:banks`).
  *
  * Keyed by uppercase bank/wallet code (`bank.code.toUpperCase()`, e.g. "MB",
- * "VCB", "MOMO", "KBANK") so it matches `src/data/banks.json` regardless of casing.
+ * "VCB", "MOMO", "ZALOPAY") so it matches `src/data/banks.json` regardless of casing.
  */
 import raw from './bank-apps.json'
 
 export type HandoffFormat =
-  | {readonly kind: 'qrPay'; readonly path: string}
+  | {readonly kind: 'qrPay'; readonly path: string; readonly param?: string}
+  | {readonly kind: 'momoQr'}
+  | {readonly kind: 'zalopayQr'}
   | {readonly kind: 'namABank'}
-  | {readonly kind: 'momoP2P'}
 
 export type BankDeeplinkTier = 'autofill' | 'qrpay' | 'launch' | 'none'
 
@@ -33,9 +34,9 @@ export interface BankAppSpec {
   readonly android: AndroidAppSpec
   /**
    * Honest offline autofill classification:
-   * - `autofill`: verified offline pre-fill (MB Bank `qrContent`, MoMo phone P2P)
-   * - `qrpay`: passes VietQR payload via iOS `qrPay` / `namABank` transfer link (best-effort unsigned)
-   * - `launch`: opens the app directly; account/amount details are copied to clipboard for manual paste
+   * - `autofill`: verified offline VietQR pre-fill (MB, MoMo, ZaloPay, BIDV, TPBank, OCB, CAKE)
+   * - `qrpay`: passes VietQR payload via `applink?qrContent=` (best-effort unsigned; varies by app version)
+   * - `launch`: opens the app directly; account details are copied to clipboard for manual paste
    */
   readonly tier: Exclude<BankDeeplinkTier, 'none'>
 }

@@ -130,7 +130,7 @@ export const vi = {
   'bank.tagQrPay': 'Deeplink · QR Pay',
   'bank.tagQrPayShort': 'Deeplink · QR',
   'bank.tagOpenApp': 'Deeplink',
-  'bank.tagLegend': 'Deeplink · Tự điền (iOS): điền sẵn thông tin • Deeplink · QR Pay (iOS): gửi mã QR • Deeplink: mở nhanh app ngân hàng',
+  'bank.tagLegend': 'Deeplink · Tự điền: mở app & điền sẵn STK, số tiền, nội dung • Deeplink · QR Pay: mở app kèm mã QR (tuỳ app hỗ trợ) • Deeplink: chỉ mở nhanh app & sao chép STK',
   'bank.copyBin': 'Sao chép BIN',
 
   // Generator
@@ -438,8 +438,8 @@ export const vi = {
   'pay.iabTitle': 'Đang mở trong {app}',
   'pay.iabBody': 'Trình duyệt tích hợp thường chặn Deeplink mở app ngân hàng. Hãy chọn “Mở bằng Safari / Chrome” hoặc sao chép link bên dưới.',
   'pay.iabCopyLink': 'Sao chép link',
-  'pay.modeConfirmed': 'Hỗ trợ tự điền thông tin trên iOS.',
-  'pay.modeQrPay': 'Gửi kèm mã QR trên iOS (tuỳ phiên bản app); trên Android sẽ mở app và sao chép STK.',
+  'pay.modeConfirmed': 'Mở app và tự điền sẵn STK, số tiền, nội dung chuyển khoản (iOS & Android).',
+  'pay.modeQrPay': 'Mở app kèm mã VietQR (tuỳ app hỗ trợ nhận QR) & tự sao chép STK.',
   'pay.modeLaunch': 'Mở nhanh app & tự sao chép số tài khoản để bạn dán hoặc quét ảnh QR.',
   'pay.copiedAccOpening': 'Đã sao chép STK • Đang mở {bank}…',
 
@@ -662,7 +662,7 @@ export const vi = {
   'faq.q6': 'Vì sao nội dung chuyển khoản bị bỏ dấu?',
   'faq.a6': 'Mã VietQR chỉ hỗ trợ ký tự không dấu, nên QRViet tự chuyển nội dung sang dạng không dấu. NAPAS khuyến nghị nội dung tối đa 25 ký tự; một số ngân hàng chấp nhận dài hơn.',
   'faq.q7': 'Deeplink mở app ngân hàng hoạt động thế nào?',
-  'faq.a7': 'Khi mở link thanh toán hoặc quét mã VietQR trên điện thoại, QRViet dùng Deeplink để mở trực tiếp hơn 40 app ngân hàng/ví ngay trên máy mà không qua máy chủ trung gian. Trên iOS, một số app hỗ trợ tự điền thông tin (như MBBank, MoMo) hoặc nhận mã QR qua QR Pay; các app khác vẫn mở nhanh kèm tự động sao chép số tài khoản.',
+  'faq.a7': 'Khi mở link thanh toán hoặc quét mã VietQR trên điện thoại, QRViet dùng Deeplink để mở trực tiếp hơn 40 app ngân hàng/ví ngay trên máy mà không qua máy chủ trung gian. Các app/ví như MoMo, ZaloPay, MBBank, BIDV, TPBank, OCB và CAKE hỗ trợ tự điền sẵn STK, số tiền và nội dung trên cả iOS & Android; nhóm QR Pay gửi kèm mã VietQR; các app còn lại sẽ mở nhanh kèm tự động sao chép số tài khoản.',
 
   // Page titles, and the link previews of the site and of /pay (keep titles ≲ 60 and descriptions ≲ 160 characters)
   'seo.home.title': 'QRViet — Tạo mã VietQR & Deeplink ngân hàng miễn phí',

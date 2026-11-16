@@ -39,8 +39,8 @@ export interface BankLaunchPlan {
   carriesPayload: boolean
   /**
    * Honest autofill expectation for this specific app + payment combination:
-   * - `confirmed`: verified offline autofill (MB Bank `qrContent`, or MoMo P2P phone transfer)
-   * - `qrpay`: unsigned `qrPay` / `namABank` transfer link on iOS (best-effort; depends on bank app)
+   * - `confirmed`: verified offline autofill (MB, MoMo, ZaloPay, BIDV, TPBank, OCB, CAKE)
+   * - `qrpay`: sends VietQR `applink?qrContent=` / `namABank` payload (best-effort; depends on bank app)
    * - `none`: opens app home/scan only
    */
   autofillMode: 'confirmed' | 'qrpay' | 'none'
@@ -51,9 +51,6 @@ export interface BankLaunchPlan {
   iosStoreUrl: string
   androidStoreUrl: string
 }
-
-const MOMO_BIN = '971025'
-const VN_MOBILE = /^0[35789]\d{8}$/
 
 export function detectPlatform(): Platform {
   if (typeof navigator === 'undefined') return 'desktop'
@@ -110,19 +107,6 @@ function resolveQrPayload(payment: BankLaunchPayment): string | null {
   }
 }
 
-function buildMomoP2PUrl(scheme: string, payment: BankLaunchPayment): string | null {
-  const phone = payment.accountNumber.trim()
-  if (payment.bin !== MOMO_BIN || payment.service === 'card' || !VN_MOBILE.test(phone)) return null
-  const amount = Number(normalizeAmount(payment.amount)) || 0
-  const data = {
-    userId: phone,
-    amount,
-    message: toQrAscii(payment.purpose ?? ''),
-  }
-  const extra = JSON.stringify({dataExtract: utf8Base64(JSON.stringify(data))})
-  return `${scheme}app?action=p2p&extra=${encodeURIComponent(extra)}`
-}
-
 function buildNamABankUrl(scheme: string, payment: BankLaunchPayment): string {
   const amount = normalizeAmount(payment.amount)
   const data = {
@@ -135,6 +119,52 @@ function buildNamABankUrl(scheme: string, payment: BankLaunchPayment): string {
     partnerId: '',
   }
   return `${scheme}ops.namabank.com.vn/?data=${encodeURIComponent(utf8Base64(JSON.stringify(data)))}`
+}
+
+function buildNativeTargetUrl(
+  spec: BankAppSpec,
+  payment: BankLaunchPayment,
+): {url: string; carriesPayload: boolean; autofillMode: BankLaunchPlan['autofillMode']} {
+  const {handoff, scheme} = spec.ios
+  let url = scheme
+  let carriesPayload = false
+  let autofillMode: BankLaunchPlan['autofillMode'] = 'none'
+
+  if (handoff?.kind === 'momoQr') {
+    const payload = resolveQrPayload(payment)
+    if (payload) {
+      url = `${scheme}?action=shareExtension&code=${encodeURIComponent(payload)}`
+      carriesPayload = true
+      autofillMode = 'confirmed'
+    }
+  } else if (handoff?.kind === 'zalopayQr') {
+    const payload = resolveQrPayload(payment)
+    if (payload) {
+      url = `${scheme}launch/f/transfer?bankinfo=${encodeURIComponent(payload)}`
+      carriesPayload = true
+      autofillMode = 'confirmed'
+    }
+  } else if (handoff?.kind === 'qrPay') {
+    const payload = resolveQrPayload(payment)
+    if (payload) {
+      const param = handoff.param ?? 'qrContent'
+      url = `${scheme}${handoff.path}?${param}=${encodeURIComponent(payload)}`
+      carriesPayload = true
+      autofillMode = spec.tier === 'autofill' ? 'confirmed' : 'qrpay'
+    }
+  } else if (handoff?.kind === 'namABank') {
+    url = buildNamABankUrl(scheme, payment)
+    carriesPayload = true
+    autofillMode = 'qrpay'
+  }
+
+  return {url, carriesPayload, autofillMode}
+}
+
+function toAndroidIntentUrl(nativeUrl: string, schemeWithSep: string, androidPkg: string, fallbackUrl: string): string {
+  const schemeName = schemeWithSep.replace(/:\/\/$/, '')
+  const rest = nativeUrl.startsWith(schemeWithSep) ? nativeUrl.slice(schemeWithSep.length) : ''
+  return `intent://${rest}#Intent;scheme=${schemeName};package=${androidPkg};S.browser_fallback_url=${encodeURIComponent(fallbackUrl)};end`
 }
 
 export function buildBankLaunchPlan(
@@ -164,14 +194,16 @@ export function buildBankLaunchPlan(
     }
   }
 
+  const target = buildNativeTargetUrl(spec, payment)
+
   if (os === 'android') {
     return {
       appBank,
       spec,
       os,
-      launchUrl: spec.ios.scheme,
-      carriesPayload: false,
-      autofillMode: 'none',
+      launchUrl: toAndroidIntentUrl(target.url, spec.ios.scheme, spec.android.package, androidStoreUrl),
+      carriesPayload: target.carriesPayload,
+      autofillMode: target.autofillMode,
       storeUrl: androidStoreUrl,
       androidMarketUrl: androidMarket,
       iosStoreUrl,
@@ -179,39 +211,13 @@ export function buildBankLaunchPlan(
     }
   }
 
-  // iOS
-  const {handoff, scheme} = spec.ios
-  let launchUrl = scheme
-  let carriesPayload = false
-  let autofillMode: BankLaunchPlan['autofillMode'] = 'none'
-
-  if (handoff?.kind === 'qrPay') {
-    const payload = resolveQrPayload(payment)
-    if (payload) {
-      launchUrl = `${scheme}${handoff.path}?targetPage=QRPay&qrContent=${encodeURIComponent(payload)}`
-      carriesPayload = true
-      autofillMode = spec.tier === 'autofill' ? 'confirmed' : 'qrpay'
-    }
-  } else if (handoff?.kind === 'namABank') {
-    launchUrl = buildNamABankUrl(scheme, payment)
-    carriesPayload = true
-    autofillMode = 'qrpay'
-  } else if (handoff?.kind === 'momoP2P') {
-    const p2p = buildMomoP2PUrl(scheme, payment)
-    if (p2p) {
-      launchUrl = p2p
-      carriesPayload = true
-      autofillMode = 'confirmed'
-    }
-  }
-
   return {
     appBank,
     spec,
     os,
-    launchUrl,
-    carriesPayload,
-    autofillMode,
+    launchUrl: target.url,
+    carriesPayload: target.carriesPayload,
+    autofillMode: target.autofillMode,
     storeUrl: iosStoreUrl,
     androidMarketUrl: null,
     iosStoreUrl,

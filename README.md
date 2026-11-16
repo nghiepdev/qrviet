@@ -205,7 +205,7 @@ Please do not report security problems in public issues. The [security policy](S
 
 - [Astryx](https://github.com/meta/astryx), [TanStack](https://tanstack.com/), [Serwist](https://serwist.pages.dev/), [uqr](https://github.com/unjs/uqr), [jsQR](https://github.com/cozmo/jsQR) and [Lucide](https://lucide.dev/) icons.
 - The [Be Vietnam Pro](https://fonts.google.com/specimen/Be+Vietnam+Pro), [Inter](https://rsms.me/inter/) and [Nunito](https://fonts.google.com/specimen/Nunito) typefaces, packaged by [Fontsource](https://fontsource.org/).
-- The bank list, logos and deeplink catalogs from the public VietQR APIs (`api.vietqr.io` & `dl.vietqr.io`), alongside banking app Deeplink references from [Ngochiendev/vietqr-core](https://github.com/Ngochiendev/vietqr-core).
+- The bank list, logos and deeplink catalogs from the public VietQR APIs (`api.vietqr.io` & `dl.vietqr.io`), alongside banking app Deeplink references from [Ngochiendev/vietqr-core](https://github.com/Ngochiendev/vietqr-core) ([`vietqr-discovery.json`](https://raw.githubusercontent.com/Ngochiendev/vietqr-core/main/vietqr-discovery.json)).
 
 ## License
 

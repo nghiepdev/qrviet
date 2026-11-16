@@ -65,9 +65,10 @@ interface VietQrCoreApp {
 }
 
 type HandoffFormat =
-  | {kind: 'qrPay'; path: string}
+  | {kind: 'qrPay'; path: string; param?: string}
+  | {kind: 'momoQr'}
+  | {kind: 'zalopayQr'}
   | {kind: 'namABank'}
-  | {kind: 'momoP2P'}
 
 interface BankAppRecord {
   code: string

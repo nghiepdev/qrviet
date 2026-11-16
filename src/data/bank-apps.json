@@ -20,11 +20,86 @@
       "scheme": "momo://",
       "appStoreId": "918751511",
       "handoff": {
-        "kind": "momoP2P"
+        "kind": "momoQr"
       }
     },
     "android": {
       "package": "com.mservice.momotransfer"
+    },
+    "tier": "autofill"
+  },
+  {
+    "code": "ZALOPAY",
+    "ios": {
+      "scheme": "zalopay://",
+      "appStoreId": "1112407590",
+      "handoff": {
+        "kind": "zalopayQr"
+      }
+    },
+    "android": {
+      "package": "vn.com.vng.zalopay"
+    },
+    "tier": "autofill"
+  },
+  {
+    "code": "BIDV",
+    "ios": {
+      "scheme": "bidv.smartbanking.partner://",
+      "appStoreId": "1061867449",
+      "handoff": {
+        "kind": "qrPay",
+        "path": "applink"
+      }
+    },
+    "android": {
+      "package": "com.vnpay.bidv"
+    },
+    "tier": "autofill"
+  },
+  {
+    "code": "TPB",
+    "ios": {
+      "scheme": "hydro://",
+      "appStoreId": "450464147",
+      "handoff": {
+        "kind": "qrPay",
+        "path": "applink"
+      }
+    },
+    "android": {
+      "package": "com.tpb.mb.gprsandroid"
+    },
+    "tier": "autofill"
+  },
+  {
+    "code": "OCB",
+    "ios": {
+      "scheme": "newomni-app://",
+      "appStoreId": "6472261202",
+      "handoff": {
+        "kind": "qrPay",
+        "path": "com.ocb/qr/decode-qr",
+        "param": "qrData"
+      }
+    },
+    "android": {
+      "package": "vn.com.ocb.awe"
+    },
+    "tier": "autofill"
+  },
+  {
+    "code": "CAKE",
+    "ios": {
+      "scheme": "cake.vn://",
+      "appStoreId": "1551907051",
+      "handoff": {
+        "kind": "qrPay",
+        "path": "applink"
+      }
+    },
+    "android": {
+      "package": "xyz.be.cake"
     },
     "tier": "autofill"
   },
@@ -35,26 +110,11 @@
       "appStoreId": "689963454",
       "handoff": {
         "kind": "qrPay",
-        "path": "host.qrTransfer"
-      }
-    },
-    "android": {
-      "package": "com.vietinbank.ipay"
-    },
-    "tier": "qrpay"
-  },
-  {
-    "code": "BIDV",
-    "ios": {
-      "scheme": "dl.bidvsmartbanking.vn://",
-      "appStoreId": "1061867449",
-      "handoff": {
-        "kind": "qrPay",
         "path": "applink"
       }
     },
     "android": {
-      "package": "com.vnpay.bidv"
+      "package": "com.vietinbank.ipay"
     },
     "tier": "qrpay"
   },
@@ -119,21 +179,6 @@
     "tier": "qrpay"
   },
   {
-    "code": "TPB",
-    "ios": {
-      "scheme": "hydro://",
-      "appStoreId": "450464147",
-      "handoff": {
-        "kind": "qrPay",
-        "path": "applink"
-      }
-    },
-    "android": {
-      "package": "com.tpb.mb.gprsandroid"
-    },
-    "tier": "qrpay"
-  },
-  {
     "code": "VIB",
     "ios": {
       "scheme": "myvib2://",
@@ -175,21 +220,6 @@
     },
     "android": {
       "package": "vn.com.msb.smartBanking"
-    },
-    "tier": "qrpay"
-  },
-  {
-    "code": "OCB",
-    "ios": {
-      "scheme": "newomni-app://",
-      "appStoreId": "6472261202",
-      "handoff": {
-        "kind": "qrPay",
-        "path": "applink"
-      }
-    },
-    "android": {
-      "package": "vn.com.ocb.awe"
     },
     "tier": "qrpay"
   },
@@ -391,29 +421,15 @@
   {
     "code": "NAB",
     "ios": {
-      "scheme": "nabtransfermoney://",
+      "scheme": "ops.namabank.com.vn://",
       "appStoreId": "1456997296",
-      "handoff": {
-        "kind": "namABank"
-      }
-    },
-    "android": {
-      "package": "ops.namabank.com.vn"
-    },
-    "tier": "qrpay"
-  },
-  {
-    "code": "CAKE",
-    "ios": {
-      "scheme": "cake.vn://",
-      "appStoreId": "1551907051",
       "handoff": {
         "kind": "qrPay",
         "path": "applink"
       }
     },
     "android": {
-      "package": "xyz.be.cake"
+      "package": "ops.namabank.com.vn"
     },
     "tier": "qrpay"
   },
@@ -561,18 +577,6 @@
     },
     "android": {
       "package": "com.vnpay.publicbank"
-    },
-    "tier": "launch"
-  },
-  {
-    "code": "ZALOPAY",
-    "ios": {
-      "scheme": "zalopay://",
-      "appStoreId": "1112407590",
-      "handoff": null
-    },
-    "android": {
-      "package": "vn.com.vng.zalopay"
     },
     "tier": "launch"
   }

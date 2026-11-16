@@ -25,14 +25,14 @@ import {
 import {setPreferredBankApp, useSettings} from '#/stores/settings'
 
 const QUICK_APP_BINS = [
-  '970422', // MBBank (verified offline autofill)
-  '970436', // Vietcombank
-  '970407', // Techcombank
-  '970415', // VietinBank
-  '970418', // BIDV
-  '970416', // ACB
-  '970432', // VPBank
+  '970422', // MBBank
   '971025', // MoMo
+  '971101', // ZaloPay
+  '970418', // BIDV
+  '970423', // TPBank
+  '970448', // OCB
+  '546034', // CAKE
+  '970436', // Vietcombank
 ]
 
 const IAB_NAMES: Record<InAppBrowserKind, string> = {
