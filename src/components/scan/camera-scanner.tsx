@@ -74,16 +74,19 @@ async function startCamera(
       return null;
     }
     video.srcObject = stream;
-    await video.play();
-    const devices = (await navigator.mediaDevices.enumerateDevices()).filter(
-      (d) => d.kind === "videoinput",
-    );
+    const [, rawDevices] = await Promise.all([
+      video.play(),
+      navigator.mediaDevices.enumerateDevices(),
+    ]);
+    const devices = rawDevices.filter((d) => d.kind === "videoinput");
     if (cancelled()) {
       stopStream(stream);
       return null;
     }
-    const caps = stream.getVideoTracks()[0]?.getCapabilities?.() as { torch?: boolean } | undefined;
-    return { stream, devices, torch: Boolean(caps?.torch) };
+    const track = stream.getVideoTracks()[0];
+    const caps = track?.getCapabilities?.() as { torch?: boolean } | undefined;
+    const activeDeviceId = track?.getSettings?.().deviceId;
+    return { stream, devices, torch: Boolean(caps?.torch), activeDeviceId };
   } catch (e) {
     stopStream(stream);
     throw e;
@@ -137,8 +140,10 @@ export function CameraScanner({
   const continuousRef = useRef(false);
   const onResultRef = useRef(onResult);
   const prevExternalRef = useRef(externalScanCount);
+  const flipTimerRef = useRef<number | null>(null);
 
-  const [state, setState] = useState<"idle" | "starting" | "running">("idle");
+  const [state, setState] = useState<"idle" | "starting" | "running" | "switching">("idle");
+  const [flipPhase, setFlipPhase] = useState<"idle" | "out" | "in">("idle");
   const [error, setError] = useState<MessageKey | null>(null);
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [deviceIndex, setDeviceIndex] = useState(-1);
@@ -159,13 +164,22 @@ export function CameraScanner({
     void preferredEngine().then(setEngine);
   }, []);
 
+  const clearFlipTimer = () => {
+    if (flipTimerRef.current != null) {
+      window.clearTimeout(flipTimerRef.current);
+      flipTimerRef.current = null;
+    }
+  };
+
   const stop = () => {
     attemptRef.current++;
     runningRef.current = false;
+    clearFlipTimer();
     stopStream(streamRef.current);
     streamRef.current = null;
     if (videoRef.current) videoRef.current.srcObject = null;
     setTorch({ supported: false, on: false });
+    setFlipPhase("idle");
     setState("idle");
   };
 
@@ -189,6 +203,14 @@ export function CameraScanner({
     if (runningRef.current) window.setTimeout(() => void loop(), 110);
   };
 
+  const resolveIndex = (list: MediaDeviceInfo[], activeId: string | undefined, fallback: number) => {
+    if (activeId) {
+      const matched = list.findIndex((d) => d.deviceId === activeId);
+      if (matched >= 0) return matched;
+    }
+    return fallback >= 0 ? fallback : 0;
+  };
+
   const start = (index = deviceIndex) => {
     setError(null);
     if (!window.isSecureContext) return setError("scan.insecure");
@@ -204,6 +226,7 @@ export function CameraScanner({
         if (!camera) return;
         streamRef.current = camera.stream;
         setDevices(camera.devices);
+        setDeviceIndex(resolveIndex(camera.devices, camera.activeDeviceId, index));
         setTorch({ supported: camera.torch, on: false });
         runningRef.current = true;
         setState("running");
@@ -266,13 +289,55 @@ export function CameraScanner({
   };
 
   const switchCamera = () => {
-    if (devices.length < 2) return;
-    const next = (deviceIndex + 1) % devices.length;
+    if (state !== "running" || devices.length < 2) return;
+    const video = videoRef.current;
+    if (!video) return;
+    const baseIndex = deviceIndex >= 0 ? deviceIndex : 0;
+    const next = (baseIndex + 1) % devices.length;
     setDeviceIndex(next);
-    start(next);
+    setError(null);
+    setTorch({ supported: false, on: false });
+
+    // Keep the active scanner UI mounted (no "Start camera" loading button flash) while flipping.
+    clearFlipTimer();
+    runningRef.current = false;
+    stopStream(streamRef.current);
+    streamRef.current = null;
+    const attempt = ++attemptRef.current;
+    const cancelled = () => attempt !== attemptRef.current || !mountedRef.current;
+    setState("switching");
+    setFlipPhase("out");
+
+    const flipOutDelay = new Promise<void>((resolve) => window.setTimeout(resolve, 160));
+    Promise.all([startCamera(video, devices[next]?.deviceId, cancelled), flipOutDelay]).then(
+      ([camera]) => {
+        if (!camera || cancelled()) return;
+        streamRef.current = camera.stream;
+        setDevices(camera.devices);
+        setDeviceIndex(resolveIndex(camera.devices, camera.activeDeviceId, next));
+        setTorch({ supported: camera.torch, on: false });
+        runningRef.current = true;
+        setState("running");
+        setFlipPhase("in");
+        flipTimerRef.current = window.setTimeout(() => {
+          flipTimerRef.current = null;
+          setFlipPhase("idle");
+        }, 250);
+        void loop();
+      },
+      (e: unknown) => {
+        if (cancelled()) return;
+        setFlipPhase("idle");
+        setState("idle");
+        if (videoRef.current) videoRef.current.srcObject = null;
+        setError(cameraError(e));
+      },
+    );
   };
 
-  const running = state === "running";
+  const running = state === "running" || state === "switching";
+  const flipClass =
+    flipPhase === "out" ? "qv-cam-flip-out" : flipPhase === "in" ? "qv-cam-flip-in" : "";
   return (
     <div className="flex flex-col gap-3">
       <div
@@ -281,7 +346,7 @@ export function CameraScanner({
       >
         <video
           ref={videoRef}
-          className={`absolute inset-0 size-full object-cover ${running ? "" : "opacity-0"}`}
+          className={`absolute inset-0 size-full object-cover ${running ? flipClass : "opacity-0"}`}
           playsInline
           muted
           aria-label={t("scan.camera")}
@@ -350,7 +415,12 @@ export function CameraScanner({
               {devices.length > 1 && (
                 <IconButton
                   label={t("scan.switch")}
-                  icon={<SwitchCamera size={18} />}
+                  icon={
+                    <SwitchCamera
+                      size={18}
+                      className={`transition-transform duration-300 ${flipPhase !== "idle" ? "rotate-180" : ""}`}
+                    />
+                  }
                   className="bg-black/55 text-white backdrop-blur hover:bg-black/75"
                   onClick={switchCamera}
                 />
