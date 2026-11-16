@@ -51,7 +51,7 @@ function PreviewSample() {
   const t = useT()
   return (
     <div
-      className="flex flex-col gap-3 p-4 rounded-xl"
+      className="flex flex-col gap-3 rounded-xl p-4"
       style={{background: 'var(--color-background-body)', color: 'var(--color-text-primary)'}}
     >
       <div className="flex items-center gap-2">
@@ -153,10 +153,10 @@ export function ThemeBuilder() {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)] items-start">
+    <div className="grid grid-cols-1 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)]">
       <div className="flex flex-col gap-4">
         <div className="flex flex-wrap items-end gap-3">
-          <div className="flex-1 min-w-48">
+          <div className="min-w-48 flex-1">
             <TextInput
               label={t('set.builderName')}
               value={draft.name.vi}
@@ -218,7 +218,7 @@ export function ThemeBuilder() {
               </button>
             ))}
             <label
-              className="qv-tile size-9 rounded-full p-1 cursor-pointer relative overflow-hidden"
+              className="qv-tile relative size-9 cursor-pointer overflow-hidden rounded-full p-1"
               title={t('common.custom')}
             >
               <span
@@ -229,7 +229,7 @@ export function ThemeBuilder() {
                 type="color"
                 value={draft.accent?.[0] ?? '#d7263d'}
                 onChange={(e) => setAccent(e.target.value.toUpperCase())}
-                className="absolute inset-0 opacity-0 cursor-pointer"
+                className="absolute inset-0 cursor-pointer opacity-0"
                 aria-label={t('common.custom')}
               />
             </label>
@@ -331,7 +331,7 @@ export function ThemeBuilder() {
         <span className="inline-flex items-center gap-2 text-sm font-semibold">
           <Palette size={15} aria-hidden /> {t('common.preview')}
         </span>
-        <div className="rounded-xl border border-border overflow-hidden min-h-64 grid">
+        <div className="grid min-h-64 overflow-hidden rounded-xl border border-border">
           {preview ? (
             <Theme
               theme={preview}

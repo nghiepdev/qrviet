@@ -270,7 +270,7 @@ function HistoryPage() {
       />
       <PageBody>
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <div className="flex-1">
               <TextInput
                 type="search"
@@ -312,7 +312,7 @@ function HistoryPage() {
             </Panel>
           ) : (
             // Cards of at least 20rem, as many per row as fit: 1 on phones, 2–3 on wider screens.
-            <ul className="grid gap-3 grid-cols-[repeat(auto-fill,minmax(min(20rem,100%),1fr))]">
+            <ul className="grid grid-cols-[repeat(auto-fill,minmax(min(20rem,100%),1fr))] gap-3">
               {filtered.slice(0, limit).map((h) => {
                 const bank = getBankByBin(h.meta.bin)
                 const KindIcon = h.kind === 'scan' ? ScanLine : h.kind === 'qr' ? Shapes : QrCode
@@ -383,7 +383,7 @@ function HistoryPage() {
                         </span>
                       </span>
                     </button>
-                    <span className="absolute right-2 top-2">
+                    <span className="absolute top-2 right-2">
                       <DropdownMenu
                         button={{
                           label: t('common.more'),

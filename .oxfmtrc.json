@@ -1,7 +1,0 @@
-{
-  "$schema": "./node_modules/oxfmt/configuration_schema.json",
-  "semi": false,
-  "singleQuote": true,
-  "bracketSpacing": false,
-  "ignorePatterns": ["src/routeTree.gen.ts", "src/data/banks.json", "src/data/bank-apps.json"]
-}

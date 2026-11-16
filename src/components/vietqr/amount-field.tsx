@@ -61,7 +61,7 @@ export function AmountField({value, onChange, label, error, showQuick = true, de
       {amount ? (
         <div className="flex items-start gap-2 rounded-md bg-accent-muted/40 px-3 py-2">
           <div className="min-w-0 flex-1">
-            <div className="text-lg font-extrabold text-accent qv-num leading-tight">
+            <div className="qv-num text-lg leading-tight font-extrabold text-accent">
               {formatVnd(amount, true)}
             </div>
             <div className="text-xs text-secondary italic">{words}</div>
@@ -86,7 +86,7 @@ export function AmountField({value, onChange, label, error, showQuick = true, de
       ) : null}
       {showQuick && (
         <div
-          className="flex gap-1.5 overflow-x-auto scrollbar-none -mx-1 px-1 pb-0.5"
+          className="-mx-1 flex scrollbar-none gap-1.5 overflow-x-auto px-1 pb-0.5"
           role="group"
           aria-label={t('gen.quickAmounts')}
         >
@@ -98,7 +98,7 @@ export function AmountField({value, onChange, label, error, showQuick = true, de
               onClick={() => onChange(formatVnd(q))}
               aria-pressed={amount === q}
               style={heatStyle(i, QUICK.length)}
-              className="qv-tile qv-tile-hue qv-heat qv-heat-money shrink-0 px-3 py-1 rounded-full text-sm font-semibold qv-num qv-hue-text"
+              className="qv-tile qv-tile-hue qv-heat qv-heat-money qv-num qv-hue-text shrink-0 rounded-full px-3 py-1 text-sm font-semibold"
             >
               {shortAmount(q, locale)}
             </button>

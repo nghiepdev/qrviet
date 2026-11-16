@@ -13,9 +13,40 @@
   },
   "options": {
     "typeAware": true,
+    "typeCheck": true,
     "maxWarnings": 0,
   },
+  "settings": {
+    "better-tailwindcss": {
+      "entryPoint": "src/styles.css",
+      "detectComponentClasses": true,
+      // Tailwind classes are passed through JSX attributes; other strings include SVG/CSS markup.
+      "selectors": [{"kind": "attribute", "name": "^class(?:Name)?$"}],
+    },
+  },
   "overrides": [
+    {
+      "files": ["src/**/*.{ts,tsx}"],
+      "jsPlugins": ["eslint-plugin-better-tailwindcss"],
+      // Oxfmt owns class order and whitespace; lint only Tailwind correctness.
+      "rules": {
+        "better-tailwindcss/no-concatenated-classes": "error",
+        "better-tailwindcss/no-unknown-classes": [
+          "error",
+          // Custom utilities and print selectors are missed by the plugin's component-class detection.
+          {"ignore": ["^qv-hue-text$", "^qv-no-print$", "^pb-safe$"]},
+        ],
+        "better-tailwindcss/no-conflicting-classes": "error",
+      },
+    },
+    {
+      "files": ["src/components/brand/*.tsx"],
+      "rules": {
+        // Brand modifiers belong to the separately imported loader.css stylesheet.
+        "better-tailwindcss/no-concatenated-classes": "off",
+        "better-tailwindcss/no-unknown-classes": ["error", {"ignore": ["^qv-", "^is-"]}],
+      },
+    },
     {
       "files": ["src/components/scan/camera-scanner.tsx"],
       "rules": {

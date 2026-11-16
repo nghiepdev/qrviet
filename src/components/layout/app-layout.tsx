@@ -177,7 +177,7 @@ export function AppLayout({children}: {children: ReactNode}) {
           Safari toolbar it is lifted over); PageBody's own 32px is the gap left above it, which still
           clears the raised scan button.
         */}
-        <div className="min-h-[calc(100dvh-64px-env(safe-area-inset-top))] pb-[calc(70px+env(safe-area-inset-bottom)+var(--qv-toolbar-overlap,0px))] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] md:pb-10">
+        <div className="min-h-[calc(100dvh-64px-env(safe-area-inset-top))] pr-[env(safe-area-inset-right)] pb-[calc(70px+env(safe-area-inset-bottom)+var(--qv-toolbar-overlap,0px))] pl-[env(safe-area-inset-left)] md:pb-10">
           {children}
         </div>
         <MobileExtras />

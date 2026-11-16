@@ -294,7 +294,7 @@ export function BuyMeCoffee() {
         icon={Coffee}
         hue="amber"
       >
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] items-start">
+        <div className="grid grid-cols-1 items-start gap-5 md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
           <div className="flex min-w-0 flex-col gap-5">
             <div className="flex flex-col gap-2">
               <span className="text-sm font-semibold">{t('support.drinks')}</span>
@@ -389,10 +389,10 @@ export function BuyMeCoffee() {
             <div className="flex items-center gap-2 rounded-lg bg-accent-muted/40 px-3.5 py-2.5">
               <div className="min-w-0 flex-1">
                 <div className="text-xs font-medium text-secondary">{t('support.total')}</div>
-                <div className="qv-num text-xl font-extrabold text-accent leading-tight">
+                <div className="qv-num text-xl leading-tight font-extrabold text-accent">
                   {totalAmount > 0 ? formatVnd(totalAmount, true) : t('support.anyAmount')}
                 </div>
-                {words && <div className="text-xs text-secondary italic mt-0.5">{words}</div>}
+                {words && <div className="mt-0.5 text-xs text-secondary italic">{words}</div>}
               </div>
               {canSpeak && (
                 <IconButton

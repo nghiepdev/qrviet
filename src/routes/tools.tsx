@@ -66,7 +66,7 @@ function ToolsPage() {
       />
       <PageBody>
         {/* Masonry: each card rises under the one above it rather than below the row's tallest. */}
-        <div ref={masonry} className="grid grid-cols-1 gap-5 md:grid-cols-2 items-start">
+        <div ref={masonry} className="grid grid-cols-1 items-start gap-5 md:grid-cols-2">
           <div className="md:col-span-2">
             <InspectTool />
           </div>
@@ -133,7 +133,7 @@ function InspectTool() {
           hasSpellCheck={false}
         />
         {!raw && (
-          <div className="-ml-3 -mt-2">
+          <div className="-mt-2 -ml-3">
             <Button
               label={t('tools.sample')}
               size="sm"
@@ -198,7 +198,7 @@ function WordsTool() {
         />
         {amount !== null && (
           <>
-            <div className="text-2xl font-extrabold text-accent qv-num">
+            <div className="qv-num text-2xl font-extrabold text-accent">
               {formatVnd(amount, true)}
             </div>
             {[vi, en].map((w) => (
@@ -233,8 +233,8 @@ function CleanTool() {
         <TextArea label={t('tools.input')} value={value} onChange={setValue} rows={2} />
         <Switch label={t('tools.strict')} value={strict} onChange={setStrict} size="sm" />
         <div className="flex items-start gap-2 rounded-md bg-muted px-3 py-2">
-          <span className="flex-1 qv-mono text-sm break-all">{out || '—'}</span>
-          <span className="text-xs text-secondary qv-num shrink-0">{out.length}</span>
+          <span className="qv-mono flex-1 text-sm break-all">{out || '—'}</span>
+          <span className="qv-num shrink-0 text-xs text-secondary">{out.length}</span>
           <Button
             label={t('common.copy')}
             isIconOnly
@@ -284,7 +284,7 @@ function SplitTool() {
         </div>
         <div className="rounded-lg bg-accent-muted/50 px-4 py-3">
           <div className="text-sm text-secondary">{t('tools.splitEach')}</div>
-          <div className="text-2xl font-extrabold text-accent qv-num">{formatVnd(each, true)}</div>
+          <div className="qv-num text-2xl font-extrabold text-accent">{formatVnd(each, true)}</div>
         </div>
         <div>
           <Button
@@ -318,7 +318,7 @@ function CrcTool() {
           hasSpellCheck={false}
         />
         <div className="flex items-center gap-2 rounded-md bg-muted px-3 py-2">
-          <span className="flex-1 qv-mono text-lg font-bold">{crc}</span>
+          <span className="qv-mono flex-1 text-lg font-bold">{crc}</span>
           <Button
             label={t('common.copy')}
             isIconOnly

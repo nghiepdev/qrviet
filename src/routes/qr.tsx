@@ -273,7 +273,7 @@ function StudioPage() {
     <>
       <PageHeader title={t('qr.title')} subtitle={t('qr.subtitle')} icon={<Shapes size={22} />} />
       <PageBody>
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] items-start">
+        <div className="grid grid-cols-1 items-start gap-5 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
           <Panel hue="violet">
             <div className="flex flex-col gap-5">
               <div className="grid grid-cols-5 gap-2" role="radiogroup" aria-label={t('qr.type')}>
@@ -284,10 +284,10 @@ function StudioPage() {
                     role="radio"
                     aria-checked={id === type}
                     onClick={() => setType(id)}
-                    className={`${HUES[hue]} qv-tile qv-tile-hue flex flex-col items-center gap-1 py-2.5 px-1 text-[11px] sm:text-xs font-semibold text-secondary`}
+                    className={`${HUES[hue]} qv-tile qv-tile-hue flex flex-col items-center gap-1 px-1 py-2.5 text-[11px] font-semibold text-secondary sm:text-xs`}
                   >
                     <Icon size={19} aria-hidden />
-                    <span className="truncate max-w-full">{t(`qr.type.${id}` as MessageKey)}</span>
+                    <span className="max-w-full truncate">{t(`qr.type.${id}` as MessageKey)}</span>
                   </button>
                 ))}
               </div>
@@ -364,7 +364,7 @@ function StudioPage() {
                     </>
                   )}
                   {type === 'vcard' && (
-                    <div className="grid sm:grid-cols-2 gap-3">
+                    <div className="grid gap-3 sm:grid-cols-2">
                       {(
                         [
                           'lastName',
@@ -605,7 +605,7 @@ function StudioPage() {
                     </>
                   )}
 
-                  <div className="flex flex-col gap-3 pt-2 border-t border-border">
+                  <div className="flex flex-col gap-3 border-t border-border pt-2">
                     <TextInput
                       label={t('qr.frameText')}
                       value={s.caption}
@@ -636,7 +636,7 @@ function StudioPage() {
             </div>
           </Panel>
 
-          <div className="flex flex-col gap-4 md:sticky md:top-20 min-w-0">
+          <div className="flex min-w-0 flex-col gap-4 md:sticky md:top-20">
             <Panel hue="blue">
               <div className="flex flex-col gap-4">
                 <QrStage

@@ -19,7 +19,7 @@ export function BankLogo({
     return (
       <span
         aria-hidden
-        className={`inline-grid place-items-center shrink-0 rounded-md font-bold text-white ${className}`}
+        className={`inline-grid shrink-0 place-items-center rounded-md font-bold text-white ${className}`}
         style={{
           width: w,
           height: size,
@@ -34,7 +34,7 @@ export function BankLogo({
   return (
     <span
       aria-hidden
-      className={`inline-grid place-items-center shrink-0 rounded-md bg-white border border-border overflow-hidden ${className}`}
+      className={`inline-grid shrink-0 place-items-center overflow-hidden rounded-md border border-border bg-white ${className}`}
       style={{width: w, height: size}}
     >
       <img
@@ -43,7 +43,7 @@ export function BankLogo({
         loading="lazy"
         decoding="async"
         onError={() => setFailed(true)}
-        className="w-full h-full object-contain"
+        className="h-full w-full object-contain"
         style={{padding: size * 0.06}}
       />
     </span>

@@ -63,29 +63,29 @@ function ThemeCard({
       role="radio"
       aria-checked={selected}
       onClick={onSelect}
-      className="qv-tile p-2 flex flex-col items-stretch gap-2 text-left"
+      className="qv-tile flex flex-col items-stretch gap-2 p-2 text-left"
     >
       <span
-        className="relative block h-16 rounded-md overflow-hidden"
+        className="relative block h-16 overflow-hidden rounded-md"
         style={{background: c}}
         aria-hidden
       >
-        <span className="absolute left-2 top-2 h-3 w-14 rounded-full" style={{background: a}} />
+        <span className="absolute top-2 left-2 h-3 w-14 rounded-full" style={{background: a}} />
         <span
-          className="absolute left-2 top-7 h-2 w-20 rounded-full opacity-40"
+          className="absolute top-7 left-2 h-2 w-20 rounded-full opacity-40"
           style={{background: a}}
         />
         <span className="absolute right-2 bottom-2 size-7 rounded-lg" style={{background: b}} />
-        <span className="absolute left-2 bottom-2 h-5 w-10 rounded-md" style={{background: a}} />
+        <span className="absolute bottom-2 left-2 h-5 w-10 rounded-md" style={{background: a}} />
         {recipe.forcedMode === 'dark' && (
-          <span className="absolute right-2 top-2">
+          <span className="absolute top-2 right-2">
             <Moon size={12} color="#fff" />
           </span>
         )}
       </span>
       <span className="flex items-center gap-1 text-sm font-semibold">
         <span className="truncate">{recipe.name[locale]}</span>
-        {selected && <Check size={14} className="text-accent shrink-0" aria-hidden />}
+        {selected && <Check size={14} className="shrink-0 text-accent" aria-hidden />}
       </span>
     </button>
   )
@@ -231,7 +231,7 @@ function SettingsPage() {
                   <div key={title} className="flex flex-col gap-2">
                     <span className="text-sm font-semibold">{title}</span>
                     <div
-                      className="grid grid-cols-3 md:grid-cols-5 xl:grid-cols-7 gap-2"
+                      className="grid grid-cols-3 gap-2 md:grid-cols-5 xl:grid-cols-7"
                       role="radiogroup"
                       aria-label={title}
                     >
@@ -251,7 +251,7 @@ function SettingsPage() {
               <div className="flex flex-col gap-2">
                 <span className="text-sm font-semibold">{t('set.font')}</span>
                 <div
-                  className="grid grid-cols-2 md:grid-cols-4 gap-2"
+                  className="grid grid-cols-2 gap-2 md:grid-cols-4"
                   role="radiogroup"
                   aria-label={t('set.font')}
                 >
@@ -269,7 +269,7 @@ function SettingsPage() {
                       className="qv-tile p-3 text-left"
                     >
                       <span
-                        className="block text-lg font-semibold truncate"
+                        className="block truncate text-lg font-semibold"
                         style={{fontFamily: FONTS[id].stack}}
                       >
                         {FONTS[id].sample}
@@ -293,7 +293,7 @@ function SettingsPage() {
           </Panel>
 
           {/* Masonry: each card rises under the one above it rather than below the row's tallest. */}
-          <div ref={masonry} className="grid grid-cols-1 gap-5 md:grid-cols-2 items-start">
+          <div ref={masonry} className="grid grid-cols-1 items-start gap-5 md:grid-cols-2">
             <Panel title={t('set.qrDefaults')} icon={QrCode}>
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-2">

@@ -19,7 +19,7 @@ export function QrStage({
   const prefix = `qv${rawId.replace(/[^a-zA-Z0-9]/g, '')}`
   const svg = scene ? sceneToSvg(scene, {idPrefix: prefix}) : ''
   return (
-    <div className="qv-preview-stage rounded-xl p-4 sm:p-6 grid place-items-center min-h-72">
+    <div className="qv-preview-stage grid min-h-72 place-items-center rounded-xl p-4 sm:p-6">
       {scene ? (
         <div
           role="img"

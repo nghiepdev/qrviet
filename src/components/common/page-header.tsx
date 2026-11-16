@@ -17,11 +17,11 @@ export function PageHeader({
 }) {
   return (
     <header className="qv-hero px-4 pt-4 pb-4 sm:pt-6 sm:pb-5 md:px-6 lg:px-8 lg:pt-8 lg:pb-6">
-      <div className="mx-auto max-w-6xl flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div className="flex items-start gap-3 min-w-0 animate-qv-rise">
+      <div className="mx-auto flex max-w-6xl flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex min-w-0 animate-qv-rise items-start gap-3">
           {icon && (
             <span
-              className="hidden sm:grid place-items-center size-11 rounded-lg bg-accent text-on-accent shadow-md shrink-0"
+              className="hidden size-11 shrink-0 place-items-center rounded-lg bg-accent text-on-accent shadow-md sm:grid"
               aria-hidden
             >
               {icon}
@@ -38,7 +38,7 @@ export function PageHeader({
             )}
           </div>
         </div>
-        {actions && <div className="flex flex-wrap gap-2 shrink-0">{actions}</div>}
+        {actions && <div className="flex shrink-0 flex-wrap gap-2">{actions}</div>}
       </div>
     </header>
   )
@@ -46,7 +46,7 @@ export function PageHeader({
 
 export function PageBody({children, className = ''}: {children: ReactNode; className?: string}) {
   return (
-    <div className={`mx-auto max-w-6xl px-4 md:px-6 lg:px-8 pb-8 ${className}`}>{children}</div>
+    <div className={`mx-auto max-w-6xl px-4 pb-8 md:px-6 lg:px-8 ${className}`}>{children}</div>
   )
 }
 
@@ -78,11 +78,11 @@ export function Panel({
   return (
     <section
       id={id}
-      className={`${HUES[hue]} qv-tint rounded-xl border border-border p-4 sm:p-5 shadow-sm ${id ? 'scroll-mt-24' : ''} ${className}`}
+      className={`${HUES[hue]} qv-tint rounded-xl border border-border p-4 shadow-sm sm:p-5 ${id ? 'scroll-mt-24' : ''} ${className}`}
     >
       {(title || actions) && (
         <div
-          className={`flex justify-between gap-3 mb-4 ${badge && !description ? 'items-center' : 'items-start'}`}
+          className={`mb-4 flex justify-between gap-3 ${badge && !description ? 'items-center' : 'items-start'}`}
         >
           {badge && Icon && (
             <IconBadge hue={hue}>
@@ -103,7 +103,7 @@ export function Panel({
               </div>
             )}
           </div>
-          {actions && <div className="flex gap-1 shrink-0">{actions}</div>}
+          {actions && <div className="flex shrink-0 gap-1">{actions}</div>}
         </div>
       )}
       {children}

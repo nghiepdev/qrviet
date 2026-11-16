@@ -276,7 +276,7 @@ function ScanPage() {
                     className={`flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-10 text-center transition-colors ${
                       dragging
                         ? 'border-accent bg-accent-muted'
-                        : 'border-border hover:border-strong'
+                        : 'border-border hover:border-border-strong'
                     }`}
                   >
                     <ImageUp size={36} className="text-accent" aria-hidden />
@@ -366,8 +366,8 @@ function ScanPage() {
         </div>
       </PageBody>
       {dragging && (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-[color-mix(in_srgb,var(--color-accent)_18%,transparent)] backdrop-blur-sm pointer-events-none">
-          <div className="rounded-2xl bg-surface px-8 py-6 shadow-lg font-bold text-lg">
+        <div className="pointer-events-none fixed inset-0 z-50 grid place-items-center bg-[color-mix(in_srgb,var(--color-accent)_18%,transparent)] backdrop-blur-sm">
+          <div className="rounded-2xl bg-surface px-8 py-6 text-lg font-bold shadow-lg">
             {t('scan.drop')}
           </div>
         </div>

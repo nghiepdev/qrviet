@@ -205,7 +205,7 @@ function AboutPage() {
             </ul>
           </section>
 
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] items-start">
+          <div className="grid grid-cols-1 items-start gap-5 md:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
             <Panel title={t('about.privacy')} icon={Lock} hue="green">
               <ul className="mb-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
                 {PROMISES.map(({label, icon: Icon}) => (

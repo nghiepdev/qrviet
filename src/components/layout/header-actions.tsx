@@ -23,7 +23,7 @@ export function HeaderActions({onOpenPalette}: {onOpenPalette: () => void}) {
       <button
         type="button"
         onClick={onOpenPalette}
-        className="hidden md:inline-flex items-center gap-2 h-9 pl-3 pr-2 rounded-md border border-border bg-surface text-secondary text-sm hover:border-strong transition-colors min-w-52"
+        className="hidden h-9 min-w-52 items-center gap-2 rounded-md border border-border bg-surface pr-2 pl-3 text-sm text-secondary transition-colors hover:border-border-strong md:inline-flex"
         aria-label={t('app.search')}
       >
         <Search size={15} aria-hidden />

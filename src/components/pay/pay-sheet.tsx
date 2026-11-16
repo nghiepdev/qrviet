@@ -111,26 +111,26 @@ function SafariSheetBar({host, isSecure, url, onDone}: SafariBarProps) {
       <button
         type="button"
         onClick={onDone}
-        className="justify-self-start inline-flex min-h-11 items-center rounded-lg px-2.5 text-[17px] font-medium tracking-[-0.01em] text-[#007aff] dark:text-[#0a84ff] transition-opacity active:opacity-50 cursor-pointer"
+        className="inline-flex min-h-11 cursor-pointer items-center justify-self-start rounded-lg px-2.5 text-[17px] font-medium tracking-[-0.01em] text-[#007aff] transition-opacity active:opacity-50 dark:text-[#0a84ff]"
       >
         {t('pay.done')}
       </button>
 
-      <div className="justify-self-center flex min-w-0 max-w-full items-center justify-center gap-1.5 px-1 text-[15px] font-semibold tracking-[-0.01em] text-primary">
+      <div className="flex max-w-full min-w-0 items-center justify-center gap-1.5 justify-self-center px-1 text-[15px] font-semibold tracking-[-0.01em] text-primary">
         {isSecure && (
           <Lock size={12} strokeWidth={2.5} className="shrink-0 text-primary/80" aria-hidden />
         )}
         <span className="truncate">{host}</span>
       </div>
 
-      <div className="justify-self-end flex items-center">
+      <div className="flex items-center justify-self-end">
         <button
           type="button"
           onClick={() => void handleCopy()}
           disabled={!url}
           aria-label={t('common.copy')}
           title={t('common.copy')}
-          className="grid size-11 place-items-center rounded-lg text-[#007aff] dark:text-[#0a84ff] transition-opacity active:opacity-50 disabled:opacity-40 cursor-pointer"
+          className="grid size-11 cursor-pointer place-items-center rounded-lg text-[#007aff] transition-opacity active:opacity-50 disabled:opacity-40 dark:text-[#0a84ff]"
         >
           {copied ? (
             <Check size={19} strokeWidth={2.1} aria-hidden />
@@ -144,7 +144,7 @@ function SafariSheetBar({host, isSecure, url, onDone}: SafariBarProps) {
           disabled={!url}
           aria-label={t('common.share')}
           title={t('common.share')}
-          className="grid size-11 place-items-center rounded-lg text-[#007aff] dark:text-[#0a84ff] transition-opacity active:opacity-50 disabled:opacity-40 cursor-pointer"
+          className="grid size-11 cursor-pointer place-items-center rounded-lg text-[#007aff] transition-opacity active:opacity-50 disabled:opacity-40 dark:text-[#0a84ff]"
         >
           <Share size={19} strokeWidth={1.9} aria-hidden />
         </button>
@@ -199,7 +199,7 @@ export function PaySheet({url, isOpen, onOpenChange, onMakeOwn}: PaySheetProps) 
         height="calc(100dvh - max(10px, env(safe-area-inset-top, 0px)))"
         padding={0}
       >
-        <div className="sticky top-0 z-10 -mt-6 pt-5 pb-1 px-2 border-b border-border/70 bg-surface/85 backdrop-blur-md">
+        <div className="sticky top-0 z-10 -mt-6 border-b border-border/70 bg-surface/85 px-2 pt-5 pb-1 backdrop-blur-md">
           {bar}
         </div>
         <div className="mx-auto max-w-5xl px-4 py-5 pb-[calc(24px+env(safe-area-inset-bottom,0px))]">
@@ -224,7 +224,7 @@ export function PaySheet({url, isOpen, onOpenChange, onMakeOwn}: PaySheetProps) 
           <LayoutHeader
             padding={0}
             hasDivider
-            className="bg-surface/90 backdrop-blur-md px-3 pt-[max(4px,env(safe-area-inset-top,0px))] pb-1"
+            className="bg-surface/90 px-3 pt-[max(4px,env(safe-area-inset-top,0px))] pb-1 backdrop-blur-md"
           >
             {bar}
           </LayoutHeader>

@@ -57,7 +57,7 @@ export function BankPicker({
       <label htmlFor={id} className="text-sm font-semibold text-primary">
         {label ?? t('bank.label')}
         {isRequired && (
-          <span className="text-error ml-0.5" aria-hidden>
+          <span className="ml-0.5 text-error" aria-hidden>
             *
           </span>
         )}
@@ -68,19 +68,19 @@ export function BankPicker({
         onClick={openSheet}
         aria-haspopup="dialog"
         aria-describedby={error ? `${id}-error` : undefined}
-        className={`group flex items-center gap-3 w-full min-h-14 px-3 py-2 rounded-md border bg-surface text-left transition-colors hover:border-strong focus-visible:outline-2 focus-visible:outline-offset-2 ${
+        className={`group flex min-h-14 w-full items-center gap-3 rounded-md border bg-surface px-3 py-2 text-left transition-colors hover:border-border-strong focus-visible:outline-2 focus-visible:outline-offset-2 ${
           error ? 'border-error' : 'border-border'
         }`}
       >
         {bank ? (
           <>
             <BankLogo bank={bank} size={36} />
-            <span className="flex-1 min-w-0">
+            <span className="min-w-0 flex-1">
               <span className="flex flex-wrap items-center gap-1.5">
-                <span className="font-semibold truncate">{bank.shortName}</span>
+                <span className="truncate font-semibold">{bank.shortName}</span>
                 <BankDeeplinkBadge bank={bank} compact />
               </span>
-              <span className="block text-xs text-secondary truncate">{bank.name}</span>
+              <span className="block truncate text-xs text-secondary">{bank.name}</span>
             </span>
           </>
         ) : (
@@ -88,7 +88,7 @@ export function BankPicker({
         )}
         <ChevronDown
           size={18}
-          className="text-secondary shrink-0 transition-transform group-hover:translate-y-0.5"
+          className="shrink-0 text-secondary transition-transform group-hover:translate-y-0.5"
           aria-hidden
         />
       </button>
@@ -195,7 +195,7 @@ export function BankSheet({
           top, inside the 16px of padding the negative margin cancels while the search is not stuck.
         */}
         <div
-          className={`flex flex-col gap-2 ${touch ? 'sticky top-0 -mt-4 pt-4 -mx-1 px-1 pb-1 bg-surface' : ''}`}
+          className={`flex flex-col gap-2 ${touch ? 'sticky top-0 -mx-1 -mt-4 bg-surface px-1 pt-4 pb-1' : ''}`}
         >
           <TextInput
             type="search"
@@ -211,7 +211,7 @@ export function BankSheet({
             autoComplete="off"
             onEnter={() => first && onSelect(first)}
           />
-          <div className="overflow-x-auto scrollbar-none">
+          <div className="scrollbar-none overflow-x-auto">
             <SegmentedControl
               label={t('bank.filterDeeplink')}
               size="sm"
@@ -229,7 +229,7 @@ export function BankSheet({
           </div>
         </div>
         <div
-          className={`flex flex-col gap-4 -mx-1 px-1 pb-2 ${touch ? '' : 'max-h-[60dvh] overflow-y-auto overflow-x-hidden'}`}
+          className={`-mx-1 flex flex-col gap-4 px-1 pb-2 ${touch ? '' : 'max-h-[60dvh] overflow-x-hidden overflow-y-auto'}`}
           role="list"
         >
           {sections.map((section) =>
@@ -274,35 +274,35 @@ function BankRow({
 }) {
   const t = useT()
   return (
-    <li className="flex items-center gap-1 min-w-0">
+    <li className="flex min-w-0 items-center gap-1">
       <button
         type="button"
         onClick={() => onSelect(bank)}
         aria-pressed={selected}
-        className={`flex-1 min-w-0 flex items-center gap-3 p-2 rounded-md text-left transition-colors hover:bg-(--color-overlay-hover) ${
+        className={`flex min-w-0 flex-1 items-center gap-3 rounded-md p-2 text-left transition-colors hover:bg-(--color-overlay-hover) ${
           selected ? 'bg-accent-muted' : ''
         }`}
       >
         <BankLogo bank={bank} size={34} />
-        <span className="flex-1 min-w-0">
+        <span className="min-w-0 flex-1">
           <span className="flex flex-wrap items-center gap-1.5">
-            <span className="font-semibold truncate">{bank.shortName}</span>
+            <span className="truncate font-semibold">{bank.shortName}</span>
             <BankDeeplinkBadge bank={bank} compact />
             {!bank.transfer && <Badge variant="neutral" label={t('bank.napasNo')} />}
           </span>
-          <span className="block text-xs text-secondary leading-snug wrap-break-word">
+          <span className="block text-xs leading-snug wrap-break-word text-secondary">
             {bank.name}
           </span>
         </span>
-        <span className="text-xs text-secondary qv-mono shrink-0">{bank.bin}</span>
-        {selected && <Check size={18} className="text-accent shrink-0" aria-hidden />}
+        <span className="qv-mono shrink-0 text-xs text-secondary">{bank.bin}</span>
+        {selected && <Check size={18} className="shrink-0 text-accent" aria-hidden />}
       </button>
       <button
         type="button"
         onClick={() => toggleFavoriteBank(bank.bin)}
         aria-label={favorite ? t('bank.unfavorite') : t('bank.favorite')}
         aria-pressed={favorite}
-        className="shrink-0 p-2 rounded-md text-secondary hover:bg-(--color-overlay-hover)"
+        className="shrink-0 rounded-md p-2 text-secondary hover:bg-(--color-overlay-hover)"
       >
         <Star
           size={16}

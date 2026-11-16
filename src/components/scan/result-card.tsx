@@ -59,7 +59,7 @@ const TYPE_ICON: Record<string, typeof Link2> = {
 export function ResultCard({result, onRemove}: {result: ScanResult; onRemove?: () => void}) {
   const classified = classifyPayload(result.text)
   return (
-    <article className="rounded-2xl border border-border bg-surface p-4 animate-qv-rise">
+    <article className="animate-qv-rise rounded-2xl border border-border bg-surface p-4">
       {classified.type === 'emv' && classified.emv.kind === 'vietqr' ? (
         <VietQrResult parsed={classified.emv} onRemove={onRemove} />
       ) : (
@@ -145,7 +145,7 @@ export function VietQrResult({
             />
             <CrcBadge valid={parsed.crc.valid} present={parsed.crc.present} />
           </div>
-          <div className="text-sm text-secondary truncate">
+          <div className="truncate text-sm text-secondary">
             {bank ? `${bank.shortName} · ${bank.name}` : t('scan.unknownBank', {bin: parsed.bin})}
           </div>
         </div>
@@ -268,7 +268,7 @@ function GenericResult({
     <div className="flex flex-col gap-3">
       <div className="flex items-center gap-3">
         <span
-          className="grid place-items-center size-10 rounded-lg bg-accent-muted text-accent shrink-0"
+          className="grid size-10 shrink-0 place-items-center rounded-lg bg-accent-muted text-accent"
           aria-hidden
         >
           <Icon size={20} />
@@ -293,7 +293,7 @@ function GenericResult({
       {classified.type === 'url' && (
         <>
           <CopyField label={t('scan.type.url')} value={classified.url} />
-          <p className="text-xs text-secondary flex items-center gap-1.5">
+          <p className="flex items-center gap-1.5 text-xs text-secondary">
             <ShieldAlert size={13} aria-hidden /> {t('scan.unsafeLink')}
           </p>
           <div>
@@ -453,7 +453,7 @@ function GenericResult({
         </>
       )}
       {(classified.type === 'text' || classified.type === 'emv-invalid') && (
-        <div className="rounded-md bg-muted p-3 text-sm whitespace-pre-wrap wrap-break-word max-h-64 overflow-auto">
+        <div className="max-h-64 overflow-auto rounded-md bg-muted p-3 text-sm wrap-break-word whitespace-pre-wrap">
           {raw}
         </div>
       )}

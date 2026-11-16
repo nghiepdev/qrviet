@@ -60,9 +60,9 @@ function FragmentRow({
 }) {
   return (
     <>
-      <tr className="border-b border-border last:border-b-0 align-top">
+      <tr className="border-b border-border align-top last:border-b-0">
         <td
-          className="py-1.5 pr-3 qv-mono text-xs whitespace-nowrap"
+          className="qv-mono py-1.5 pr-3 text-xs whitespace-nowrap"
           style={{paddingLeft: depth * 14}}
         >
           {depth > 0 && <span className="text-secondary">└ </span>}
@@ -70,7 +70,7 @@ function FragmentRow({
           <span className="text-secondary"> · {String(field.length).padStart(2, '0')}</span>
         </td>
         <td className="py-1.5 pr-3 text-xs text-secondary">{nameFor(path, field.id)}</td>
-        <td className="py-1.5 qv-mono text-xs break-all">{field.children ? '' : field.value}</td>
+        <td className="qv-mono py-1.5 text-xs break-all">{field.children ? '' : field.value}</td>
       </tr>
       {field.children && <Rows fields={field.children} path={fullPath} depth={depth + 1} />}
     </>
@@ -85,7 +85,7 @@ export function TlvTable({fields}: {fields: TlvField[]}) {
       <table className="w-full text-left">
         <thead className="bg-muted">
           <tr className="text-xs text-secondary">
-            <th className="py-1.5 px-2 font-semibold">{t('tools.tag')}</th>
+            <th className="px-2 py-1.5 font-semibold">{t('tools.tag')}</th>
             <th className="py-1.5 pr-3 font-semibold">{t('tools.name')}</th>
             <th className="py-1.5 pr-2 font-semibold">{t('tools.value')}</th>
           </tr>

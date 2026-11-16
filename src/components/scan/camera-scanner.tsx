@@ -343,7 +343,7 @@ export function CameraScanner({
   return (
     <div className="flex flex-col gap-3">
       <div
-        className="relative overflow-hidden rounded-xl bg-[#0d0a0b] aspect-square sm:aspect-4/3"
+        className="relative aspect-square overflow-hidden rounded-xl bg-[#0d0a0b] sm:aspect-4/3"
         style={{'--qv-scan-h': '280px'} as CSSProperties}
       >
         <video
@@ -358,7 +358,7 @@ export function CameraScanner({
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center text-white/80">
             <Camera size={40} aria-hidden />
-            {error && <p className="text-sm max-w-xs text-white">{t(error)}</p>}
+            {error && <p className="max-w-xs text-sm text-white">{t(error)}</p>}
             <div className="flex flex-wrap items-center justify-center gap-2">
               <Button
                 label={t('scan.start')}
@@ -391,8 +391,8 @@ export function CameraScanner({
           </div>
         )}
         {running && (
-          <div className="absolute bottom-3 inset-x-3 flex items-center justify-between gap-2">
-            <span className="rounded-full bg-black/55 text-white text-xs px-2.5 py-1 backdrop-blur">
+          <div className="absolute inset-x-3 bottom-3 flex items-center justify-between gap-2">
+            <span className="rounded-full bg-black/55 px-2.5 py-1 text-xs text-white backdrop-blur">
               {t('scan.engine', {engine: engine === 'native' ? 'BarcodeDetector' : 'jsQR'})}
             </span>
             <span className="flex gap-1.5">

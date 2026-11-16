@@ -21,7 +21,7 @@ export function BottomTabs() {
   const menuCurrent = hasNavEntry(pathname) && !TABS.some((tab) => isActivePath(pathname, tab.to))
   return (
     <nav className="qv-tabbar qv-no-print" aria-label={t('nav.main')}>
-      <ul className="grid grid-cols-5 max-w-lg mx-auto">
+      <ul className="mx-auto grid max-w-lg grid-cols-5">
         {TABS.map((tab) => {
           const active = isActivePath(pathname, tab.to)
           const Icon = tab.icon

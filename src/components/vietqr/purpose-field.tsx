@@ -39,7 +39,7 @@ export function PurposeField({value, ascii, onChange, error, warning}: Props) {
         statusVariant="detached"
       />
       <div className="flex items-center justify-between gap-2 text-xs">
-        <span className="text-secondary truncate min-w-0">
+        <span className="min-w-0 truncate text-secondary">
           {changed ? (
             <>
               → <span className="qv-mono">{ascii}</span>

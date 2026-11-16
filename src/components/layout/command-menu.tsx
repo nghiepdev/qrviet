@@ -141,15 +141,15 @@ export function CommandMenu({
         item?.auxiliaryData?.run()
       }}
       renderItem={(item: Cmd) => (
-        <span className="flex items-center gap-3 w-full min-w-0">
-          <span className="text-secondary shrink-0 grid place-items-center w-10">
+        <span className="flex w-full min-w-0 items-center gap-3">
+          <span className="grid w-10 shrink-0 place-items-center text-secondary">
             {item.auxiliaryData?.icon}
           </span>
           <Text type="body" maxLines={1}>
             {item.label}
           </Text>
           {item.auxiliaryData?.hint && (
-            <span className="ml-auto text-xs text-secondary qv-mono truncate">
+            <span className="qv-mono ml-auto truncate text-xs text-secondary">
               {item.auxiliaryData.hint}
             </span>
           )}

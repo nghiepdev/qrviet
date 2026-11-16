@@ -166,7 +166,7 @@ export function BankAppLauncher({payment, disabled = false, onSaveQr, framed = t
           </IconBadge>
           <div className="min-w-0 flex-1">
             <Heading level={2}>{t('pay.openAppTitle')}</Heading>
-            <p className="text-xs text-secondary mt-0.5">{t('pay.openAppSubtitle')}</p>
+            <p className="mt-0.5 text-xs text-secondary">{t('pay.openAppSubtitle')}</p>
           </div>
         </div>
       )}
@@ -216,15 +216,15 @@ export function BankAppLauncher({payment, disabled = false, onSaveQr, framed = t
       </div>
 
       {/* Selected bank app card */}
-      <div className="rounded-xl border border-border bg-surface p-3 flex flex-col gap-3">
+      <div className="flex flex-col gap-3 rounded-xl border border-border bg-surface p-3">
         <div className="flex items-center gap-3">
           <BankLogo bank={selectedBank} size={36} />
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="font-bold truncate">{selectedBank.shortName}</span>
+              <span className="truncate font-bold">{selectedBank.shortName}</span>
               <BankDeeplinkBadge bank={selectedBank} compact />
             </div>
-            <p className="text-xs text-secondary mt-0.5">{modeHint}</p>
+            <p className="mt-0.5 text-xs text-secondary">{modeHint}</p>
           </div>
         </div>
 
@@ -267,7 +267,7 @@ export function BankAppLauncher({payment, disabled = false, onSaveQr, framed = t
             />
 
             {status === 'opened' && (
-              <div className="rounded-lg border border-border bg-muted p-3 text-xs flex flex-col gap-2">
+              <div className="flex flex-col gap-2 rounded-lg border border-border bg-muted p-3 text-xs">
                 <div className="flex items-center gap-1.5 font-semibold text-success">
                   <CheckCircle2 size={15} aria-hidden />
                   <span>{t('pay.openedTitle', {bank: selectedBank.shortName})}</span>
@@ -297,7 +297,7 @@ export function BankAppLauncher({payment, disabled = false, onSaveQr, framed = t
             )}
 
             {status === 'fallback' && (
-              <div className="rounded-lg border border-border bg-muted p-3 text-xs flex flex-col gap-2">
+              <div className="flex flex-col gap-2 rounded-lg border border-border bg-muted p-3 text-xs">
                 <div className="font-semibold">
                   {t('pay.fallbackTitle', {bank: selectedBank.shortName})}
                 </div>

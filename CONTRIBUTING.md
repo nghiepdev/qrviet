@@ -63,13 +63,14 @@ Recommended VS Code extensions are listed in `.vscode/extensions.json`. Configur
 
 ### Code style
 
-- TypeScript runs in strict mode, and `pnpm typecheck` must pass.
+- TypeScript runs in strict mode, and `pnpm lint` checks both lint rules and TypeScript compiler diagnostics.
 - File names are kebab-case (`app-layout.tsx`, `use-qr-scene.ts`). Components keep PascalCase names and hooks start with `use`.
 - Import from `src/` through the `#/` alias (`#/lib/vietqr`).
 - The scripts in `scripts/` run directly in Node.js, which strips the types without compiling, and the edge function in `netlify/edge-functions/` runs in Deno. In them, and in the `src/` modules they import, use relative imports that end in `.ts` and erasable TypeScript only (no `enum`, `namespace` or constructor parameter properties).
 - Keep domain logic (VietQR, EMV, amounts, text) in `src/lib/` as plain TypeScript without React.
 - Match the surrounding code: 2-space indentation, single quotes, no semicolons and no spaces inside braces. `.editorconfig` sets the basics for your editor.
-- [Oxfmt](https://oxc.rs/docs/guide/usage/formatter/config) owns formatting; `.oxfmtrc.json` preserves this style with its default 100-column width. [Oxlint](https://oxc.rs/docs/guide/usage/linter/config) checks correctness, React Hooks and accessibility in `.oxlintrc.jsonc`. Type-aware rules use `oxlint-tsgolint`; `pnpm typecheck` runs the TypeScript compiler separately. The config documents exceptions for custom ARIA widgets, effect-driven browser synchronization and the experimental compiler's scan-loop purity diagnostic.
+- [Oxfmt](https://oxc.rs/docs/guide/usage/formatter/config) owns formatting; `.oxfmtrc.jsonc` preserves this style with its default 100-column width. [Oxlint](https://oxc.rs/docs/guide/usage/linter/config) checks correctness, React Hooks and accessibility in `.oxlintrc.jsonc`. `oxlint-tsgolint` runs type-aware rules and TypeScript compiler diagnostics together via `typeAware` and the experimental `typeCheck` option. The config documents exceptions for custom ARIA widgets, effect-driven browser synchronization and the experimental compiler's scan-loop purity diagnostic.
+- Oxfmt sorts Tailwind classes using `src/styles.css`, including the Astryx theme. [eslint-plugin-better-tailwindcss](https://github.com/schoero/eslint-plugin-better-tailwindcss/blob/main/docs/parsers/tsx.md) runs its correctness rules through Oxlint: unknown, conflicting and dynamically concatenated classes. It checks JSX class attributes; the config documents exceptions for separately loaded brand CSS and selectors the plugin cannot detect. Oxlint's JavaScript plugin API is currently alpha.
 - Write comments that explain why the code does something, not what it does.
 
 ### React
@@ -104,7 +105,7 @@ pnpm check
 pnpm build
 ```
 
-`pnpm check` runs lint, formatting checks and type checking without changing files. Run `pnpm fix` to apply safe lint fixes and formatting, then rerun `pnpm check`. Both Oxc tools respect `.gitignore`; their configs also exclude the generated route tree, and Oxfmt skips the generated bank JSON files. Import order and Tailwind class sorting are left unchanged.
+`pnpm check` runs lint, formatting checks and type checking without changing files. Run `pnpm fix` to apply safe lint fixes and formatting, then rerun `pnpm check`. Both Oxc tools respect `.gitignore`; their configs also exclude the generated route tree, and Oxfmt skips the generated bank JSON files. Oxfmt handles Tailwind class order; import order is left unchanged.
 
 Then try the change in the browser: `pnpm dev` covers most changes, and `pnpm preview` (after `pnpm build`) covers offline mode, installation and updates.
 

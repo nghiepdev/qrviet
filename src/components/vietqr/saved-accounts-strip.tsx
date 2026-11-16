@@ -22,7 +22,7 @@ export function SavedAccountsStrip({
   return (
     <div className="flex flex-col gap-2">
       <span className="text-sm font-semibold">{t('gen.pickSaved')}</span>
-      <div className="flex gap-2 overflow-x-auto scrollbar-none -mx-1 px-1 pb-1 snap-x">
+      <div className="-mx-1 flex snap-x scrollbar-none gap-2 overflow-x-auto px-1 pb-1">
         {sorted.map((a) => {
           const bank = getBankByBin(a.bin)
           const active = activeKey === `${a.bin}:${a.accountNumber}`
@@ -32,7 +32,7 @@ export function SavedAccountsStrip({
               type="button"
               onClick={() => onPick(a)}
               aria-pressed={active}
-              className="qv-tile snap-start shrink-0 flex items-center gap-2 pl-2 pr-3 py-2 text-left max-w-60"
+              className="qv-tile flex max-w-60 shrink-0 snap-start items-center gap-2 py-2 pr-3 pl-2 text-left"
             >
               <span
                 className="w-1 self-stretch rounded-full"
@@ -41,10 +41,10 @@ export function SavedAccountsStrip({
               />
               <BankLogo bank={bank} size={26} />
               <span className="min-w-0">
-                <span className="block text-sm font-semibold truncate">
+                <span className="block truncate text-sm font-semibold">
                   {a.nickname || a.accountName || bank?.shortName}
                 </span>
-                <span className="block text-xs text-secondary qv-mono truncate">
+                <span className="qv-mono block truncate text-xs text-secondary">
                   {a.accountNumber}
                 </span>
               </span>
@@ -53,7 +53,7 @@ export function SavedAccountsStrip({
         })}
         <Link
           to="/accounts"
-          className="qv-tile shrink-0 grid place-items-center px-3 text-secondary"
+          className="qv-tile grid shrink-0 place-items-center px-3 text-secondary"
           aria-label={t('acc.add')}
           title={t('acc.add')}
         >

@@ -279,9 +279,9 @@ function GeneratorPage() {
     <>
       <PageHeader title={t('gen.title')} subtitle={t('gen.subtitle')} icon={<QrCode size={22} />} />
       <PageBody>
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] items-start">
+        <div className="grid grid-cols-1 items-start gap-5 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
           {/* ---------------- Form ---------------- */}
-          <div className="flex flex-col gap-5 min-w-0">
+          <div className="flex min-w-0 flex-col gap-5">
             <Panel
               actions={
                 <>
@@ -411,7 +411,7 @@ function GeneratorPage() {
           </div>
 
           {/* ---------------- Preview ---------------- */}
-          <div className="flex flex-col gap-5 min-w-0 md:sticky md:top-20" ref={previewRef}>
+          <div className="flex min-w-0 flex-col gap-5 md:sticky md:top-20" ref={previewRef}>
             <Panel hue="violet">
               <div className="flex flex-col gap-4">
                 <TemplatePicker
@@ -517,7 +517,7 @@ function GeneratorPage() {
       </PageBody>
 
       {!previewVisible && derived.payload && (
-        <div className="qv-hide-when-typing md:hidden fixed inset-x-0 bottom-[calc(104px+env(safe-area-inset-bottom))] z-30 flex justify-center pointer-events-none animate-qv-rise">
+        <div className="qv-hide-when-typing pointer-events-none fixed inset-x-0 bottom-[calc(104px+env(safe-area-inset-bottom))] z-30 flex animate-qv-rise justify-center md:hidden">
           <span className="pointer-events-auto">
             <Button
               label={t('common.preview')}

@@ -207,16 +207,16 @@ function AccountsPage() {
                 <li key={a.id} className="animate-qv-rise">
                   <article className="relative overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
                     <div
-                      className="h-24 px-4 pt-3 flex items-start justify-between text-white"
+                      className="flex h-24 items-start justify-between px-4 pt-3 text-white"
                       style={{
                         background: `linear-gradient(135deg, ${a.color}, color-mix(in srgb, ${a.color} 55%, #000))`,
                       }}
                     >
                       <div className="min-w-0">
-                        <div className="text-xs opacity-85 truncate">
+                        <div className="truncate text-xs opacity-85">
                           {bank?.shortName ?? a.bin}
                         </div>
-                        <div className="font-bold text-lg truncate">
+                        <div className="truncate text-lg font-bold">
                           {a.nickname || a.accountName || bank?.shortName}
                         </div>
                       </div>
@@ -228,15 +228,15 @@ function AccountsPage() {
                         />
                       )}
                     </div>
-                    <div className="absolute right-4 top-14">
+                    <div className="absolute top-14 right-4">
                       <BankLogo bank={bank} size={40} className="shadow-md" />
                     </div>
-                    <div className="p-4 pt-3 flex flex-col gap-3">
+                    <div className="flex flex-col gap-3 p-4 pt-3">
                       <div>
                         <div className="qv-mono text-lg font-semibold tracking-wide">
                           {groupDigits(a.accountNumber)}
                         </div>
-                        <div className="text-sm text-secondary truncate">
+                        <div className="truncate text-sm text-secondary">
                           {a.accountName || '—'}
                         </div>
                       </div>

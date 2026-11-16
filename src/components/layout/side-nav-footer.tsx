@@ -19,7 +19,7 @@ export function SideNavFooter() {
   return (
     // `qv-sidenav-footer`: styles.css pins it to the bottom of the mobile drawer.
     <VStack gap={2} padding={2} className="qv-sidenav-footer">
-      <div className="rounded-lg p-3 qv-hero border border-border">
+      <div className="qv-hero rounded-lg border border-border p-3">
         <VStack gap={2}>
           <Text type="supporting">{t('app.tagline')}</Text>
           <Button

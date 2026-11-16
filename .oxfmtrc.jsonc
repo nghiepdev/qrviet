@@ -1,0 +1,10 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "semi": false,
+  "singleQuote": true,
+  "bracketSpacing": false,
+  "sortTailwindcss": {
+    "stylesheet": "./src/styles.css",
+  },
+  "ignorePatterns": ["src/routeTree.gen.ts", "src/data/banks.json", "src/data/bank-apps.json"],
+}

@@ -68,7 +68,7 @@ function Preview({style}: {style: QrStyle}) {
   const svg = qrToSvg(layoutQr(SAMPLE, {...style, margin: 1}), 64, {style: {...style, margin: 1}})
   return (
     <span
-      className="block size-14 [&>svg]:size-full [&>svg]:block"
+      className="block size-14 [&>svg]:block [&>svg]:size-full"
       aria-hidden
       dangerouslySetInnerHTML={{__html: svg}}
     />
@@ -93,7 +93,7 @@ function Tiles<T extends string>({
   const t = useT()
   return (
     <fieldset className="flex flex-col gap-2">
-      <legend className="text-sm font-semibold mb-2">{label}</legend>
+      <legend className="mb-2 text-sm font-semibold">{label}</legend>
       {/* Auto-fill tiles at least 4.5rem wide so 4 fit per row on mobile while keeping uniform widths. */}
       <div
         className="grid grid-cols-[repeat(auto-fill,minmax(4.5rem,1fr))] gap-2"
@@ -111,7 +111,7 @@ function Tiles<T extends string>({
             title={t(labelKey(o))}
           >
             {render(o)}
-            <span className="truncate max-w-full">{t(labelKey(o))}</span>
+            <span className="max-w-full truncate">{t(labelKey(o))}</span>
           </button>
         ))}
       </div>
@@ -148,17 +148,17 @@ function ColorInput({
   const valid = HEX_INPUT.test(text.trim())
   return (
     <label
-      className={`flex items-center gap-2 rounded-md border bg-surface pl-1.5 pr-2 py-1.5 min-w-0 ${valid ? 'border-border' : 'border-error'}`}
+      className={`flex min-w-0 items-center gap-2 rounded-md border bg-surface py-1.5 pr-2 pl-1.5 ${valid ? 'border-border' : 'border-error'}`}
     >
       <input
         type="color"
         value={HEX_INPUT.test(value) ? toHex6(value) : '#000000'}
         onChange={(e) => onChange(e.target.value)}
-        className="size-8 rounded cursor-pointer border-0 bg-transparent p-0 shrink-0"
+        className="size-8 shrink-0 cursor-pointer rounded border-0 bg-transparent p-0"
         aria-label={label}
       />
-      <span className="flex flex-col min-w-0">
-        <span className="text-[11px] text-secondary leading-tight">{label}</span>
+      <span className="flex min-w-0 flex-col">
+        <span className="text-[11px] leading-tight text-secondary">{label}</span>
         <input
           value={text}
           onChange={(e) => {
@@ -167,7 +167,7 @@ function ColorInput({
             if (HEX_INPUT.test(v)) onChange(toHex6(v))
           }}
           onBlur={() => !HEX_INPUT.test(text.trim()) && setText(value)}
-          className={`qv-mono text-sm bg-transparent outline-none w-20 ${valid ? '' : 'text-error'}`}
+          className={`qv-mono w-20 bg-transparent text-sm outline-none ${valid ? '' : 'text-error'}`}
           spellCheck={false}
           maxLength={7}
           aria-invalid={!valid}
@@ -235,7 +235,7 @@ export function StylePanel({
                     eyeBallColor: p.eye ?? null,
                   })
                 }
-                className="qv-tile size-10 p-1 rounded-full"
+                className="qv-tile size-10 rounded-full p-1"
               >
                 <span
                   className="block size-full rounded-full border border-black/10"
@@ -349,8 +349,8 @@ export function StylePanel({
           />
         </div>
         {(contrast < 3 || inverted) && (
-          <div className="flex items-start gap-2 rounded-md p-2.5 bg-warning-muted text-on-warning-muted text-sm">
-            <TriangleAlert size={16} className="shrink-0 mt-0.5" aria-hidden />
+          <div className="flex items-start gap-2 rounded-md bg-warning-muted p-2.5 text-sm text-on-warning-muted">
+            <TriangleAlert size={16} className="mt-0.5 shrink-0" aria-hidden />
             <span>{t('gen.lowContrast')}</span>
           </div>
         )}
@@ -376,7 +376,7 @@ export function StylePanel({
                 <img
                   src={design.customLogo}
                   alt=""
-                  className="size-12 rounded-md border border-border object-contain bg-white"
+                  className="size-12 rounded-md border border-border bg-white object-contain"
                 />
               )}
               <Button
@@ -420,7 +420,7 @@ export function StylePanel({
         </div>
       )}
 
-      <div className="grid sm:grid-cols-2 gap-x-4 gap-y-2 items-center">
+      <div className="grid items-center gap-x-4 gap-y-2 sm:grid-cols-2">
         <SegmentedControl
           label={t('style.ecc')}
           value={ecc}
@@ -438,7 +438,7 @@ export function StylePanel({
               : `${t('style.ecc')}: ${t('style.ecc.hint')}`}
           </Text>
         </div>
-        <div className="pt-2 sm:pt-0 sm:order-2">
+        <div className="pt-2 sm:order-2 sm:pt-0">
           <Slider
             label={t('style.margin')}
             value={style.margin}

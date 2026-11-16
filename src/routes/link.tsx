@@ -126,7 +126,7 @@ function LinkBuilder() {
         icon={<Link2 size={22} />}
       />
       <PageBody>
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] items-start">
+        <div className="grid grid-cols-1 items-start gap-5 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
           <Panel>
             <div className="flex flex-col gap-5">
               <SavedAccountsStrip
@@ -176,7 +176,7 @@ function LinkBuilder() {
                         setStampedAt(Date.now())
                       }}
                       style={heatStyle(i, EXPIRY.length)}
-                      className="qv-tile qv-tile-hue qv-heat qv-heat-time px-3 py-1.5 rounded-full text-sm font-semibold qv-hue-text"
+                      className="qv-tile qv-tile-hue qv-heat qv-heat-time qv-hue-text rounded-full px-3 py-1.5 text-sm font-semibold"
                     >
                       {t(`pay.expiry.${e.value}` as 'pay.expiry.none')}
                     </button>
@@ -196,11 +196,11 @@ function LinkBuilder() {
             </div>
           </Panel>
 
-          <div className="flex flex-col gap-5 md:sticky md:top-20 min-w-0">
+          <div className="flex min-w-0 flex-col gap-5 md:sticky md:top-20">
             <Panel title={t('pay.link')} icon={Link2} hue="violet">
               {url ? (
                 <div className="flex flex-col gap-3">
-                  <div className="rounded-md bg-muted p-3 qv-mono text-xs break-all max-h-28 overflow-auto">
+                  <div className="qv-mono max-h-28 overflow-auto rounded-md bg-muted p-3 text-xs break-all">
                     {url}
                   </div>
                   <div className="flex flex-wrap gap-2">

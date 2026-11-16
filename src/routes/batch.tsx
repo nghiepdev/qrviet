@@ -238,8 +238,8 @@ function BatchPage() {
         icon={<Layers size={22} />}
       />
       <PageBody>
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] items-start">
-          <div className="flex flex-col gap-5 min-w-0">
+        <div className="grid grid-cols-1 items-start gap-5 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+          <div className="flex min-w-0 flex-col gap-5">
             <Panel title={t('batch.account')} icon={Landmark}>
               <div className="flex flex-col gap-4">
                 <SavedAccountsStrip
@@ -293,7 +293,7 @@ function BatchPage() {
                     </div>
                   </>
                 ) : (
-                  <div className="grid sm:grid-cols-2 gap-3">
+                  <div className="grid gap-3 sm:grid-cols-2">
                     <TextInput
                       label={t('batch.seqPrefix')}
                       value={seq.prefix}
@@ -331,16 +331,16 @@ function BatchPage() {
             </Panel>
           </div>
 
-          <div className="flex flex-col gap-5 min-w-0">
+          <div className="flex min-w-0 flex-col gap-5">
             <Panel hue="pink">
               <div className="flex flex-col gap-4">
                 <TemplatePicker value={template} onChange={setTemplate} />
                 <div className="flex flex-wrap items-center gap-3 text-sm">
-                  <span className="inline-flex items-center gap-1 text-success font-semibold">
+                  <span className="inline-flex items-center gap-1 font-semibold text-success">
                     <CircleCheck size={15} aria-hidden /> {t('batch.valid', {count: valid.length})}
                   </span>
                   {rows.length - valid.length > 0 && (
-                    <span className="inline-flex items-center gap-1 text-error font-semibold">
+                    <span className="inline-flex items-center gap-1 font-semibold text-error">
                       <CircleAlert size={15} aria-hidden />{' '}
                       {t('batch.invalid', {count: rows.length - valid.length})}
                     </span>
@@ -381,7 +381,7 @@ function BatchPage() {
             </Panel>
             {rows.length > 0 && (
               <Panel hue="green">
-                <ul className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                   {rows.map((r) => {
                     const sc = scenes.find((s) => s.row.n === r.n)
                     return (
@@ -392,15 +392,15 @@ function BatchPage() {
                         {sc ? (
                           <SceneThumb scene={sc.scene} />
                         ) : (
-                          <div className="aspect-square grid place-items-center text-xs text-error p-2 text-center">
+                          <div className="grid aspect-square place-items-center p-2 text-center text-xs text-error">
                             {t('gen.invalid.amount')}
                           </div>
                         )}
                         <div className="mt-1.5 text-xs">
-                          <div className="font-semibold truncate">
+                          <div className="truncate font-semibold">
                             {r.label || t('batch.row', {n: r.n})}
                           </div>
-                          <div className="text-secondary truncate">
+                          <div className="truncate text-secondary">
                             {r.amount ? formatVnd(r.amount, true) : '—'}
                           </div>
                         </div>

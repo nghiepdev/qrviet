@@ -139,7 +139,7 @@ export function AccentPicker({
         </button>
       ))}
       <label
-        className="qv-tile size-9 rounded-full p-1 cursor-pointer relative overflow-hidden"
+        className="qv-tile relative size-9 cursor-pointer overflow-hidden rounded-full p-1"
         title={label}
       >
         <span
@@ -150,7 +150,7 @@ export function AccentPicker({
           type="color"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="absolute inset-0 opacity-0 cursor-pointer"
+          className="absolute inset-0 cursor-pointer opacity-0"
           aria-label={label}
         />
       </label>

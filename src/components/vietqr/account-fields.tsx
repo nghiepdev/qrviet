@@ -59,7 +59,7 @@ export function AccountFields({
         />
       </SegmentedControl>
       <div className="flex items-end gap-2">
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           <TextInput
             label={form.service === 'card' ? t('gen.card') : t('gen.account')}
             value={form.accountNumber}

@@ -56,8 +56,8 @@ function BanksPage() {
       />
       <PageBody>
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col lg:flex-row gap-3 lg:items-center">
-            <div className="flex-1 min-w-0">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+            <div className="min-w-0 flex-1">
               <TextInput
                 type="search"
                 label={t('bank.search')}
@@ -70,7 +70,7 @@ function BanksPage() {
               />
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              <div className="overflow-x-auto scrollbar-none">
+              <div className="scrollbar-none overflow-x-auto">
                 <SegmentedControl
                   label={t('bank.filterDeeplink')}
                   size="sm"
@@ -90,7 +90,7 @@ function BanksPage() {
               />
             </div>
           </div>
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-sm text-secondary">
+          <div className="flex flex-col justify-between gap-1 text-sm text-secondary sm:flex-row sm:items-center">
             <p>{t('bank.count', {count: list.length})}</p>
             <p className="text-xs">{t('bank.tagLegend')}</p>
           </div>
@@ -100,13 +100,13 @@ function BanksPage() {
               return (
                 <li
                   key={b.bin}
-                  className="rounded-2xl border border-border bg-surface p-3 shadow-sm flex flex-col gap-3"
+                  className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-3 shadow-sm"
                 >
                   <div className="flex items-start gap-3">
                     <BankLogo bank={b} size={40} />
                     <div className="min-w-0 flex-1">
-                      <div className="font-bold truncate">{b.shortName}</div>
-                      <div className="text-xs text-secondary line-clamp-2">{b.name}</div>
+                      <div className="truncate font-bold">{b.shortName}</div>
+                      <div className="line-clamp-2 text-xs text-secondary">{b.name}</div>
                     </div>
                     <IconButton
                       label={fav ? t('bank.unfavorite') : t('bank.favorite')}
@@ -129,14 +129,14 @@ function BanksPage() {
                     </div>
                     <div>
                       <dt className="text-secondary">{t('bank.code')}</dt>
-                      <dd className="qv-mono font-semibold truncate">{b.code}</dd>
+                      <dd className="qv-mono truncate font-semibold">{b.code}</dd>
                     </div>
                     <div>
                       <dt className="text-secondary">{t('bank.swift')}</dt>
-                      <dd className="qv-mono font-semibold truncate">{b.swift ?? '—'}</dd>
+                      <dd className="qv-mono truncate font-semibold">{b.swift ?? '—'}</dd>
                     </div>
                   </dl>
-                  <div className="flex flex-wrap items-center gap-1.5 mt-auto">
+                  <div className="mt-auto flex flex-wrap items-center gap-1.5">
                     {b.transfer ? (
                       <Badge variant="success" label={t('bank.napas')} />
                     ) : (

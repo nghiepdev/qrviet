@@ -131,9 +131,9 @@ export function PayView({data, bank, shareUrl, onMakeOwn}: PayViewProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] items-start">
+    <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
       <section
-        className={`${HUES.red} qv-tint rounded-2xl border border-border shadow-md overflow-hidden animate-qv-rise`}
+        className={`${HUES.red} qv-tint animate-qv-rise overflow-hidden rounded-2xl border border-border shadow-md`}
       >
         <div
           className="px-5 py-5 text-white"
@@ -145,10 +145,10 @@ export function PayView({data, bank, shareUrl, onMakeOwn}: PayViewProps) {
             <div className="min-w-0">
               {/* text-inherit: the Astryx reset colours headings with the page text colour, which is dark on this banner. */}
               <h1 className="text-sm/5 font-normal text-inherit opacity-90">{t('pay.title')}</h1>
-              <div className="text-3xl font-extrabold qv-num tracking-tight">
+              <div className="qv-num text-3xl font-extrabold tracking-tight">
                 {data.amount ? formatVnd(data.amount, true) : '—'}
               </div>
-              {words && <div className="text-xs opacity-90 italic mt-0.5">{words}</div>}
+              {words && <div className="mt-0.5 text-xs italic opacity-90">{words}</div>}
             </div>
             {data.amount && typeof speechSynthesis !== 'undefined' ? (
               <IconButton
@@ -182,11 +182,11 @@ export function PayView({data, bank, shareUrl, onMakeOwn}: PayViewProps) {
 
       <div className="flex flex-col gap-5">
         <section className={`${HUES.green} qv-tint rounded-2xl border border-border p-5 shadow-sm`}>
-          <div className="flex items-center gap-3 mb-2">
+          <div className="mb-2 flex items-center gap-3">
             <BankLogo bank={bank} size={40} />
             <div className="min-w-0">
-              <div className="font-bold truncate">{bank.shortName}</div>
-              <div className="text-xs text-secondary truncate">{bank.name}</div>
+              <div className="truncate font-bold">{bank.shortName}</div>
+              <div className="truncate text-xs text-secondary">{bank.name}</div>
             </div>
           </div>
           <CopyField label={t('pay.to')} value={data.name ?? ''} />
@@ -227,7 +227,7 @@ export function PayView({data, bank, shareUrl, onMakeOwn}: PayViewProps) {
           <ol className="mt-4 flex flex-col gap-3">
             {(['pay.step1', 'pay.step2', 'pay.step3'] as const).map((k, i) => (
               <li key={k} className="flex items-start gap-3">
-                <span className="grid place-items-center size-7 shrink-0 rounded-full bg-accent text-on-accent text-sm font-bold">
+                <span className="grid size-7 shrink-0 place-items-center rounded-full bg-accent text-sm font-bold text-on-accent">
                   {i + 1}
                 </span>
                 <span className="pt-0.5">{t(k)}</span>
