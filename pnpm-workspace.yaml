@@ -4,6 +4,7 @@ minimumReleaseAge: 360
 packages:
   - .
 allowBuilds:
+  lefthook: true
   esbuild: true
   lightningcss: true
   '@astryxdesign/core': false

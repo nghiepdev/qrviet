@@ -7,6 +7,7 @@ dist-ssr
 .DS_Store
 *.log
 coverage
+lefthook-local.yml
 .vscode/*
 *.test.*
 !.vscode/extensions.json

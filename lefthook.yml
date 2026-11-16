@@ -1,0 +1,13 @@
+glob_matcher: doublestar
+
+pre-commit:
+  jobs:
+    - name: format
+      glob: '**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,json,jsonc,css,html,md,yml,yaml,webmanifest}'
+      run: pnpm exec oxfmt --write --no-error-on-unmatched-pattern -- {staged_files}
+      stage_fixed: true
+
+pre-push:
+  jobs:
+    - name: check
+      run: pnpm check

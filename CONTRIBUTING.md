@@ -47,6 +47,8 @@ pnpm preview
 
 To try the app on a phone on the same network, run `pnpm dev --host` and open the network address it prints. Browsers allow the camera and the service worker only on HTTPS or `localhost`, so those two features need an HTTPS tunnel on a phone.
 
+`pnpm install` also installs the Git hooks through Lefthook's postinstall script, allowed in `pnpm-workspace.yaml`. To reinstall the hooks in an existing checkout, run `pnpm exec lefthook install`. GitHub Actions sets `CI=true`, so installation there skips the hooks and runs the checks directly.
+
 Recommended VS Code extensions are listed in `.vscode/extensions.json`. Configure Oxc format-on-save and safe lint fixes in your personal `.vscode/settings.json`, which is ignored by Git.
 
 ## Project conventions
@@ -106,6 +108,13 @@ pnpm build
 ```
 
 `pnpm check` runs lint, formatting checks and type checking without changing files. Run `pnpm fix` to apply safe lint fixes and formatting, then rerun `pnpm check`. Both Oxc tools respect `.gitignore`; their configs also exclude the generated route tree, and Oxfmt skips the generated bank JSON files. Oxfmt handles Tailwind class order; import order is left unchanged.
+
+[Lefthook](https://lefthook.dev/) runs two Git hooks from `lefthook.yml`:
+
+- **pre-commit** formats staged text files and stages the formatted result with `stage_fixed: true`. It temporarily hides unstaged changes in partially staged files and restores them afterward. If formatting fails or restoring unstaged changes conflicts with the formatted result, the commit stops; resolve the reported problem before retrying.
+- **pre-push** runs `pnpm check` on the whole project, including type-aware linting, Tailwind rules, TypeScript diagnostics and formatting. Type checking runs here to avoid repeating the full TypeScript analysis on every commit.
+
+Lefthook reads the config when each hook runs. Keep personal overrides in the ignored `lefthook-local.yml`.
 
 Then try the change in the browser: `pnpm dev` covers most changes, and `pnpm preview` (after `pnpm build`) covers offline mode, installation and updates.
 
