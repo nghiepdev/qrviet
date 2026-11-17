@@ -1,6 +1,6 @@
-import {useState} from 'react'
-import {createFileRoute, useNavigate} from '@tanstack/react-router'
-import type {ReactNode} from 'react'
+import {parseToolsSearch, type ToolId, rawLocationHash} from '#/lib/route-search'
+import {useEffect, useState, type ReactNode} from 'react'
+import {createFileRoute, useNavigate, useLocation} from '@tanstack/react-router'
 import {
   Calculator,
   Copy,
@@ -33,10 +33,9 @@ import {pageHead} from '#/seo/head'
 
 export const Route = createFileRoute('/tools')({
   head: () => pageHead('tools'),
+  validateSearch: parseToolsSearch,
   component: ToolsPage,
 })
-
-type ToolId = 'inspect' | 'words' | 'split' | 'clean' | 'crc'
 
 const TOOLS: ReadonlyArray<{
   id: ToolId
@@ -57,6 +56,16 @@ const toolById = (id: ToolId) => TOOLS.find((tool) => tool.id === id)!
 function ToolsPage() {
   const t = useT()
   const masonry = useMasonry<HTMLDivElement>()
+  const hash = useLocation({select: rawLocationHash})
+  const search = parseToolsSearch(Route.useSearch(), hash)
+
+  useEffect(() => {
+    if (!search.tool) return
+    requestAnimationFrame(() => {
+      document.getElementById(search.tool!)?.scrollIntoView({behavior: 'smooth', block: 'start'})
+    })
+  }, [search.tool])
+
   return (
     <>
       <PageHeader
@@ -68,12 +77,14 @@ function ToolsPage() {
         {/* Masonry: each card rises under the one above it rather than below the row's tallest. */}
         <div ref={masonry} className="grid grid-cols-1 items-start gap-5 md:grid-cols-2">
           <div className="md:col-span-2">
-            <InspectTool />
+            <InspectTool
+              seed={search.tool === 'inspect' || !search.tool ? search.input : undefined}
+            />
           </div>
-          <WordsTool />
-          <SplitTool />
-          <CleanTool />
-          <CrcTool />
+          <WordsTool seed={search.amount ?? (search.tool === 'words' ? search.input : undefined)} />
+          <SplitTool seedTotal={search.total} seedPeople={search.people} seedTip={search.tip} />
+          <CleanTool seed={search.tool === 'clean' ? search.input : undefined} />
+          <CrcTool seed={search.tool === 'crc' ? search.input : undefined} />
         </div>
       </PageBody>
     </>
@@ -109,10 +120,13 @@ function inspectEmv(raw: string) {
   }
 }
 
-function InspectTool() {
+function InspectTool({seed}: {seed?: string}) {
   const t = useT()
   const copy = useCopy()
-  const [input, setInput] = useState('')
+  const [input, setInput] = useState(seed ?? '')
+  useEffect(() => {
+    if (seed !== undefined) setInput(seed)
+  }, [seed])
   const raw = input.trim()
   const result = inspectEmv(raw)
   const crc = raw ? checkCrc(raw) : null
@@ -179,10 +193,13 @@ function InspectTool() {
   )
 }
 
-function WordsTool() {
+function WordsTool({seed}: {seed?: string}) {
   const t = useT()
   const copy = useCopy()
-  const [value, setValue] = useState('1.250.000')
+  const [value, setValue] = useState(seed ?? '1.250.000')
+  useEffect(() => {
+    if (seed !== undefined) setValue(seed)
+  }, [seed])
   const amount = parseAmount(value)
   const vi = amount !== null ? amountToVietnameseWords(amount) : ''
   const en = amount !== null ? amountToEnglishWords(amount) : ''
@@ -221,10 +238,13 @@ function WordsTool() {
   )
 }
 
-function CleanTool() {
+function CleanTool({seed}: {seed?: string}) {
   const t = useT()
   const copy = useCopy()
-  const [value, setValue] = useState('Chuyển tiền ăn trưa #12 (team Đà Nẵng)!')
+  const [value, setValue] = useState(seed ?? 'Chuyển tiền ăn trưa #12 (team Đà Nẵng)!')
+  useEffect(() => {
+    if (seed !== undefined) setValue(seed)
+  }, [seed])
   const [strict, setStrict] = useState(false)
   const out = sanitizeTransferContent(value, strict ? 'strict' : 'relaxed').trim()
   return (
@@ -249,12 +269,33 @@ function CleanTool() {
   )
 }
 
-function SplitTool() {
+function SplitTool({
+  seedTotal,
+  seedPeople,
+  seedTip,
+}: {
+  seedTotal?: string
+  seedPeople?: number
+  seedTip?: number
+}) {
   const t = useT()
   const navigate = useNavigate()
-  const [total, setTotal] = useState('1.200.000')
-  const [people, setPeople] = useState(4)
-  const [tip, setTip] = useState(0)
+  const [total, setTotal] = useState(seedTotal ?? '1.200.000')
+  const [people, setPeople] = useState(
+    seedPeople !== undefined ? Math.max(1, Math.min(100, Math.round(seedPeople))) : 4,
+  )
+  const [tip, setTip] = useState(
+    seedTip !== undefined ? Math.max(0, Math.min(50, Math.round(seedTip))) : 0,
+  )
+  useEffect(() => {
+    if (seedTotal !== undefined) setTotal(seedTotal)
+  }, [seedTotal])
+  useEffect(() => {
+    if (seedPeople !== undefined) setPeople(Math.max(1, Math.min(100, Math.round(seedPeople))))
+  }, [seedPeople])
+  useEffect(() => {
+    if (seedTip !== undefined) setTip(Math.max(0, Math.min(50, Math.round(seedTip))))
+  }, [seedTip])
   const amount = parseAmount(total) ?? 0
   const withTip = amount * (1 + tip / 100)
   const each = people > 0 ? Math.ceil(withTip / people / 1000) * 1000 : 0
@@ -302,10 +343,13 @@ function SplitTool() {
   )
 }
 
-function CrcTool() {
+function CrcTool({seed}: {seed?: string}) {
   const t = useT()
   const copy = useCopy()
-  const [value, setValue] = useState('123456789')
+  const [value, setValue] = useState(seed ?? '123456789')
+  useEffect(() => {
+    if (seed !== undefined) setValue(seed)
+  }, [seed])
   const crc = crc16ccitt(value)
   return (
     <ToolPanel id="crc">

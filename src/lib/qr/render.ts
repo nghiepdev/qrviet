@@ -86,6 +86,7 @@ export interface QrGeometry {
   logoBox: {x: number; y: number; w: number; h: number; plate: number} | null
 }
 
+const LOGO_CORNER_RADIUS = 0.12
 const f = (n: number) => (Math.round(n * 1000) / 1000).toString()
 
 function isFinderZone(x: number, y: number, size: number): boolean {
@@ -219,7 +220,12 @@ export function layoutQr(
     logoBox = {x: start + m, y: start + m, w, h: w, plate}
     if (logo.excavate) {
       const half = w / 2 + (logo.plate === 'none' ? 0.15 : plate + 0.05)
-      const r = logo.plate === 'circle' ? half : logo.plate === 'rounded' ? half * 0.44 : 0
+      const r =
+        logo.plate === 'circle'
+          ? half
+          : logo.plate === 'rounded'
+            ? half * 2 * LOGO_CORNER_RADIUS
+            : 0
       hole = {cx: size / 2, cy: size / 2, half, r}
     }
   }
@@ -386,7 +392,8 @@ export function qrToSvgParts(
       const p = b.plate
       const pw = b.w + p * 2
       const ph = b.h + p * 2
-      const r = logo.plate === 'circle' ? pw / 2 : logo.plate === 'rounded' ? pw * 0.22 : 0
+      const r =
+        logo.plate === 'circle' ? pw / 2 : logo.plate === 'rounded' ? pw * LOGO_CORNER_RADIUS : 0
       const clipId = `${id}-logo-clip`
       defs += `<clipPath id="${clipId}"><rect x="${f(b.x - p)}" y="${f(b.y - p)}" width="${f(pw)}" height="${f(ph)}" rx="${f(r)}"/></clipPath>`
       body += `<rect x="${f(b.x - p)}" y="${f(b.y - p)}" width="${f(pw)}" height="${f(ph)}" rx="${f(r)}" fill="${esc(logo.plateColor)}" shape-rendering="geometricPrecision"/>`
@@ -453,7 +460,8 @@ export function paintQr(
     if (logo.plate !== 'none') {
       const p = b.plate
       const w = b.w + p * 2
-      const r = logo.plate === 'circle' ? w / 2 : logo.plate === 'rounded' ? w * 0.22 : 0
+      const r =
+        logo.plate === 'circle' ? w / 2 : logo.plate === 'rounded' ? w * LOGO_CORNER_RADIUS : 0
       ctx.save()
       ctx.beginPath()
       ctx.roundRect(b.x - p, b.y - p, w, w, r)

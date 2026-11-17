@@ -1,5 +1,6 @@
+import {parseGenSearch, rawLocationHash} from '#/lib/route-search'
 import {useEffect, useRef, useState} from 'react'
-import {createFileRoute, useNavigate} from '@tanstack/react-router'
+import {createFileRoute, useNavigate, useLocation} from '@tanstack/react-router'
 import {useSelector} from '@tanstack/react-store'
 import {
   ArrowDown,
@@ -30,6 +31,8 @@ import {
   EMPTY_FORM,
   draftStore,
   formFromAccount,
+  formFromParsed,
+  formFromSearch,
   useDerivedVietQr,
   type VietQrForm,
 } from '#/components/vietqr/form'
@@ -40,7 +43,7 @@ import {StylePanel} from '#/components/qr/style-panel'
 import {AccentPicker, TemplatePicker} from '#/components/qr/template-picker'
 import {resolveLogo, useQrScene} from '#/components/qr/use-qr-scene'
 import {LogoMark} from '#/components/brand/logo'
-import {getBankByBin, resolveBank} from '#/data/banks'
+import {getBankByBin} from '#/data/banks'
 import {useLocale, useT} from '#/i18n'
 import {
   accountsStore,
@@ -53,38 +56,16 @@ import {addHistory, historyStore} from '#/stores/history'
 import {applyHistoryEntry} from '#/components/vietqr/history-entry'
 import {saveSceneThumb} from '#/lib/thumbs'
 import {settingsStore, updateDesign, updateQrStyle, useSettings} from '#/stores/settings'
-import {formatVnd, parseAmount} from '#/lib/money'
+import {formatVnd} from '#/lib/money'
+import {parseEmvQr} from '#/lib/vietqr'
 import {slugify} from '#/lib/text'
 import {payLinkUrl} from '#/lib/paylink'
 import {useCopy} from '#/hooks/use-copy'
 import {homeHead} from '#/seo/head'
 
-interface GenSearch {
-  bank?: string
-  acc?: string
-  name?: string
-  amount?: string
-  memo?: string
-  account?: string
-  card?: boolean
-  /** A history entry shown as it was exported; kept in the URL until the code is edited. */
-  h?: string
-}
-
-const str = (v: unknown) => (typeof v === 'string' || typeof v === 'number' ? String(v) : undefined)
-
 export const Route = createFileRoute('/')({
   head: () => homeHead(),
-  validateSearch: (s: Record<string, unknown>): GenSearch => ({
-    bank: str(s.bank),
-    acc: str(s.acc),
-    name: str(s.name),
-    amount: str(s.amount),
-    memo: str(s.memo),
-    account: str(s.account),
-    card: s.card === true || s.card === 'true' || s.card === '1' ? true : undefined,
-    h: str(s.h),
-  }),
+  validateSearch: parseGenSearch,
   component: GeneratorPage,
 })
 
@@ -92,7 +73,8 @@ function GeneratorPage() {
   const t = useT()
   const locale = useLocale()
   const navigate = useNavigate({from: '/'})
-  const search = Route.useSearch()
+  const hash = useLocation({select: rawLocationHash})
+  const search = parseGenSearch(Route.useSearch(), hash)
   const showToast = useToast()
   const copy = useCopy()
   const form = useSelector(draftStore, (s) => s)
@@ -109,7 +91,7 @@ function GeneratorPage() {
     draftStore.setState((f) => ({...f, ...p}))
   }
 
-  // Seed from URL (command palette, saved accounts, banks page, scan → re-issue), then clean the URL.
+  // Seed from URL (command palette, saved accounts, banks page, scan → re-issue, PWA deep link), then clean the URL.
   const seeded = useRef(false)
   useEffect(() => {
     const firstRun = !seeded.current
@@ -127,7 +109,16 @@ function GeneratorPage() {
       }
       return
     }
-    if (search.account) {
+    if (search.payload) {
+      try {
+        const parsed = parseEmvQr(search.payload)
+        if (parsed.kind === 'vietqr') {
+          draftStore.setState(() => formFromParsed(parsed))
+        }
+      } catch {
+        /* ignore invalid payload */
+      }
+    } else if (search.account) {
       const a = accountsStore.state.find((x) => x.id === search.account)
       if (a) {
         draftStore.setState((f) =>
@@ -136,22 +127,8 @@ function GeneratorPage() {
         touchAccount(a.id)
       }
     } else {
-      const bank = resolveBank(search.bank)
-      const parsed = search.amount ? parseAmount(search.amount) : null
-      const amountText = search.amount ? (parsed ? formatVnd(parsed) : search.amount) : undefined
       draftStore.setState((f) => {
-        const fresh = Boolean(search.acc) // a complete payee → start from a clean form
-        const base = fresh ? EMPTY_FORM : f
-        const switchedBank = Boolean(bank && bank.bin !== f.bin && !fresh)
-        let next: VietQrForm = {
-          ...base,
-          bin: bank?.bin ?? base.bin,
-          accountNumber: search.acc ?? (switchedBank ? '' : base.accountNumber),
-          accountName: search.name ?? (switchedBank ? '' : base.accountName),
-          amountText: amountText ?? base.amountText,
-          purpose: search.memo ?? base.purpose,
-          service: search.card ? 'card' : fresh ? 'account' : base.service,
-        }
+        let next = formFromSearch(f, search)
         // Amount/memo-only links (e.g. split bill): use the default account as payee when none is set.
         if (!next.accountNumber && !search.bank) {
           const def = getDefaultAccount()
@@ -160,7 +137,7 @@ function GeneratorPage() {
         return next
       })
     }
-    void navigate({search: {}, replace: true, resetScroll: false})
+    void navigate({search: {}, hash: '', replace: true, resetScroll: false})
   }, [search, navigate])
 
   // A history entry (`?h=<id>`): the history page has already loaded it, so the first frame shows
@@ -169,7 +146,7 @@ function GeneratorPage() {
   // the code or its design, so a reload never puts back an entry over your edits.
   useEffect(() => {
     if (!search.h) return
-    const leave = () => void navigate({search: {}, replace: true, resetScroll: false})
+    const leave = () => void navigate({search: {}, hash: '', replace: true, resetScroll: false})
     const entry = historyStore.state.find((h) => h.id === search.h)
     if (!entry || !applyHistoryEntry(entry)) return leave()
     const design = settingsStore.state.design

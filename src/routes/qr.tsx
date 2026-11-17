@@ -1,5 +1,7 @@
+import {studioPatchFromSearch} from '#/lib/qr-prefill'
+import {parseQrSearch, rawLocationHash} from '#/lib/route-search'
 import {useEffect, useState} from 'react'
-import {createFileRoute, useNavigate} from '@tanstack/react-router'
+import {createFileRoute, useNavigate, useLocation} from '@tanstack/react-router'
 import {useSelector} from '@tanstack/react-store'
 import {
   AtSign,
@@ -92,9 +94,7 @@ const PLATFORMS: Array<{value: SocialPlatform; label: string}> = [
 
 export const Route = createFileRoute('/qr')({
   head: () => pageHead('qr'),
-  validateSearch: (s: Record<string, unknown>): {type?: QrKind} => ({
-    type: TYPES.some((x) => x.id === s.type) ? (s.type as QrKind) : undefined,
-  }),
+  validateSearch: parseQrSearch,
   component: StudioPage,
 })
 
@@ -191,13 +191,21 @@ function StudioPage() {
   const copy = useCopy()
   const coarse = useCoarsePointer()
   const navigate = useNavigate({from: '/qr'})
-  const search = Route.useSearch()
+  const hash = useLocation({select: rawLocationHash})
+  const search = parseQrSearch(Route.useSearch(), hash)
   const state = useSelector(studioStore, (s) => s)
   const autoSave = useSettings((s) => s.autoSaveHistory)
   const [tab, setTab] = useState<'content' | 'style'>('content')
   const [mapInput, setMapInput] = useState('')
   // Self-contained (images inlined) snippet, prepared ahead so copying stays inside the click gesture.
   const [embedHtml, setEmbedHtml] = useState('')
+
+  useEffect(() => {
+    const patch = studioPatchFromSearch(search, studioStore.state)
+    if (!patch) return
+    patchStudio(patch)
+    void navigate({search: {type: patch.type}, hash: '', replace: true, resetScroll: false})
+  }, [search, navigate])
 
   // Hooks above, derived values below: the compiler can only memoize values whose
   // construction does not straddle a hook call.
@@ -524,6 +532,11 @@ function StudioPage() {
                         value={s.event.allDay}
                         onChange={(allDay) => patchStudio({event: withAllDay(s.event, allDay)})}
                       />
+                      {s.event.timeZone && !s.event.allDay && (
+                        <p className="text-xs text-secondary">
+                          {t('qr.event.timeZone', {timeZone: s.event.timeZone})}
+                        </p>
+                      )}
                       {/* Side by side only when the panel is wide enough for a full date and time in each. */}
                       <div className="@container">
                         <div className="grid gap-3 @lg:grid-cols-2">
@@ -553,6 +566,7 @@ function StudioPage() {
                             <>
                               <DateTimeInput
                                 label={t('qr.event.start')}
+                                hasSeconds={s.event.start.length > 16}
                                 value={(s.event.start || undefined) as DateTimeInputProps['value']}
                                 onChange={(start) =>
                                   patchStudio({event: {...s.event, start: start ?? ''}})
@@ -562,6 +576,7 @@ function StudioPage() {
                               />
                               <DateTimeInput
                                 label={t('qr.event.end')}
+                                hasSeconds={s.event.end.length > 16}
                                 value={(s.event.end || undefined) as DateTimeInputProps['value']}
                                 min={(s.event.start || undefined) as DateTimeInputProps['min']}
                                 onChange={(end) =>

@@ -1,5 +1,6 @@
-import {useState} from 'react'
-import {createFileRoute, useNavigate} from '@tanstack/react-router'
+import {parseBanksSearch, type AppFilter, rawLocationHash} from '#/lib/route-search'
+import {useEffect, useState} from 'react'
+import {createFileRoute, useNavigate, useLocation} from '@tanstack/react-router'
 import {Copy, Landmark, QrCode, Search, Star} from 'lucide-react'
 import {Badge} from '@astryxdesign/core/Badge'
 import {Button} from '@astryxdesign/core/Button'
@@ -18,19 +19,26 @@ import {pageHead} from '#/seo/head'
 
 export const Route = createFileRoute('/banks')({
   head: () => pageHead('banks'),
+  validateSearch: parseBanksSearch,
   component: BanksPage,
 })
-
-type AppFilter = 'all' | 'deeplink' | 'autofill'
 
 function BanksPage() {
   const t = useT()
   const copy = useCopy()
   const navigate = useNavigate()
+  const hash = useLocation({select: rawLocationHash})
+  const search = parseBanksSearch(Route.useSearch(), hash)
   const favorites = useSettings((s) => s.favoriteBins)
-  const [query, setQuery] = useState('')
-  const [napasOnly, setNapasOnly] = useState(false)
-  const [appFilter, setAppFilter] = useState<AppFilter>('all')
+  const [query, setQuery] = useState(search.q ?? '')
+  const [napasOnly, setNapasOnly] = useState(Boolean(search.napas))
+  const [appFilter, setAppFilter] = useState<AppFilter>(search.filter ?? 'all')
+
+  useEffect(() => {
+    if (search.q !== undefined) setQuery(search.q)
+    if (search.filter !== undefined) setAppFilter(search.filter)
+    if (search.napas !== undefined) setNapasOnly(search.napas)
+  }, [search.q, search.filter, search.napas])
 
   const base = BANKS.filter((b) => {
     if (napasOnly && !b.transfer) return false

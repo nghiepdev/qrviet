@@ -12,6 +12,8 @@ import {sanitizeTransferContent, type ContentMode} from '#/lib/text'
 import type {SavedAccount} from '#/stores/accounts'
 import type {MessageKey} from '#/i18n'
 import {persistedStore} from '#/lib/persist'
+import {resolveBank} from '#/data/banks'
+import type {GenSearch} from '#/lib/route-search'
 
 export interface VietQrForm {
   bin: string
@@ -74,6 +76,31 @@ export function formFromParsed(p: ParsedVietQr): VietQrForm {
     initiation: p.initiation === 'unknown' ? 'auto' : p.initiation,
     includeName: Boolean(p.merchantName),
     merchantCity: p.merchantCity,
+  }
+}
+
+export function formFromSearch(
+  form: VietQrForm,
+  search: Omit<GenSearch, 'account' | 'payload' | 'h'>,
+): VietQrForm {
+  const bank = resolveBank(search.bank)
+  const fresh = search.acc !== undefined
+  const base = fresh ? EMPTY_FORM : form
+  const switchedBank = search.bank !== undefined && bank?.bin !== form.bin && !fresh
+  const amount = search.amount !== undefined ? parseAmount(search.amount) : null
+  return {
+    ...base,
+    bin: bank?.bin ?? (search.bank !== undefined ? '' : base.bin),
+    accountNumber: search.acc ?? (switchedBank ? '' : base.accountNumber),
+    accountName: search.name ?? (switchedBank ? '' : base.accountName),
+    amountText:
+      search.amount !== undefined
+        ? amount !== null
+          ? formatVnd(amount)
+          : search.amount
+        : base.amountText,
+    purpose: search.memo ?? base.purpose,
+    service: search.card !== undefined ? (search.card ? 'card' : 'account') : base.service,
   }
 }
 

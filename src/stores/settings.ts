@@ -18,6 +18,8 @@ export interface QrDesign {
   customLogo: string | null
   logoSize: number
   logoPlate: LogoPlate
+  logoPlateColor: string
+  logoTransparentBg: boolean
   showBrand: boolean
   maskAccount: boolean
   title: string
@@ -46,6 +48,8 @@ export const DEFAULT_DESIGN: QrDesign = {
   customLogo: null,
   logoSize: 0.22,
   logoPlate: 'rounded',
+  logoPlateColor: '#ffffff',
+  logoTransparentBg: false,
   showBrand: true,
   maskAccount: false,
   title: '',

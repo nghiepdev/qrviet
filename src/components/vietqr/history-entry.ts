@@ -30,7 +30,7 @@ export function applyHistoryEntry(h: HistoryItem): boolean {
   draftStore.setState(() => form)
   settingsStore.setState((s) => ({
     ...s,
-    design: {...(h.design ?? DEFAULT_DESIGN), customLogo: s.design.customLogo},
+    design: {...DEFAULT_DESIGN, ...h.design, customLogo: s.design.customLogo},
   }))
   return true
 }

@@ -81,6 +81,7 @@ type PageId =
   | 'banks'
   | 'accounts'
   | 'history'
+  | 'open'
   | 'settings'
   | 'about'
   | 'notFound'

@@ -3,6 +3,7 @@ import {PayView} from '#/components/pay/pay-view'
 import {decodePayLink, type PayLinkData} from '#/lib/paylink'
 import {getBankByBin, resolveBank, type Bank} from '#/data/banks'
 import {payHead} from '#/seo/head'
+import {rawLocationHash} from '#/lib/route-search'
 
 export const Route = createFileRoute('/pay')({
   head: ({match}) => payHead(match.search),
@@ -15,7 +16,7 @@ export const Route = createFileRoute('/pay')({
  * can memoize everything derived from them.
  */
 function usePayLink(): {data: PayLinkData | null; bank: Bank | undefined} {
-  const hash = useRouterState({select: (s) => s.location.hash})
+  const hash = useRouterState({select: (s) => rawLocationHash(s.location)})
   const search = useRouterState({select: (s) => s.location.searchStr})
   const data = decodePayLink(hash || (typeof location !== 'undefined' ? location.hash : ''), search)
   return {data, bank: data ? (getBankByBin(data.bin) ?? resolveBank(data.bin)) : undefined}

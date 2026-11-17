@@ -1,5 +1,7 @@
+import {readClipboard} from '#/lib/clipboard'
+import {parseScanSearch, type ScanSearch, rawLocationHash} from '#/lib/route-search'
 import {useEffect, useEffectEvent, useRef, useState} from 'react'
-import {createFileRoute, useNavigate} from '@tanstack/react-router'
+import {createFileRoute, useNavigate, useLocation} from '@tanstack/react-router'
 import {History, ImageUp, ScanLine, Trash2} from 'lucide-react'
 import {Button} from '@astryxdesign/core/Button'
 import {Tab, TabList} from '@astryxdesign/core/TabList'
@@ -12,6 +14,7 @@ import {CameraScanner, subscribeCameraStart} from '#/components/scan/camera-scan
 import {ResultCard, type ScanResult} from '#/components/scan/result-card'
 import {decodeBlob, imageFromDataTransfer} from '#/lib/scan'
 import {classifyPayload} from '#/lib/payloads'
+import {consumeLaunchFiles, consumeSharedFiles, subscribeLaunchFiles} from '#/lib/pwa-launch'
 import {formatVnd} from '#/lib/money'
 import {getBankByBin} from '#/data/banks'
 import {addHistory} from '#/stores/history'
@@ -20,19 +23,9 @@ import {uid} from '#/lib/text'
 import {useT} from '#/i18n'
 import {pageHead} from '#/seo/head'
 
-interface ScanSearch {
-  text?: string
-  url?: string
-  title?: string
-}
-
 export const Route = createFileRoute('/scan')({
   head: () => pageHead('scan'),
-  validateSearch: (s: Record<string, unknown>): ScanSearch => {
-    const str = (v: unknown) =>
-      typeof v === 'string' ? v : typeof v === 'number' ? String(v) : undefined
-    return {text: str(s.text), url: str(s.url), title: str(s.title)}
-  },
+  validateSearch: parseScanSearch,
   component: ScanPage,
 })
 
@@ -72,7 +65,8 @@ function ScanPage() {
   const t = useT()
   const showToast = useToast()
   const navigate = useNavigate({from: '/scan'})
-  const search = Route.useSearch()
+  const hash = useLocation({select: rawLocationHash})
+  const search = parseScanSearch(Route.useSearch(), hash)
   const autoSave = useSettings((s) => s.autoSaveHistory)
   const isMobile = useMediaQuery('(max-width: 767.98px)')
   const [tab, setTab] = useState('camera')
@@ -102,75 +96,39 @@ function ScanPage() {
     )
   }
 
-  const decodeImage = async (file: Blob) => {
+  const decodeImages = async (files: Blob[]) => {
     setBusy(true)
-    const found = await decodeImageFile(file)
-    setBusy(false)
-    if (!found?.length)
-      return showToast({body: t('scan.notFound'), type: 'error', uniqueID: 'scan'})
-    found.forEach((f) => push(f, 'image'))
-    setExternalScanCount((c) => c + 1)
+    try {
+      for (const file of files) {
+        const found = await decodeImageFile(file)
+        if (!found?.length) {
+          showToast({body: t('scan.notFound'), type: 'error', uniqueID: 'scan'})
+          continue
+        }
+        found.forEach((payload) => push(payload, 'image'))
+        setExternalScanCount((count) => count + 1)
+      }
+    } finally {
+      setBusy(false)
+    }
   }
 
   const pasteFromClipboard = async () => {
-    const clipboard = typeof navigator !== 'undefined' ? navigator.clipboard : undefined
-    if (!clipboard) {
-      showToast({body: t('scan.pastePermission'), type: 'error', uniqueID: 'scan'})
-      return
-    }
     setPasting(true)
     try {
-      if (typeof clipboard.read === 'function') {
-        const items = await clipboard.read()
-        for (const item of items) {
-          const imageType = item.types.find((type) => type.startsWith('image/'))
-          if (imageType) {
-            const blob = await item.getType(imageType)
-            await decodeImage(blob)
-            return
-          }
-        }
-        for (const item of items) {
-          if (item.types.includes('text/plain')) {
-            const blob = await item.getType('text/plain')
-            const pasted = (await blob.text()).trim()
-            if (pasted) {
-              push(pasted, 'text')
-              setExternalScanCount((c) => c + 1)
-              return
-            }
-          }
-        }
-        showToast({body: t('scan.pasteEmpty'), type: 'error', uniqueID: 'scan'})
-        return
-      }
-      if (typeof clipboard.readText === 'function') {
-        const pasted = (await clipboard.readText()).trim()
-        if (pasted) {
-          push(pasted, 'text')
-          setExternalScanCount((c) => c + 1)
-          return
-        }
-        showToast({body: t('scan.pasteEmpty'), type: 'error', uniqueID: 'scan'})
-        return
-      }
-      showToast({body: t('scan.pastePermission'), type: 'error', uniqueID: 'scan'})
-    } catch (e) {
-      const name = (e as DOMException | undefined)?.name
-      if (name !== 'NotAllowedError' && typeof clipboard.readText === 'function') {
-        try {
-          const pasted = (await clipboard.readText()).trim()
-          if (pasted) {
-            push(pasted, 'text')
-            setExternalScanCount((c) => c + 1)
-            return
-          }
-        } catch {
-          /* fall through */
-        }
-      }
+      const content = await readClipboard()
+      if (content instanceof Blob) await decodeImages([content])
+      else if (content) {
+        push(content, 'text')
+        setExternalScanCount((count) => count + 1)
+      } else showToast({body: t('scan.pasteEmpty'), type: 'error', uniqueID: 'scan'})
+    } catch (error) {
       showToast({
-        body: t(name === 'NotAllowedError' ? 'scan.pastePermission' : 'scan.pasteEmpty'),
+        body: t(
+          (error as DOMException)?.name === 'NotAllowedError'
+            ? 'scan.pastePermission'
+            : 'scan.pasteEmpty',
+        ),
         type: 'error',
         uniqueID: 'scan',
       })
@@ -179,18 +137,46 @@ function ScanPage() {
     }
   }
 
-  // Share target (Android "Share → QRViet") delivers text/url as query params.
-  const receiveShare = useEffectEvent(({text, url}: ScanSearch) => {
+  // File data stays in CacheStorage; text and URL payloads use the fragment.
+  const receiveShare = useEffectEvent(({text, url, shareId, shareError}: ScanSearch) => {
     const shared = text || url
-    if (!shared) return
-    push(url && !text?.includes(url) ? `${text ?? ''} ${url}`.trim() : shared, 'share')
-    showToast({body: t('scan.shared'), uniqueID: 'shared'})
-    setTab('text')
-    void navigate({search: {}, replace: true, resetScroll: false})
+    if (!shared && !shareId && !shareError) return
+    if (shareError)
+      showToast({body: t('scan.sharedError'), type: 'error', uniqueID: 'shared-error'})
+    if (shareId) {
+      void consumeSharedFiles(shareId)
+        .then((files) => {
+          if (!files.length) throw new Error('Shared images unavailable')
+          void decodeImages(files)
+          showToast({body: t('scan.shared'), uniqueID: 'shared'})
+        })
+        .catch(() =>
+          showToast({body: t('scan.sharedError'), type: 'error', uniqueID: 'shared-error'}),
+        )
+    }
+    if (shared) {
+      push(url && !text?.includes(url) ? `${text ?? ''} ${url}`.trim() : shared, 'share')
+      setTab('text')
+      if (!shareError) showToast({body: t('scan.shared'), uniqueID: 'shared'})
+    }
+    void navigate({search: {}, hash: '', replace: true, resetScroll: false})
   })
+
   useEffect(() => {
     receiveShare(search)
   }, [search])
+
+  // OS File Handlers ("Open with → QRViet") deliver opened QR images via window.launchQueue.
+  const receiveLaunchFiles = useEffectEvent(() => {
+    const files = consumeLaunchFiles()
+    if (!files.length) return
+    void decodeImages(files)
+    showToast({body: t('scan.openedFile'), uniqueID: 'opened-file'})
+  })
+  useEffect(() => {
+    receiveLaunchFiles()
+    return subscribeLaunchFiles(() => receiveLaunchFiles())
+  }, [])
 
   // Paste an image (screenshot) anywhere on the page.
   const onPaste = useEffectEvent((e: ClipboardEvent) => {
@@ -198,7 +184,7 @@ function ScanPage() {
     const image = imageFromDataTransfer(e.clipboardData)
     if (image) {
       e.preventDefault()
-      void decodeImage(image)
+      void decodeImages([image])
       return
     }
     if (target && /^(INPUT|TEXTAREA)$/.test(target.tagName)) return
@@ -224,7 +210,7 @@ function ScanPage() {
     e.preventDefault()
     setDragging(false)
     const image = imageFromDataTransfer(e.dataTransfer)
-    if (image) void decodeImage(image)
+    if (image) void decodeImages([image])
   }
 
   return (
@@ -294,7 +280,7 @@ function ScanPage() {
                   hidden
                   onChange={(e) => {
                     const f = e.target.files?.[0]
-                    if (f) void decodeImage(f)
+                    if (f) void decodeImages([f])
                     e.target.value = ''
                   }}
                 />

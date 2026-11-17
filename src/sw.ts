@@ -20,6 +20,8 @@ import {
   type SerwistGlobalConfig,
 } from 'serwist'
 
+import {handleShareTarget} from '#/lib/pwa-launch'
+
 declare global {
   interface WorkerGlobalScope extends SerwistGlobalConfig {
     __SW_MANIFEST: (PrecacheEntry | string)[] | undefined
@@ -53,6 +55,18 @@ const serwist = new Serwist({
       }),
     },
   ],
+})
+
+self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url)
+  const sharePath = `${import.meta.env.BASE_URL}share-target`
+  if (
+    event.request.method === 'POST' &&
+    url.origin === self.location.origin &&
+    url.pathname === sharePath
+  ) {
+    event.respondWith(handleShareTarget(event.request))
+  }
 })
 
 serwist.addEventListeners()

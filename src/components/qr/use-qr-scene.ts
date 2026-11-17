@@ -32,13 +32,16 @@ export function useTextMeasure(): Measure {
 }
 
 export function resolveLogo(
-  design: Pick<QrDesign, 'logoMode' | 'customLogo' | 'logoSize' | 'logoPlate'>,
+  design: Pick<
+    QrDesign,
+    'logoMode' | 'customLogo' | 'logoSize' | 'logoPlate' | 'logoPlateColor' | 'logoTransparentBg'
+  >,
   bank?: Bank | null,
 ): QrLogo | null {
   const base = {
     size: design.logoSize,
     plate: design.logoPlate,
-    plateColor: '#ffffff',
+    plateColor: design.logoTransparentBg ? 'transparent' : design.logoPlateColor,
     excavate: true,
   }
   switch (design.logoMode) {

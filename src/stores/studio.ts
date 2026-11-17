@@ -31,6 +31,8 @@ export interface StudioState {
   customLogo: string | null
   logoSize: number
   logoPlate: LogoPlate
+  logoPlateColor: string
+  logoTransparentBg: boolean
 }
 
 export const STUDIO_DEFAULT: StudioState = {
@@ -63,6 +65,8 @@ export const STUDIO_DEFAULT: StudioState = {
   customLogo: null,
   logoSize: 0.22,
   logoPlate: 'rounded',
+  logoPlateColor: '#ffffff',
+  logoTransparentBg: false,
 }
 
 export const studioStore = persistedStore<StudioState>({

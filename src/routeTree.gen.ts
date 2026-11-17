@@ -17,10 +17,12 @@ import { Route as BanksRouteImport } from './routes/banks'
 import { Route as BatchRouteImport } from './routes/batch'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as LinkRouteImport } from './routes/link'
+import { Route as OpenRouteImport } from './routes/open'
 import { Route as PayRouteImport } from './routes/pay'
 import { Route as QrRouteImport } from './routes/qr'
 import { Route as ScanRouteImport } from './routes/scan'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ShareTargetRouteImport } from './routes/share-target'
 import { Route as ToolsRouteImport } from './routes/tools'
 
 const IndexRoute = IndexRouteImport.update({
@@ -63,6 +65,11 @@ const LinkRoute = LinkRouteImport.update({
   path: '/link',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OpenRoute = OpenRouteImport.update({
+  id: '/open',
+  path: '/open',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PayRoute = PayRouteImport.update({
   id: '/pay',
   path: '/pay',
@@ -83,6 +90,11 @@ const SettingsRoute = SettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ShareTargetRoute = ShareTargetRouteImport.update({
+  id: '/share-target',
+  path: '/share-target',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ToolsRoute = ToolsRouteImport.update({
   id: '/tools',
   path: '/tools',
@@ -98,10 +110,12 @@ export interface FileRoutesByFullPath {
   '/batch': typeof BatchRoute
   '/history': typeof HistoryRoute
   '/link': typeof LinkRoute
+  '/open': typeof OpenRoute
   '/pay': typeof PayRoute
   '/qr': typeof QrRoute
   '/scan': typeof ScanRoute
   '/settings': typeof SettingsRoute
+  '/share-target': typeof ShareTargetRoute
   '/tools': typeof ToolsRoute
 }
 export interface FileRoutesByTo {
@@ -113,10 +127,12 @@ export interface FileRoutesByTo {
   '/batch': typeof BatchRoute
   '/history': typeof HistoryRoute
   '/link': typeof LinkRoute
+  '/open': typeof OpenRoute
   '/pay': typeof PayRoute
   '/qr': typeof QrRoute
   '/scan': typeof ScanRoute
   '/settings': typeof SettingsRoute
+  '/share-target': typeof ShareTargetRoute
   '/tools': typeof ToolsRoute
 }
 export interface FileRoutesById {
@@ -129,10 +145,12 @@ export interface FileRoutesById {
   '/batch': typeof BatchRoute
   '/history': typeof HistoryRoute
   '/link': typeof LinkRoute
+  '/open': typeof OpenRoute
   '/pay': typeof PayRoute
   '/qr': typeof QrRoute
   '/scan': typeof ScanRoute
   '/settings': typeof SettingsRoute
+  '/share-target': typeof ShareTargetRoute
   '/tools': typeof ToolsRoute
 }
 export interface FileRouteTypes {
@@ -146,10 +164,12 @@ export interface FileRouteTypes {
     | '/batch'
     | '/history'
     | '/link'
+    | '/open'
     | '/pay'
     | '/qr'
     | '/scan'
     | '/settings'
+    | '/share-target'
     | '/tools'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -161,10 +181,12 @@ export interface FileRouteTypes {
     | '/batch'
     | '/history'
     | '/link'
+    | '/open'
     | '/pay'
     | '/qr'
     | '/scan'
     | '/settings'
+    | '/share-target'
     | '/tools'
   id:
     | '__root__'
@@ -176,10 +198,12 @@ export interface FileRouteTypes {
     | '/batch'
     | '/history'
     | '/link'
+    | '/open'
     | '/pay'
     | '/qr'
     | '/scan'
     | '/settings'
+    | '/share-target'
     | '/tools'
   fileRoutesById: FileRoutesById
 }
@@ -192,10 +216,12 @@ export interface RootRouteChildren {
   BatchRoute: typeof BatchRoute
   HistoryRoute: typeof HistoryRoute
   LinkRoute: typeof LinkRoute
+  OpenRoute: typeof OpenRoute
   PayRoute: typeof PayRoute
   QrRoute: typeof QrRoute
   ScanRoute: typeof ScanRoute
   SettingsRoute: typeof SettingsRoute
+  ShareTargetRoute: typeof ShareTargetRoute
   ToolsRoute: typeof ToolsRoute
 }
 
@@ -257,6 +283,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LinkRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/open': {
+      id: '/open'
+      path: '/open'
+      fullPath: '/open'
+      preLoaderRoute: typeof OpenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/pay': {
       id: '/pay'
       path: '/pay'
@@ -285,6 +318,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/share-target': {
+      id: '/share-target'
+      path: '/share-target'
+      fullPath: '/share-target'
+      preLoaderRoute: typeof ShareTargetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tools': {
       id: '/tools'
       path: '/tools'
@@ -304,10 +344,12 @@ const rootRouteChildren: RootRouteChildren = {
   BatchRoute: BatchRoute,
   HistoryRoute: HistoryRoute,
   LinkRoute: LinkRoute,
+  OpenRoute: OpenRoute,
   PayRoute: PayRoute,
   QrRoute: QrRoute,
   ScanRoute: ScanRoute,
   SettingsRoute: SettingsRoute,
+  ShareTargetRoute: ShareTargetRoute,
   ToolsRoute: ToolsRoute,
 }
 export const routeTree = rootRouteImport

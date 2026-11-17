@@ -1,6 +1,10 @@
 /** Builders and a classifier for general-purpose QR payloads (Wi-Fi, vCard, …). */
 import {looksLikeEmv, parseEmvQr, type EmvParseResult} from './vietqr.ts'
 
+const Temporal =
+  (globalThis as {Temporal?: typeof import('temporal-polyfill').Temporal}).Temporal ??
+  (await import('temporal-polyfill')).Temporal
+
 export type QrKind =
   | 'url'
   | 'text'
@@ -51,6 +55,7 @@ export interface EventData {
   start: string // datetime-local value
   end: string
   allDay: boolean
+  timeZone?: string
   description: string
 }
 export type SocialPlatform =
@@ -126,33 +131,37 @@ export function buildGeo(d: GeoData): string {
   return d.label ? `${base}?q=${encodeURIComponent(`${lat},${lng}(${d.label})`)}` : base
 }
 
-const pad2 = (n: number) => String(n).padStart(2, '0')
-
-/** "2026-12-24" or "2026-12-24T19:00" → calendar date parts, read as a local date (no UTC shift). */
-function dateParts(value: string): [number, number, number] | null {
-  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(value)
-  return m ? [Number(m[1]), Number(m[2]), Number(m[3])] : null
-}
-
-/** All-day value; `plusDays` makes DTEND exclusive as RFC 5545 requires. */
+/** DTEND is exclusive for all-day events. */
 function icsDay(value: string, plusDays = 0): string {
-  const p = dateParts(value)
-  if (!p) return ''
-  const d = new Date(Date.UTC(p[0], p[1] - 1, p[2] + plusDays))
-  return `${d.getUTCFullYear()}${pad2(d.getUTCMonth() + 1)}${pad2(d.getUTCDate())}`
+  if (!value) return ''
+  try {
+    return Temporal.PlainDate.from(value.slice(0, 10))
+      .add({days: plusDays})
+      .toString()
+      .replace(/-/g, '')
+  } catch {
+    return ''
+  }
 }
 
-function icsDateTime(value: string): string {
+function icsDateTime(value: string, timeZone?: string): string {
   if (!value) return ''
-  const d = new Date(value) // datetime-local strings are local time
-  if (Number.isNaN(d.getTime())) return ''
-  return `${d.getUTCFullYear()}${pad2(d.getUTCMonth() + 1)}${pad2(d.getUTCDate())}T${pad2(d.getUTCHours())}${pad2(d.getUTCMinutes())}00Z`
+  try {
+    const utc = /(?:Z|[+-]\d{2}:\d{2})$/i.test(value)
+      ? Temporal.Instant.from(value).toZonedDateTimeISO('UTC')
+      : Temporal.PlainDateTime.from(value)
+          .toZonedDateTime(timeZone || Temporal.Now.timeZoneId(), {disambiguation: 'compatible'})
+          .withTimeZone('UTC')
+    return `${utc.toPlainDateTime().toString({smallestUnit: 'second'}).replace(/[-:]/g, '')}Z`
+  } catch {
+    return ''
+  }
 }
 
 export function buildEvent(d: EventData): string {
   const lines = ['BEGIN:VEVENT', `SUMMARY:${escV(d.title)}`]
-  const start = d.allDay ? icsDay(d.start) : icsDateTime(d.start)
-  const end = d.allDay ? icsDay(d.end || d.start, 1) : icsDateTime(d.end || d.start)
+  const start = d.allDay ? icsDay(d.start) : icsDateTime(d.start, d.timeZone)
+  const end = d.allDay ? icsDay(d.end || d.start, 1) : icsDateTime(d.end || d.start, d.timeZone)
   if (start) lines.push(d.allDay ? `DTSTART;VALUE=DATE:${start}` : `DTSTART:${start}`)
   if (end) lines.push(d.allDay ? `DTEND;VALUE=DATE:${end}` : `DTEND:${end}`)
   if (d.location) lines.push(`LOCATION:${escV(d.location)}`)
@@ -208,12 +217,12 @@ export type Classified =
   | {type: 'emv-invalid'; error: string}
   | {type: 'url'; url: string}
   | {type: 'wifi'; wifi: WifiData}
-  | {type: 'vcard'; fields: Array<[string, string]>; name: string}
+  | {type: 'vcard'; fields: Array<[string, string]>; name: string; vcard: VCardData}
   | {type: 'email'; to: string; subject: string; body: string}
   | {type: 'phone'; phone: string}
   | {type: 'sms'; phone: string; message: string}
   | {type: 'geo'; lat: string; lng: string; query: string}
-  | {type: 'event'; fields: Array<[string, string]>; title: string}
+  | {type: 'event'; fields: Array<[string, string]>; title: string; event: EventData | null}
   | {type: 'text'; text: string}
 
 function unescWifi(v: string) {
@@ -253,34 +262,128 @@ const VCARD_LABELS: Record<string, string> = {
   NOTE: 'note',
 }
 
-function parseVCard(text: string): {fields: Array<[string, string]>; name: string} {
-  const fields: Array<[string, string]> = []
-  let name = ''
-  const unfolded = text.replace(/\r?\n[ \t]/g, '')
-  for (const line of unfolded.split(/\r?\n/)) {
-    const idx = line.indexOf(':')
-    if (idx < 0) continue
-    const key = line.slice(0, idx).split(';')[0].toUpperCase()
-    const value = line
-      .slice(idx + 1)
-      .replace(/\\n/g, '\n')
-      .replace(/\\([,;\\])/g, '$1')
-      .replace(/;+/g, ' ')
-      .trim()
-    if (!value || key === 'BEGIN' || key === 'END' || key === 'VERSION') continue
-    if (key === 'FN') name = value
-    if (key === 'N' && !name) name = value
-    const label = VCARD_LABELS[key]
-    if (label && !(key === 'N' && fields.some(([l]) => l === 'name'))) fields.push([label, value])
-  }
-  return {fields, name}
+function unescText(value: string): string {
+  return value.replace(/\\([nN,;:\\"])/g, (_, char: string) => (/[nN]/.test(char) ? '\n' : char))
 }
 
-function parseMeCard(text: string): {fields: Array<[string, string]>; name: string} {
-  const body = text.slice(7)
+function splitEscaped(value: string, separator: string): string[] {
+  const parts = ['']
+  let escaped = false
+  for (const char of value) {
+    if (char === separator && !escaped) parts.push('')
+    else parts[parts.length - 1] += char
+    escaped = char === '\\' && !escaped
+  }
+  return parts.map(unescText)
+}
+
+function readProperties(text: string) {
+  const properties = []
+  for (const line of text.replace(/\r?\n[ \t]/g, '').split(/\r?\n/)) {
+    let index = -1
+    let quoted = false
+    let escaped = false
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i]
+      if (char === ':' && !quoted) {
+        index = i
+        break
+      }
+      if (char === '"' && !escaped) quoted = !quoted
+      escaped = char === '\\' && !escaped
+    }
+    if (index < 0) continue
+    const head = line.slice(0, index)
+    const key = head.split(';')[0].split('.').at(-1)!.toUpperCase()
+    const raw = line.slice(index + 1)
+    properties.push({head, key, raw, value: unescText(raw).trim()})
+  }
+  return properties
+}
+
+function emptyVCard(): VCardData {
+  return {
+    firstName: '',
+    lastName: '',
+    org: '',
+    title: '',
+    phone: '',
+    mobile: '',
+    email: '',
+    website: '',
+    address: '',
+    note: '',
+  }
+}
+
+function parseVCard(text: string) {
   const fields: Array<[string, string]> = []
+  const vcard = emptyVCard()
+  const phones: Array<{value: string; mobile: boolean; work: boolean}> = []
   let name = ''
-  const map: Record<string, string> = {
+  for (const {head, key, raw, value} of readProperties(text)) {
+    if (!value || key === 'BEGIN' || key === 'END' || key === 'VERSION') continue
+    const label = VCARD_LABELS[key]
+    if (label && !(key === 'N' && fields.some(([label]) => label === 'name'))) {
+      const display =
+        key === 'ADR' || key === 'N' || key === 'ORG'
+          ? splitEscaped(raw, ';')
+              .map((part) => part.trim())
+              .filter(Boolean)
+              .join(key === 'ADR' ? ', ' : ' ')
+          : value
+      fields.push([label, display])
+    }
+    switch (key) {
+      case 'N': {
+        const [last = '', first = '', middle = ''] = splitEscaped(raw, ';')
+        vcard.lastName = last.trim()
+        vcard.firstName = [first.trim(), middle.trim()].filter(Boolean).join(' ')
+        break
+      }
+      case 'FN':
+        name = value
+        break
+      case 'ORG':
+        vcard.org = splitEscaped(raw, ';').filter(Boolean).join(' ')
+        break
+      case 'TITLE':
+        vcard.title = value
+        break
+      case 'TEL':
+        phones.push({value, mobile: /CELL|MOBILE/i.test(head), work: /WORK/i.test(head)})
+        break
+      case 'EMAIL':
+        vcard.email = value
+        break
+      case 'URL':
+        vcard.website = value
+        break
+      case 'ADR':
+        vcard.address = splitEscaped(raw, ';')
+          .map((s) => s.trim())
+          .filter(Boolean)
+          .join(', ')
+        break
+      case 'NOTE':
+        vcard.note = value
+        break
+    }
+  }
+  if (!vcard.firstName && !vcard.lastName && name) vcard.firstName = name
+  vcard.mobile = phones.find((p) => p.mobile)?.value ?? phones.find((p) => !p.work)?.value ?? ''
+  vcard.phone =
+    phones.find((p) => p.work && p.value !== vcard.mobile)?.value ??
+    phones.find((p) => p.value !== vcard.mobile)?.value ??
+    ''
+  name ||= [vcard.firstName, vcard.lastName].filter(Boolean).join(' ') || vcard.org
+  return {fields, name, vcard}
+}
+
+function parseMeCard(text: string) {
+  const fields: Array<[string, string]> = []
+  const vcard = emptyVCard()
+  const labels: Record<string, string> = {
     N: 'name',
     TEL: 'phone',
     EMAIL: 'email',
@@ -290,14 +393,46 @@ function parseMeCard(text: string): {fields: Array<[string, string]>; name: stri
     ORG: 'org',
   }
   const re = /([A-Z-]+):((?:\\.|[^;])*);/gi
-  let m: RegExpExecArray | null
-  while ((m = re.exec(body))) {
-    const key = m[1].toUpperCase()
-    const value = unescWifi(m[2]).replace(/,/g, ' ').trim()
-    if (key === 'N') name = value
-    if (map[key] && value) fields.push([map[key], value])
+  let match: RegExpExecArray | null
+  while ((match = re.exec(text.slice(7)))) {
+    const key = match[1].toUpperCase()
+    const value = unescText(match[2]).trim()
+    if (labels[key] && value) fields.push([labels[key], value.replace(/,/g, ' ')])
+    switch (key) {
+      case 'N': {
+        const parts = splitEscaped(match[2], ',')
+        if (parts.length > 1) {
+          vcard.lastName = parts[0].trim()
+          vcard.firstName = parts
+            .slice(1)
+            .map((s) => s.trim())
+            .join(' ')
+        } else vcard.firstName = value
+        break
+      }
+      case 'TEL':
+        if (!vcard.mobile) vcard.mobile = value
+        else if (!vcard.phone) vcard.phone = value
+        break
+      case 'EMAIL':
+        vcard.email = value
+        break
+      case 'URL':
+        vcard.website = value
+        break
+      case 'ADR':
+        vcard.address = value
+        break
+      case 'NOTE':
+        vcard.note = value
+        break
+      case 'ORG':
+        vcard.org = value
+        break
+    }
   }
-  return {fields, name}
+  const name = [vcard.firstName, vcard.lastName].filter(Boolean).join(' ') || vcard.org
+  return {fields, name, vcard}
 }
 
 function safeDecode(v: string): string {
@@ -325,22 +460,82 @@ export function classifyPayload(raw: string): Classified {
   }
 }
 
-/** Contact fields from a scanned vCard/MECARD → a proper vCard 3.0 for download. */
-export function contactToVCard(fields: Array<[string, string]>, name: string): string {
-  const get = (k: string) => fields.find(([key]) => key === k)?.[1] ?? ''
-  const [last = '', ...first] = name.split(/[ ,]+/).filter(Boolean)
-  return buildVCard({
-    firstName: first.join(' '),
-    lastName: last,
-    org: get('org'),
-    title: get('title'),
-    phone: '',
-    mobile: get('phone'),
-    email: get('email'),
-    website: get('website'),
-    address: get('address'),
-    note: get('note'),
-  })
+function parseIcsDate(raw: string, head: string) {
+  const date = /^(\d{4})(\d{2})(\d{2})$/.exec(raw)
+  if (date) {
+    return {
+      value: Temporal.PlainDate.from(`${date[1]}-${date[2]}-${date[3]}`).toString(),
+      allDay: true,
+      zoned: null,
+    }
+  }
+  const dt = /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})?(Z)?$/i.exec(raw)
+  if (!dt) throw new RangeError('Invalid iCalendar date')
+  const [, y, mo, d, h, mi, sec = '00', utc] = dt
+  const plain = Temporal.PlainDateTime.from(`${y}-${mo}-${d}T${h}:${mi}:${sec}`)
+  const zone = utc ? 'UTC' : /TZID=(?:"([^"]+)"|([^;]+))/i.exec(head)?.slice(1).find(Boolean)
+  return {
+    value: plain.toString({smallestUnit: plain.second ? 'second' : 'minute'}),
+    allDay: false,
+    zoned: zone ? plain.toZonedDateTime(zone, {disambiguation: 'compatible'}) : null,
+  }
+}
+
+function parseEvent(text: string) {
+  const body =
+    /(?:^|\r?\n)BEGIN:VEVENT\r?\n([\s\S]*?)\r?\nEND:VEVENT(?:$|\r?\n)/i.exec(text)?.[1] ?? text
+  const properties = readProperties(body)
+  const get = (key: string) => properties.find((p) => p.key === key)
+  const title = get('SUMMARY')?.value ?? ''
+  const location = get('LOCATION')?.value ?? ''
+  const description = get('DESCRIPTION')?.value ?? ''
+  const start = get('DTSTART')
+  const end = get('DTEND')
+  const fields: Array<[string, string]> = []
+  for (const [key, property] of [
+    ['start', start],
+    ['end', end],
+  ] as const) {
+    if (property) {
+      const zone = /TZID=(?:"([^"]+)"|([^;]+))/i.exec(property.head)?.slice(1).find(Boolean)
+      fields.push([key, `${formatIcs(property.raw)}${zone ? ` (${zone})` : ''}`])
+    }
+  }
+  if (location) fields.push(['location', location])
+  if (description) fields.push(['note', description])
+  let event: EventData | null = null
+  try {
+    const parsedStart = start ? parseIcsDate(start.raw, start.head) : null
+    const parsedEnd = end ? parseIcsDate(end.raw, end.head) : null
+    if (parsedStart && parsedEnd && parsedStart.allDay !== parsedEnd.allDay)
+      throw new RangeError('Mixed iCalendar date types')
+    const allDay = Boolean(parsedStart?.allDay)
+    let startValue = parsedStart?.value ?? ''
+    let endValue = parsedEnd?.value ?? ''
+    let timeZone: string | undefined
+    if (parsedStart?.zoned || parsedEnd?.zoned) {
+      timeZone = 'UTC'
+      const asUtc = (parsed: NonNullable<typeof parsedStart>) => {
+        const zoned =
+          parsed.zoned ??
+          Temporal.PlainDateTime.from(parsed.value).toZonedDateTime(Temporal.Now.timeZoneId(), {
+            disambiguation: 'compatible',
+          })
+        const plain = zoned.withTimeZone('UTC').toPlainDateTime()
+        return plain.toString({smallestUnit: plain.second ? 'second' : 'minute'})
+      }
+      startValue = parsedStart ? asUtc(parsedStart) : ''
+      endValue = parsedEnd ? asUtc(parsedEnd) : ''
+    }
+    if (allDay && endValue) {
+      endValue = Temporal.PlainDate.from(endValue).subtract({days: 1}).toString()
+      if (startValue && endValue < startValue) throw new RangeError('Invalid iCalendar end')
+    }
+    event = {title, location, description, start: startValue, end: endValue, allDay, timeZone}
+  } catch {
+    // Unsupported TZIDs or invalid dates remain inspectable/downloadable without a lossy reissue.
+  }
+  return {fields, title, event}
 }
 
 function classifyUnsafe(raw: string): Classified {
@@ -356,22 +551,8 @@ function classifyUnsafe(raw: string): Classified {
   if (wifi) return {type: 'wifi', wifi}
   if (/^BEGIN:VCARD/i.test(text)) return {type: 'vcard', ...parseVCard(text)}
   if (/^MECARD:/i.test(text)) return {type: 'vcard', ...parseMeCard(text)}
-  if (/^BEGIN:(VEVENT|VCALENDAR)/i.test(text)) {
-    const {fields} = parseVCard(text)
-    const summary = /SUMMARY:(.*)/i.exec(text)?.[1]?.trim() ?? ''
-    const extra: Array<[string, string]> = []
-    const start = /DTSTART[^:]*:(\S+)/i.exec(text)?.[1]
-    const end = /DTEND[^:]*:(\S+)/i.exec(text)?.[1]
-    const loc = /LOCATION:(.*)/i.exec(text)?.[1]
-    if (start) extra.push(['start', formatIcs(start)])
-    if (end) extra.push(['end', formatIcs(end)])
-    if (loc) extra.push(['location', loc.trim()])
-    return {
-      type: 'event',
-      fields: [...extra, ...fields.filter(([k]) => k === 'note')],
-      title: summary,
-    }
-  }
+  if (/^BEGIN:(VEVENT|VCALENDAR)/i.test(text)) return {type: 'event', ...parseEvent(text)}
+
   if (/^mailto:/i.test(text)) {
     const [address, query = ''] = text.slice(7).split('?')
     const q = safeParams(query)
@@ -391,7 +572,7 @@ function classifyUnsafe(raw: string): Classified {
       body: /BODY:([^;]*)/i.exec(text)?.[1] ?? '',
     }
   }
-  if (/^tel:/i.test(text)) return {type: 'phone', phone: text.slice(4)}
+  if (/^tel:/i.test(text)) return {type: 'phone', phone: safeDecode(text.slice(4))}
   // RFC 5724 URI ("sms:+849…?body=Hi") — checked before the colon form it would otherwise match.
   if (/^sms:[^:]*$/i.test(text)) {
     const [phone, query = ''] = text.slice(4).split('?')
@@ -399,7 +580,7 @@ function classifyUnsafe(raw: string): Classified {
   }
   if (/^(SMSTO|SMS):/i.test(text)) {
     const [, phone = '', ...rest] = text.split(':')
-    return {type: 'sms', phone, message: rest.join(':')}
+    return {type: 'sms', phone: safeDecode(phone), message: rest.join(':')}
   }
   if (/^geo:/i.test(text)) {
     const [coords, query = ''] = text.slice(4).split('?')

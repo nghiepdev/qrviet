@@ -13,6 +13,7 @@ import {useNavigate} from '@tanstack/react-router'
 import {LogoMark} from '#/components/brand/logo'
 import {isSearchBot} from '#/app/boot-splash'
 import {NAV_ITEMS, SECTION_LABEL, isActivePath, type NavSection} from '#/app/nav'
+import {initLaunchQueue} from '#/lib/pwa-launch'
 import {useT} from '#/i18n'
 import {cycleMode} from '#/stores/settings'
 import {HeaderActions} from './header-actions'
@@ -136,6 +137,13 @@ export function AppLayout({children}: {children: ReactNode}) {
     {keys: 'shift+d', onPress: () => cycleMode()},
     {keys: 'shift+s', onPress: () => void navigate({to: '/scan'})},
   ])
+
+  const openScanForFile = useEffectEvent((failed: boolean) => {
+    void navigate({to: '/scan', search: {shareError: failed || undefined}})
+  })
+  useEffect(() => {
+    initLaunchQueue((failed) => openScanForFile(failed))
+  }, [])
 
   // Fade out the static boot splash once the shell is on screen (remove immediately for bots).
   useEffect(() => {

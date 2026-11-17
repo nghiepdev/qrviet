@@ -181,7 +181,10 @@ function ColorInput({
 interface Props {
   style: QrStyle
   onStyle: (patch: Partial<QrStyle>) => void
-  design?: Pick<QrDesign, 'logoMode' | 'customLogo' | 'logoSize' | 'logoPlate'>
+  design?: Pick<
+    QrDesign,
+    'logoMode' | 'customLogo' | 'logoSize' | 'logoPlate' | 'logoPlateColor' | 'logoTransparentBg'
+  >
   onDesign?: (patch: Partial<QrDesign>) => void
   allowBankLogo?: boolean
   /** The logo the code is drawn with: it sets a minimum error-correction level. */
@@ -376,7 +379,13 @@ export function StylePanel({
                 <img
                   src={design.customLogo}
                   alt=""
-                  className="size-12 rounded-md border border-border bg-white object-contain"
+                  className="size-12 rounded-md border border-border object-contain"
+                  style={{
+                    backgroundColor:
+                      design.logoPlate !== 'none' && !design.logoTransparentBg
+                        ? design.logoPlateColor
+                        : 'transparent',
+                  }}
                 />
               )}
               <Button
@@ -415,6 +424,22 @@ export function StylePanel({
                   <SegmentedControlItem key={p} value={p} label={t(`plate.${p}` as MessageKey)} />
                 ))}
               </SegmentedControl>
+              {design.logoPlate !== 'none' && (
+                <>
+                  <Switch
+                    label={t('style.logoTransparent')}
+                    value={design.logoTransparentBg}
+                    onChange={(logoTransparentBg) => onDesign({logoTransparentBg})}
+                  />
+                  {!design.logoTransparentBg && (
+                    <ColorInput
+                      label={t('style.logoPlateColor')}
+                      value={design.logoPlateColor}
+                      onChange={(logoPlateColor) => onDesign({logoPlateColor})}
+                    />
+                  )}
+                </>
+              )}
             </>
           )}
         </div>
@@ -463,6 +488,8 @@ export function StylePanel({
               logoMode: allowBankLogo ? 'bank' : 'none',
               logoSize: 0.22,
               logoPlate: 'rounded',
+              logoPlateColor: '#ffffff',
+              logoTransparentBg: false,
             })
           }}
         />

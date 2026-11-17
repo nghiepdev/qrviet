@@ -366,7 +366,7 @@ function SettingsPage() {
                   <Smartphone size={15} aria-hidden />{' '}
                   {t('set.version', {version: `${__APP_VERSION__} · ${__BUILD_DATE__}`})}
                 </div>
-                <div>
+                <div className="flex flex-wrap gap-2">
                   <Button
                     label={t('set.checkUpdate')}
                     icon={<RefreshCw size={15} />}

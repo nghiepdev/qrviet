@@ -1,5 +1,6 @@
+import {parseLinkSearch, rawLocationHash} from '#/lib/route-search'
 import {useEffect, useState} from 'react'
-import {createFileRoute} from '@tanstack/react-router'
+import {createFileRoute, useNavigate, useLocation} from '@tanstack/react-router'
 import {Copy, ExternalLink, Link2, QrCode, Share2} from 'lucide-react'
 import {Button} from '@astryxdesign/core/Button'
 import {TextInput} from '@astryxdesign/core/TextInput'
@@ -18,6 +19,7 @@ import {
   EMPTY_FORM,
   draftStore,
   formFromAccount,
+  formFromSearch,
   useDerivedVietQr,
   type VietQrForm,
 } from '#/components/vietqr/form'
@@ -36,6 +38,7 @@ import {pageHead} from '#/seo/head'
 
 export const Route = createFileRoute('/link')({
   head: () => pageHead('link'),
+  validateSearch: parseLinkSearch,
   component: LinkBuilder,
 })
 
@@ -71,6 +74,9 @@ function linkQrScene(url: string, caption: string, accent: string, measure: Meas
 function LinkBuilder() {
   const t = useT()
   const copy = useCopy()
+  const navigate = useNavigate({from: '/link'})
+  const hash = useLocation({select: rawLocationHash})
+  const search = parseLinkSearch(Route.useSearch(), hash)
   const paySheet = usePaySheet()
   const contentMode = useSettings((s) => s.contentMode)
   const [form, setForm] = useState<VietQrForm>(() => ({
@@ -86,6 +92,19 @@ function LinkBuilder() {
   // Off unless asked for: a detailed preview sends the bank, name and amount to the host (src/lib/paylink.ts).
   const [preview, setPreview] = useState(false)
   const measure = useTextMeasure()
+
+  useEffect(() => {
+    const hasSearch = Object.values(search).some((v) => v !== undefined)
+    if (!hasSearch) return
+    const fresh = search.acc !== undefined
+    setForm((form) => formFromSearch(form, search))
+    if (search.note !== undefined || fresh) setNote(search.note ?? '')
+    if (search.exp && EXPIRY.some((expiry) => expiry.value === search.exp)) setExpiry(search.exp)
+    else if (fresh) setExpiry('none')
+    if (search.preview !== undefined || fresh) setPreview(search.preview ?? false)
+    void navigate({search: {}, hash: '', replace: true, resetScroll: false})
+  }, [search, navigate])
+
   const patch = (p: Partial<VietQrForm>) => setForm((f) => ({...f, ...p}))
   const derived = useDerivedVietQr(form, contentMode)
 

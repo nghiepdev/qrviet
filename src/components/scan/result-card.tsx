@@ -28,7 +28,9 @@ import {CopyField} from '#/components/common/copy-field'
 import {BankLogo} from '#/components/bank/bank-logo'
 import {BankAppLauncher} from '#/components/pay/bank-app-launcher'
 import {TlvTable} from '#/components/vietqr/tlv-table'
-import {classifyPayload, contactToVCard, type Classified} from '#/lib/payloads'
+import {classifyPayload, buildVCard, type Classified} from '#/lib/payloads'
+import {qrSearchFromClassified} from '#/lib/qr-prefill'
+import {privateDestination} from '#/lib/route-search'
 import type {ParsedVietQr} from '#/lib/vietqr'
 import {amountToWords, formatVnd} from '#/lib/money'
 import {downloadText} from '#/lib/qr/export'
@@ -254,6 +256,8 @@ function GenericResult({
 }) {
   const t = useT()
   const copy = useCopy()
+  const navigate = useNavigate()
+  const qrSearch = qrSearchFromClassified(classified)
   const type =
     classified.type === 'emv' || classified.type === 'emv-invalid' ? 'text' : classified.type
   const Icon = TYPE_ICON[type] ?? FileText
@@ -343,9 +347,7 @@ function GenericResult({
               variant="primary"
               onClick={() =>
                 downloadText(
-                  /^BEGIN:VCARD/i.test(raw.trim())
-                    ? raw
-                    : contactToVCard(classified.fields, classified.name),
+                  /^BEGIN:VCARD/i.test(raw.trim()) ? raw : buildVCard(classified.vcard),
                   `${classified.name || 'contact'}.vcf`,
                   'text/vcard;charset=utf-8',
                 )
@@ -460,7 +462,20 @@ function GenericResult({
       {classified.type === 'emv-invalid' && (
         <p className="text-xs text-error">{classified.error}</p>
       )}
-      <div>
+      <div className="flex flex-wrap gap-2">
+        {qrSearch && (
+          <Button
+            label={t('scan.reissue')}
+            icon={<PencilLine size={16} />}
+            size="sm"
+            onClick={() =>
+              void navigate({
+                ...privateDestination({to: '/qr', search: qrSearch}),
+                hashScrollIntoView: false,
+              })
+            }
+          />
+        )}
         <Button label={t('common.copy')} size="sm" variant="ghost" onClick={() => void copy(raw)} />
       </div>
     </div>
